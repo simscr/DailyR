@@ -1,0 +1,111 @@
+---
+title: "Daily R - July 2021"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "July", "/")
+)
+
+pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr)
+
+theme_set(theme_bw(base_size = 15))
+```
+
+July wasn't my best month :). I will try again in August.
+
+# 20210701 - Nothing
+# 20210702 - Nothing
+# 20210706 - #TidyTuesdayR and Independence Days.
+
+```{r, tt-1}
+p_load(tidytuesdayR, sf, rnaturalearth, rnaturalearthdata, rgeos)
+
+#tt <- tt_load("2021", week = 28)$holidays
+#tt <- import(here("data", "tt_wk28.xlsx"))
+
+world <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  left_join(tt %>% rename(name = country)) %>% 
+  mutate(always_free = case_when(is.na(independence_from) ~ "No Independence Day",
+                                 TRUE ~ "Has an Independence Day"))
+
+ggplot(data = world) +
+  geom_sf(aes(fill = year_of_event)) + 
+  theme_void() + 
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+```
+
+# 20210707 - #TidyTuesdayR and Independance Days with {ggiraph}
+
+```{r}
+p_load(ggiraph)
+
+ind_from <- ggplot(data = world) +
+  geom_sf(aes(fill = independence_from)) + 
+  theme_void() + 
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+
+ind_when <- ggplot(data = world) +
+  geom_sf(aes(fill = as.factor(year_of_event))) + 
+  theme_void() + 
+  theme(legend.position = "none", legend.direction = "horizontal")
+
+ind_ever <- ggplot(data = world) +
+  geom_sf_interactive(aes(fill = always_free, tooltip = independence_from)) + 
+  scale_fill_manual(values = c("#F5C7CF", "#A4B4CC")) + 
+  theme_void() + 
+  theme(legend.position = "none", legend.direction = "horizontal")
+
+girafe(ggobj = ind_ever)
+```
+
+```{r}
+ind_ever_africa <- world %>% 
+  filter(continent == "Africa") %>% 
+  ggplot() +
+  geom_sf_interactive(aes(fill = independence_from, tooltip = independence_from)) + 
+#  scale_fill_manual(values = c("#F5C7CF", "#A4B4CC")) + 
+  theme_void() + 
+  theme(legend.position = "none", legend.direction = "horizontal")
+
+girafe(ggobj = ind_ever_africa)
+```
+
+
+# 20210708 - Nothing
+# 20210709 - Nothing
+# 20210712 - Looked into {hrbrthemes}
+
+They are some themes for {ggplot} that [@hrbrmstr](https://github.com/hrbrmstr) has made in a separate package.
+
+
+# Ideas
+
+template, gtsummary, officedown/officer, glue/,gluedown tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {ggradar}, {ggstatplots}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://www.tidymodels.org/>
+
+<https://rstudio.github.io/distill/basics.html>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>

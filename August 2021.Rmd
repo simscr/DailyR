@@ -1,0 +1,521 @@
+---
+title: "Daily R - August 2021"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "August", "/")
+)
+
+pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr)
+
+theme_set(theme_bw(base_size = 15))
+```
+
+# 20210802 - '{ggradar}'
+
+```{r, include = F}
+#devtools::install_github("ricardo-bion/ggradar", dependencies = TRUE)
+
+p_load(ggradar, scales)
+
+mtcars_radar <- mtcars %>% 
+  as_tibble(rownames = "group") %>% 
+  mutate_at(vars(-group), rescale) %>% 
+  tail(3) %>% 
+  select(1:10)
+
+```
+
+```{r}
+ggradar(mtcars_radar, 
+        group.colours = c("blue", "red", "green"), 
+        values.radar = c("0", "0.5", "1.0"), 
+        background.circle.colour = "white", 
+        group.point.size = 1)
+```
+
+# 20210803 - #TidyTuesday and Paralympic Games
+
+```{r, include = F}
+p_load(tidytuesdayR)
+
+tt <- tt_load("2021-08-03")
+#readme(tt)
+
+para <- tt$athletes
+
+skim(para)
+
+glimpse(para)
+
+para %>% count(gender)
+
+```
+
+```{r, include = F}
+repeat_winners <- para %>% 
+  count(athlete) %>% 
+  filter(n > 1) %>% 
+  arrange(-n) %>% 
+  filter(!is.na(athlete))
+
+repeat_winners %>% 
+  ggplot(aes(n)) + 
+  geom_density()
+
+most_medals <- repeat_winners %>% 
+  head(10) %>% 
+  filter(athlete != "-")
+
+best_para <- para %>% 
+  filter(athlete %in% most_medals$athlete) %>% 
+  mutate(medal = factor(medal, levels = c("Bronze", "Silver", "Gold")))
+
+```
+
+```{r}
+best_para %>% 
+  ggplot(aes(athlete, fill = medal)) + 
+  geom_bar() + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#cd7f32", "#c0c0c0", "#ffd700")) + 
+  labs(x = NULL, y = "Medal Count", title = "Most Decorated Paralympians and How Many of Each Medal They Won") + 
+  theme_light() + 
+  theme(plot.title.position = "plot", legend.title = element_blank(), 
+        legend.position = c(0.8, 0.2), legend.background = element_blank())
+```
+
+# 20210804 - More #TidyTuesday and The Paralympics
+
+```{r}
+best_para %>% 
+  ggplot(aes(athlete, fill = type)) + 
+  geom_bar() + 
+  coord_flip() + 
+  scale_fill_manual(values = c("#bc4b4b", "#abcdef", "#9cd6a3", "#4e6b51")) + 
+  labs(x = NULL, y = "Medal Count", title = "Most Decorated Paralympians and The Types of Sports They Play") + 
+  theme_light() + 
+  theme(plot.title.position = "plot", legend.title = element_blank(), 
+        legend.position = c(0.8, 0.2), legend.background = element_blank())
+```
+
+# 20210805 - Trying {ggstatsplot}
+
+Using {ggstatsplot} and {palmerpenguins} cause R to crash. Not sure why.
+
+```{r, include = F}
+p_load(ggstatsplot, palmerpenguins)
+
+penguins
+
+ggbetweenstats(iris, Species, Sepal.Length)
+
+ggplot(penguins, aes(species, bill_length_mm)) + 
+  geom_boxplot()
+
+#ggbetweenstats(penguins, species, Sepal.Length)
+
+
+```
+
+```{r}
+ggbetweenstats(
+  data = penguins,
+  x = species,
+  y = bill_depth_mm,
+  plot.type = "box"
+)
+```
+
+# 20210806 - Trying {ggstatsplot} again
+
+Had to update {Rcpp} and it works now.
+
+```{r, include = F}
+p_load(ggstatsplot)
+
+ggstatsplot::bugs_wide
+
+bugs <- bugs_wide
+
+```
+
+
+```{r}
+bugs %>% 
+  ggplot(aes(education, ldlf)) + 
+  geom_boxplot() + 
+  facet_wrap(~gender) + 
+  coord_flip()
+
+bugs %>% 
+  ggplot(aes(education, ldhf)) + 
+  geom_boxplot() + 
+  facet_wrap(~gender) + 
+  coord_flip()
+
+bugs %>% 
+  ggplot(aes(education, hdlf)) + 
+  geom_boxplot() + 
+  facet_wrap(~gender) + 
+  coord_flip()
+
+bugs %>% 
+  ggplot(aes(education, hdhf)) + 
+  geom_boxplot() + 
+  facet_wrap(~gender) + 
+  coord_flip()
+```
+
+```{r}
+ggbetweenstats(bugs, education, ldlf)
+```
+
+
+
+# 20210809 - Working on a map of my parent's trip to Portland, OR
+
+```{r}
+stops <- import("or_trip.xlsx")
+
+test <- map_data("state")
+
+# ggplot(test, aes(long, lat)) + 
+#   geom_sf(aes(group = group), fill = "white", color = "black") +
+#   geom_point(data = stops, aes(x = lat, y = lon)) + 
+#   theme_void()
+
+
+```
+
+# 20210810 - #TidyTuesday and U.S. Investment
+
+```{r, include = F}
+p_load(tidytuesdayR)
+
+tt <- tt_load("2021-08-10")
+
+readme(tt)
+
+
+tt1 <- tt$investment
+
+skim(tt1)
+
+str(tt1)
+
+tt1 %>% 
+  count(meta_cat) %>% 
+  View()
+
+
+total_inv <- tt1 %>% 
+  filter(str_detect(meta_cat, "^Total"))
+```
+
+```{r}
+total_inv %>% 
+  ggplot(aes(year, gross_inv, color = category)) +
+  geom_point(size = 0.5) + 
+  facet_wrap(~meta_cat) + 
+  theme(legend.position = "bottom", legend.direction = "horizontal", legend.title = element_blank())
+```
+
+# 20210811 - More #TidyTuesday and Investment
+
+```{r}
+total_inv %>% 
+  ggplot(aes(year, gross_inv, color = category)) +
+  geom_line(size = 0.5) + 
+  facet_wrap(~meta_cat) + 
+  scale_y_continuous(labels=scales::dollar_format(), name = "") + 
+  theme(legend.position = "bottom", legend.direction = "horizontal", legend.title = element_blank())
+```
+
+```{r, include = F}
+other_inv <- tt1 %>% 
+  filter(!str_detect(meta_cat, "^Total"))
+
+other_inv %>% 
+  count(category)
+```
+
+# 20210812 - Portland trip map
+
+```{r, include = F}
+p_load(rnaturalearth, rnaturalearthdata, sf, maps)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+usa <- subset(world, admin %in% c("United States of America", "Canada", "Mexico"))
+(mainland <- ggplot(data = usa) +
+     geom_sf(fill = "white", color = "black") +
+     coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 
+         730000)))
+
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))
+#states <- cbind(states, st_coordinates(st_centroid(states)))
+
+ggplot(usa) + 
+  geom_sf(fill = "white", color = "black", size = 0.05) +
+#  coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 730000)) + 
+  geom_point(data = stops, aes(x = lon, y = lat), size = 2) + 
+  scale_x_continuous(limits = c(-125, -90)) + 
+  scale_y_continuous(limits = c(32, 50)) + 
+  geom_sf(data = states, fill = NA, size = 0.25) + 
+  geom_segment(data = stops, aes(x = lon, y = lat, 
+                    xend=c(tail(lon, n=-1), NA), 
+                    yend=c(tail(lat, n=-1), NA)
+                  ), lty = 2) +
+  coord_sf() + 
+  theme_void()
+
+
+
+#browseURL("https://r-spatial.org/r/2018/10/25/ggplot2-sf-2.html")
+
+
+```
+
+# 20210813 - Portland again
+
+```{r}
+p_load(ggrepel)
+
+
+(trip_map <- ggplot(usa) + 
+  geom_sf(fill = "beige", color = "black", size = 0.05) +
+  geom_point(data = stops, aes(x = lon, y = lat), size = 2) + 
+  scale_x_continuous(limits = c(-125, -90)) + 
+  scale_y_continuous(limits = c(32, 50)) + 
+  geom_sf(data = states, fill = NA, size = 0.25) + 
+  geom_segment(data = stops, aes(x = lon, y = lat, 
+                    xend=c(tail(lon, n=-1), NA), 
+                    yend=c(tail(lat, n=-1), NA)
+                  ), lty = 2) +
+  geom_label_repel(data = stops, aes(label = stop, x = lon, y = lat))+
+  coord_sf() + 
+  theme_void() + 
+  theme(panel.background = element_rect(fill = "steelblue4"))
+)
+```
+
+
+# 20210816 - OFF
+
+# 20210817 - #TidyTuesday and Star Trek Voice Commands and {ggwaffle}
+
+```{r, include = F}
+p_load(tidytuesdayR, ggwaffle)
+
+tt <- tt_load("2021-08-17")
+readme(tt)
+
+trek <- tt$computer %>% 
+  mutate(type = str_to_title(type))
+
+skim(trek)
+```
+
+```{r}
+trek %>% 
+  count(type) %>% 
+  gt::gt()
+```
+
+```{r, include = F}
+waffle_data <- waffle_iron(mpg, aes_d(group = class))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle()
+
+```
+
+
+
+```{r}
+trek_waffle <- waffle_iron(trek, aes_d(group = type), sample_size = 0.25, rows = 25)
+
+ggplot(trek_waffle, aes(x = x, y = y, fill = group)) + 
+  geom_waffle() + 
+  coord_equal() + 
+ # scale_fill_waffle() + 
+  theme(legend.position = "bottom", legend.title = element_blank(), legend.direction = "horizontal") +
+  theme_waffle() +
+  labs(x = NULL, y = NULL)
+
+```
+
+# 20210818 - ISRHML
+# 20210819 - ISRHML
+# 20210820 - ISRHML
+
+# 20210824 - Portland, Again
+
+```{r}
+trip_legend <- stops %>% 
+  mutate(legend = 1) %>% 
+  head(-1) %>% 
+  ggplot(aes(legend, reorder(name, -stop))) + 
+  geom_text(aes(label = paste0(stop, ":"))) +
+  labs(x = NULL, y = NULL) +
+  scale_y_discrete(position = "right") +
+  scale_x_discrete(labels = NULL) + 
+  theme_classic(base_size = 15, base_line_size = 0) +
+  theme(axis.text = element_text(color = "black"))
+
+trip_legend
+```
+
+# 20210824 - #TidyTuesdayR and Lemurs
+
+```{r, include = F}
+p_load(tidytuesdayR, ggbeeswarm)
+
+#tt <- tt_load("2021-08-24")
+
+#lemurs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-08-24/lemur_data.csv')
+
+lemurs <- import(here("data", "lemur_data.csv"))
+
+skim(lemurs)
+```
+
+```{r}
+lemurs %>% 
+  filter(birth_type != "Unk") %>% 
+  mutate(taxon = fct_reorder(taxon, age_at_death_y, .fun = "mean", na.rm = T)) %>% 
+  ggplot(aes(taxon, age_at_death_y, fill = birth_type)) +
+  geom_boxplot() + 
+  coord_flip()
+```
+
+# 20210825 - Nothing
+# 20210826 - portland
+
+```{r}
+p_load(patchwork, elevatr, sf, raster)
+
+trip_map + trip_legend + plot_layout(widths = c(10, 0.5), heights = 10)
+
+
+trip_map2 <- ggplot(usa) + 
+  geom_sf(fill = "beige", color = "black", size = 0.05) +
+  geom_point(data = stops, aes(x = lon, y = lat), size = 2) + 
+  scale_x_continuous(limits = c(-125, -90)) + 
+  scale_y_continuous(limits = c(32, 50)) + 
+  geom_sf(data = states, fill = NA, size = 0.25) + 
+  geom_segment(data = stops, aes(x = lon, y = lat, 
+                    xend=c(tail(lon, n=-1), NA), 
+                    yend=c(tail(lat, n=-1), NA)
+                  ), lty = 2) +
+  geom_label_repel(data = stops, aes(label = stop, x = lon, y = lat))+
+  coord_sf() + 
+  theme_void() + 
+  theme(panel.background = element_rect(fill = "steelblue4"))
+
+
+#browseURL("https://stackoverflow.com/questions/57024684/ggplot2-numbered-points-on-plot-and-in-legend")
+
+```
+
+```{r, include = F, eval = F}
+
+#st_bbox(usa)
+
+crop_usa <- st_crop(usa, ymin = 32, ymax = 50, 
+                xmin = -125, xmax = -90)
+
+ggplot(crop_usa) + 
+  geom_sf(fill = "white", color = "black", size = 0.05)
+
+elevation1 <- get_elev_raster(test, z = 8)
+
+plot(elevation1)
+
+crs(elevation1)
+
+elevation <- raster::crop(elevation1, extent(crop_usa))
+
+plot(elevation)
+
+test3 <- st_crop(test2, ymin = 32, ymax = 50, 
+                 xmin = -125, xmax = -90)
+
+```
+
+# 20210830 - Nothing. Home with kid.
+# 20210831 - #TidyTuesdayR and Bird Baths in Australia and {treemap}
+
+```{r, include = F}
+p_load(tidytuesdayR, treemap)
+
+tt <- tt_load("2021-08-31")
+readme(tt)
+
+birds <- tt$bird_baths
+
+skim(birds)
+```
+
+```{r, include = F, eval = F}
+birds %>% 
+  group_by(survey_year, bird_type, bioregions) %>% 
+  mutate(total = sum(bird_count)) %>% 
+  filter(!is.na(bioregions)) %>% 
+  ggplot(aes(bioregions, total, color = survey_year)) + 
+  geom_point() +
+  coord_flip() +
+  facet_wrap(~bird_type)
+```
+
+```{r, include = F}
+tot_birds <- birds %>% 
+  dplyr::filter(bird_count > 1) %>% 
+  mutate(bird_count2 = scale(bird_count)) %>% 
+  arrange(-bird_count)
+
+```
+
+
+```{r}
+tot_birds %>% 
+  head(15) %>% 
+  treemap(.,
+          index = "bird_type",
+          vSize = "bird_count",
+          type = "index")
+```
+
+
+# Ideas
+
+template, gtsummary, officedown/officer, glue/,gluedown tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {dotwhisker}, {infer}, {aRtsy} 
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://www.tidymodels.org/>
+
+<https://rstudio.github.io/distill/basics.html>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>

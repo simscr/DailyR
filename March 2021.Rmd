@@ -1,0 +1,1072 @@
+---
+title: "Daily R - March 2021"
+output: html_document
+---
+
+# {.tabset .tabset-pills}
+
+## Packages
+
+```{r setup, include=FALSE, eval = T}
+knitr::opts_chunk$set(echo = F)
+
+pacman::p_load(pacman, tidyverse, rio, ggpubr, corrplot, janitor, broom, broom.mixed, lme4,
+               ggdark,  # 
+               RColorBrewer,  # 
+               httr, XML,  # for Wikipedia scraping
+               ggrepel,
+               plotly,
+               gt,  # tables
+               ggdark,  # dark theme
+               tidytuesdayR,
+               rstatix,
+               ggthemes,
+               plotrix,
+               rayshader,
+               leaflet, 
+               gghighlight, 
+               ggbump, 
+               ggtext, 
+               scales, 
+               gt,
+               car
+)
+
+theme_set(theme_bw())
+
+
+#usethis::create_github_token()
+#usethis::edit_r_environ()
+#gitcreds::gitcreds_set(url = "https://github.com")
+
+#substr(gh::gh_token(), 1, 4)
+
+```
+
+```{r, eval = F}
+library(tidyverse)
+library(pacman)
+library(rio)
+library(tidytuesdayR)
+library(gghighlight)
+library(plotly)
+
+theme_set(theme_bw())
+
+```
+
+## 20210301
+
+rayshader
+
+```{r, include = F}
+p_load(rayshader, leaflet)
+
+bbox <- list(
+  p1 = list(long = -122.522, lat = 37.707),
+  p2 = list(long = -122.354, lat = 37.84)
+)
+
+define_image_size <- function(bbox, major_dim = 400) {
+  # calculate aspect ration (width/height) from lat/long bounding box
+  aspect_ratio <- abs((bbox$p1$long - bbox$p2$long) / (bbox$p1$lat - bbox$p2$lat))
+  # define dimensions
+  img_width <- ifelse(aspect_ratio > 1, major_dim, major_dim*aspect_ratio) %>% round()
+  img_height <- ifelse(aspect_ratio < 1, major_dim, major_dim/aspect_ratio) %>% round()
+  size_str <- paste(img_width, img_height, sep = ",")
+  list(height = img_height, width = img_width, size = size_str)
+}
+
+get_usgs_elevation_data <- function(bbox, size = "400,400", file = NULL, 
+                                    sr_bbox = 4326, sr_image = 4326) {
+  require(httr)
+  
+  # TODO - validate inputs
+  
+  url <- parse_url("https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage")
+  res <- GET(
+    url, 
+    query = list(
+      bbox = paste(bbox$p1$long, bbox$p1$lat, bbox$p2$long, bbox$p2$lat,
+                   sep = ","),
+      bboxSR = sr_bbox,
+      imageSR = sr_image,
+      size = size,
+      format = "tiff",
+      pixelType = "F32",
+      noDataInterpretation = "esriNoDataMatchAny",
+      interpolation = "+RSP_BilinearInterpolation",
+      f = "json"
+    )
+  )
+  
+  if (status_code(res) == 200) {
+    body <- content(res, type = "application/json")
+    # TODO - check that bbox values are correct
+    # message(jsonlite::toJSON(body, auto_unbox = TRUE, pretty = TRUE))
+    
+    img_res <- GET(body$href)
+    img_bin <- content(img_res, "raw")
+    if (is.null(file)) 
+      file <- tempfile("elev_matrix", fileext = ".tif")
+    writeBin(img_bin, file)
+    message(paste("image saved to file:", file))
+  } else {
+    warning(res)
+  }
+  invisible(file)
+}
+
+image_size <- define_image_size(bbox, major_dim = 600)
+
+```
+
+```{r, eval = F}
+montereybay %>%
+  sphere_shade(zscale = 10, texture = "imhof1") %>%
+  add_shadow(ray_shade(montereybay, zscale = 50)) %>%
+  add_shadow(ambient_shade(montereybay, zscale = 50)) %>%
+  plot_3d(montereybay, zscale = 50, theta = -45, phi = 45, water = TRUE,
+          windowsize = c(1000,800), zoom = 0.75, waterlinealpha = 0.3,
+          wateralpha = 0.5, watercolor = "lightblue", waterlinecolor = "white")
+render_snapshot()
+```
+
+```{r}
+
+water_palette = colorRampPalette(c("darkblue", "dodgerblue", "lightblue"))(300)
+bathy_hs = height_shade(montereybay, texture = water_palette)
+
+montereybay %>%
+ sphere_shade(zscale=10, texture = "imhof2") %>%
+ add_overlay(generate_altitude_overlay(bathy_hs, montereybay, 0, 0))  %>%
+ add_shadow(ray_shade(montereybay,zscale=50),0.3) %>%
+ plot_map()
+
+
+#montereybay, zscale = 50, theta = -45, phi = 45, water = TRUE,
+#          windowsize = c(1000,800), zoom = 0.75, waterlinealpha = 0.3,
+#          wateralpha = 0.5, watercolor = "lightblue", waterlinecolor = "white"
+```
+
+
+```{r, eval = T, include = F}
+bbox <- list(
+  p1 = list(long = -122.522, lat = 37.707),
+  p2 = list(long = -122.354, lat = 37.84)
+)
+
+leaflet() %>%
+  addTiles() %>% 
+  addRectangles(
+    lng1 = bbox$p1$long, lat1 = bbox$p1$lat,
+    lng2 = bbox$p2$long, lat2 = bbox$p2$lat,
+    fillColor = "transparent"
+  ) %>%
+  fitBounds(
+    lng1 = bbox$p1$long, lat1 = bbox$p1$lat,
+    lng2 = bbox$p2$long, lat2 = bbox$p2$lat,
+  )
+
+
+#elev_file <- file.path(getwd(), "data", "sf-elevation.tif")
+get_usgs_elevation_data(bbox, size = image_size$size, file = "sf.tif",
+                        sr_bbox = 4326, sr_image = 4326)
+
+elev_img <- raster::raster("sf.tif")
+elev_matrix <- matrix(
+  raster::extract(elev_img, raster::extent(elev_img), buffer = 1000), 
+  nrow = ncol(elev_img), ncol = nrow(elev_img)
+)
+
+ambmat <- ambient_shade(elev_matrix, zscale = 30)
+raymat <- ray_shade(elev_matrix, zscale = 30, lambert = TRUE)
+watermap <- detect_water(elev_matrix)
+```
+
+
+```{r}
+elev_matrix %>%
+  sphere_shade(texture = "imhof4") %>%
+  add_water(watermap, color = "imhof4") %>%
+  add_shadow(raymat, max_darken = 0.5) %>%
+  add_shadow(ambmat, max_darken = 0.5) %>%
+  plot_map()
+```
+
+```{r, include = F, eval = F}
+zscale <- 10
+rgl::clear3d()
+elev_matrix %>% 
+  sphere_shade(texture = "imhof4") %>% 
+  add_water(watermap, color = "imhof4") %>%
+#  add_overlay(overlay_img, alphalayer = 0.5) %>%
+  add_shadow(raymat, max_darken = 0.5) %>%
+  add_shadow(ambmat, max_darken = 0.5) %>%
+  plot_3d(elev_matrix, zscale = zscale, windowsize = c(1200, 1000),
+          water = TRUE, soliddepth = -max(elev_matrix)/zscale, wateralpha = 0,
+          theta = 25, phi = 30, zoom = 0.65, fov = 60)
+render_snapshot()
+```
+
+## 20210302
+
+Tidy Tuesday - Super Bowl Commercials
+
+``````{r, include = F}
+
+tt <- tt_load("2021-03-02")
+readme(tt)
+
+sb_com <- tt$youtube
+
+
+sb_com2 <- sb_com %>% 
+  filter(funny == F & show_product_quickly == F & patriotic == F & celebrity == F &
+         danger == F & animals == F & use_sex == F)
+
+sb_com2 %>% ggplot(aes(view_count, like_count)) + 
+  geom_point() + 
+  geom_text(aes(label = brand))
+```
+
+```{r, fig.width = 8, fig.height = 24, echo = F, message = F, warning = F}
+sb_com %>% 
+  count(brand, year) %>% 
+  ggplot(aes(brand, n)) + 
+  geom_col() + 
+  labs(x = "", y = "Number of Commercials") + 
+  coord_flip() + 
+  facet_wrap(~ year, nrow = 7, ncol = 3)
+
+```
+
+
+## 20210303
+
+more rayshader
+
+```{r, include = F}
+bbox2 <- list(
+  p1 = list(long = -122.798248, lat = 37.566351),
+  p2 = list(long = -122.259558, lat = 37.974515)
+)
+
+leaflet() %>%
+  addTiles() %>% 
+  addRectangles(
+    lng1 = bbox2$p1$long, lat1 = bbox2$p1$lat,
+    lng2 = bbox2$p2$long, lat2 = bbox2$p2$lat,
+    fillColor = "transparent"
+  ) %>%
+  fitBounds(
+    lng1 = bbox2$p1$long, lat1 = bbox2$p1$lat,
+    lng2 = bbox2$p2$long, lat2 = bbox2$p2$lat,
+  )
+
+get_usgs_elevation_data(bbox2, size = image_size$size, file = "sf2.tif",
+                        sr_bbox = 4326, sr_image = 4326)
+
+elev_img <- raster::raster("sf2.tif")
+elev_matrix <- matrix(
+  raster::extract(elev_img, raster::extent(elev_img), buffer = 1000), 
+  nrow = ncol(elev_img), ncol = nrow(elev_img)
+)
+
+ambmat <- ambient_shade(elev_matrix, zscale = 30)
+raymat <- ray_shade(elev_matrix, zscale = 30, lambert = TRUE)
+watermap <- detect_water(elev_matrix)
+```
+
+```{r, include = F, eval = F}
+elev_matrix %>%
+  sphere_shade(texture = "imhof4") %>%
+  add_water(watermap, color = "imhof4") %>%
+  add_shadow(raymat, max_darken = 0.5) %>%
+  add_shadow(ambmat, max_darken = 0.5) %>%
+  plot_map()
+
+elev_matrix %>%
+  sphere_shade(texture = "imhof4") %>%
+  add_water(watermap, color = "imhof4") %>%
+  add_shadow(raymat, max_darken = 0.5) %>%
+  add_shadow(ambmat, max_darken = 0.5) %>%
+  plot_3d(elev_matrix)
+
+#render_snapshot()
+```
+
+```{r, include = F, eval = F}
+montbay_water = montereybay
+
+montbay_water[montbay_water < 0] = 0
+
+montereybay %>%
+ sphere_shade(texture="imhof4") %>%
+ add_water(detect_water(montbay_water),color="imhof4") %>%
+ plot_map()
+
+montereybay %>% 
+  sphere_shade() %>% 
+  add_water(detect_water(montbay_water)) %>% 
+  add_shadow(ray_shade(montereybay)) %>% 
+  add_shadow(ambient_shade(montereybay)) %>% 
+  plot_3d(montereybay, zscale = 50)
+  plot_map()
+```
+
+```{r}
+volcano %>% 
+  sphere_shade() %>% 
+  add_shadow(ray_shade(volcano)) %>% 
+  add_shadow(ambient_shade(volcano)) %>% 
+  plot_3d(volcano, zscale = 2)
+```
+
+
+
+## 20210304
+
+Slacker
+
+```{r}
+
+```
+
+## 20210305
+
+```{r, include = F}
+#file:///C:/Users/SimsCR/Downloads/zine_radial_patterns.pdf
+
+lines  <-  tibble(
+  x = seq(0, 19, by = .5),
+  xend = x,
+  y = c(rep(c(5, 10), 19), 5),
+  yend = rep(0, 39),
+  speed = 3)
+
+dots  <-  lines %>%
+select(x, y)
+```
+
+```{r}
+ggplot() +
+  geom_segment(data = lines,
+               aes(x = x, y = y,xend = xend,yend = yend), color = "black") +
+  geom_point(data = dots,
+             aes(x = x, y = y), color = "blue") +
+  scale_x_continuous(limits = c(0, 19)) +
+  scale_y_continuous(limits = c(-5, 10)) +
+  coord_polar() +
+  theme_void()
+
+```
+
+## 20210308
+
+gghighlight
+
+```{r}
+
+df <- datasets::swiss %>% 
+  rownames_to_column(var = "Province")
+
+df %>% ggplot(aes(Fertility, Catholic)) + 
+  geom_point(color = "red") +
+#  gghighlight(Fertility < 50, label_key = Province) + 
+  gghighlight(Fertility > 82 & Catholic < 50, label_key = Province)
+  
+
+
+```
+
+## 20210309
+
+Tidy Tuesday - Bechdel Data
+
+``````{r, include = F}
+
+tt <- tt_load("2021-03-09")
+readme(tt)
+
+bech <- tt$raw_bechdel
+movie <- tt$movies
+
+
+all <- movie %>% left_join(bech)
+```
+
+```{r}
+all %>% ggplot(aes(year, binary)) + 
+  geom_jitter(shape = 1, color = "lightgreen") + 
+  gghighlight(rating == 3, unhighlighted_params = aes(color = "black")) + 
+  labs(y = "", x = "") +
+  theme_bw()
+
+```
+
+```{r, include = F}
+movie_clean <- movie %>%
+  select(year, binary, budget, imdb_rating, genre) %>%  
+  drop_na(genre, imdb_rating, binary)
+
+min_max <- movie_clean %>%
+  group_by(year, binary) %>%
+  summarise(min = min(imdb_rating),
+            max = max(imdb_rating),
+            median = median(imdb_rating))
+
+
+```
+
+
+```{r}
+ggplot(movie_clean, aes(x = year, y = imdb_rating, fill = binary, color = binary))+
+  # geom_boxplot(aes(group = year), outlier.colour = "transparent", alpha = .4, color = "darkgrey") +
+  geom_jitter(alpha = 0.15, size = 1, width = .15, show.legend = FALSE) +
+  geom_segment(data = min_max, aes(x = year, y = min, xend = year, yend= max), color = "gray", size = 0.5, show.legend = FALSE)+
+  geom_point(data =min_max, aes( x = year, y = min, color = binary), size = 2, color = "gray", show.legend = FALSE)+
+  geom_point(data =min_max, aes( x = year, y = max, color = binary), size = 2, color = "gray", show.legend = FALSE)+
+ 
+  ggbump::geom_bump(data = min_max, aes(x = year, y = median, color = binary), show.legend = FALSE)+
+
+  scale_color_manual(values = c("#F26B38","#2F9599")) +
+  #facet_wrap(.~binary, ncol = 2) +
+  
+  ylab("IMDB Rating") +
+  xlab("")+
+  
+  labs(title = "Gender Bias in Movies Over Time",
+       subtitle = "Median and Minimum/Maximum IMDB Ratings for Movies with <span style = 'color: #2F9599;'>**Passed**</span> and <span style = 'color: #F26B38;'>**Failed**</span> Test Results",
+       caption = "Plot by **Tobias Stalder** | tobias-stalder.netlify.app<br>Data from **fivethirtyeight.com**<br>**#TidyTuesday**") +
+  
+  theme_minimal() +
+  theme(plot.subtitle = element_markdown(),
+        plot.caption = element_markdown(hjust = 0, lineheight = 1.5),
+      text = element_text(family = "Segoe UI"),
+      panel.grid.minor = element_blank(),
+      strip.text = element_blank())
+```
+
+## 20210310
+
+More Tidy Tuesday
+
+```{r}
+movie %>% 
+  filter(!is.na(rated)) %>% 
+  mutate(rated = fct_relevel(rated, levels = c("G", "PG","TV-PG", "PG-13","TV-14", "NC-17", "R", "X", "Unrated","Not Rated", "N/A"))) %>% 
+  group_by(rated) %>% 
+  summarize(n_movie = n(),
+            pct_pass = mean(binary== "PASS")) %>% 
+  ggplot(aes(rated, pct_pass)) + 
+  geom_point()
+```
+
+## 20210311
+
+terra
+
+```{r, include = F}
+p_load(terra)
+
+x <- rast(ncol=36, nrow=18, xmin=-1000, xmax=1000, ymin=-100, ymax=900)
+res(x)
+res(x) <- 100
+
+ncol(x) <- 18
+crs(x) <- "+proj=utm +zone=48 +datum=WGS84"
+x
+
+r <- rast(ncol=10, nrow=10)
+values(r) <- 1:ncell(r)
+
+plot(r, main='Raster with 100 cells')
+```
+
+```{r}
+filename <- system.file("ex/test.tif", package="terra")
+filename
+r <- rast(filename)
+sources(r)
+hasValues(r)
+plot(r, main='SpatRaster from file')
+```
+
+
+```{r}
+p_load(raster)
+
+
+```
+
+
+## 20210312
+
+```{r}
+library(raster)
+library(rayshader)
+
+
+raster1 = raster::raster("gebco_2020_n20.0_s1.0_w68.0_e92.0.tif")
+
+plot(raster1, yaxt = 'n', xaxt = 'n', ann = F, bty =  'n')
+
+```
+
+
+## 20210315
+
+India
+
+```{r, eval = F}
+library(raster)
+library(rayshader)
+
+
+#Load QGIS georeference image (see https://www.qgistutorials.com/en/docs/3/georeferencing_basics.html)
+testindia = raster::stack("1870_southern-india_modified.tif") 
+
+#Set bounding box for final map (cut off edges without data, introduced via reprojection)
+india_bb = raster::extent(c(68,92,1,20))  # box size
+cropped_india = raster::crop(testindia, india_bb)  # cropping
+
+#Convert to RGB array
+india_array = as.array(cropped_india)
+
+#Load elevation data, sourced from GEBCO
+raster1 = raster::raster("gebco_2020_n20.0_s1.0_w68.0_e92.0.tif")
+
+#Reproject and crop elevation data to historical map coordinate system
+reprojected_india = raster::projectRaster(raster1, crs=raster::crs(cropped_india))
+cropped_reprojected_india = raster::crop(reprojected_india,india_bb)
+
+#Reduce the size of the elevation data, for speed
+small_india_matrix = resize_matrix(as.matrix(cropped_reprojected_india), scale = 0.2)
+
+#Remove bathymetry data
+water_india = small_india_matrix
+water_india[is.na(water_india)] = 0
+water_india[water_india < 0]=0
+water_india = t(water_india)
+
+#Compute shadows
+ambient_layer = ambient_shade(water_india, zscale = 10, multicore = TRUE, maxsearch = 200)
+ray_layer = ray_shade(water_india, zscale = 20, multicore = TRUE)
+
+#Plot in 3D
+(india_array/255) %>%
+  add_shadow(ray_layer,0.3) %>%
+  add_shadow(ambient_layer,0) %>%
+  plot_3d(water_india,zscale=130)
+
+#Render snapshot with depth of field
+render_depth(focus=0.982,focallength = 4000)
+
+#Plot in 2D
+(india_array/255) %>%
+  add_shadow(ray_layer,0.3) %>%
+  add_shadow(ambient_layer,0) %>%
+  plot_map()
+
+%>% 
+  ggsave(filename = "test.pdf", device = cairo_pdf, height = 20, width = 30)
+```
+
+
+## 20210316
+
+Tidy Tuesday - Steam Games
+
+```{r, include = F}
+library(lubridate)
+
+tt <- tt_load("2021-03-16")
+readme(tt)
+
+games <- tt$games %>% 
+  mutate(peak_perc = parse_number(avg_peak_perc))
+
+```
+
+```{r, include = F}
+test <- games %>% 
+  filter(peak_perc > 0) %>% 
+  filter(peak >= 10000) %>% 
+  mutate(date_chr = paste0(year, ", ", month)) %>% 
+  mutate(date = ymd(date_chr, truncated = 1)) %>% 
+  dplyr::select(-month, -date_chr)
+  
+
+top50_1 <- test %>% 
+  group_by(gamename) %>% 
+  summarize(avg_players = mean(avg, na.rm = T)) %>% 
+  arrange(desc(avg_players)) %>% 
+  ungroup() %>% 
+  slice(1:50)
+
+top50 <- test %>% 
+  filter(gamename %in% top50_1$gamename) %>% 
+  left_join(top50_1)
+```
+
+``` {r}
+top50 %>% 
+  filter(avg_players > 50000) %>% 
+  ggplot(aes(date, peak, color = gamename)) + 
+  geom_point() + 
+  scale_y_continuous("Peak Players", labels = comma) + 
+  labs(x = "") + 
+  theme(legend.position = "bottom", legend.title = element_blank())
+
+
+```
+
+
+## 20210317
+
+Continue Tidy Tuesday
+
+```{r}
+fm <- test %>% 
+  filter(str_detect(gamename, "Football Manager"))
+
+fm %>% 
+  ggplot(aes(date, peak, color = gamename)) + 
+  geom_line() + 
+  scale_y_continuous("Peak Players", labels = comma) + 
+#  scale_x_continuous(breaks = c(2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021)) + 
+  labs(x = "") + 
+#  geom_text(aes(label = gamename), check_overlap = T, show.legend = F) + 
+  theme(legend.position = "bottom", legend.title = element_blank())
+```
+
+
+## 20210318
+
+Open Street Maps Data. The plotting is slow.
+
+```{r, include = F}
+library(osmdata)
+
+getbb("North Little Rock")
+
+streets <- getbb("North Little Rock") %>% 
+  opq() %>% 
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "secondary", "tertiary")) %>% 
+  osmdata_sf()
+
+small_streets <- getbb("North Little Rock")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("residential", "living_street",
+                            "unclassified",
+                            "service", "footway")) %>%
+  osmdata_sf()
+
+river <- getbb("North Little Rock")%>%
+  opq()%>%
+  add_osm_feature(key = "waterway", value = "river") %>%
+  osmdata_sf()
+```
+
+```{r, include = F}
+NLR <- ggplot() +
+  geom_sf(data = streets$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = .4,
+          alpha = .8) +
+#  geom_sf(data = small_streets$osm_lines,
+#          inherit.aes = FALSE,
+#          color = "black",
+#          size = .4,
+#          alpha = .6) +
+  geom_sf(data = river$osm_lines,
+          inherit.aes = FALSE,
+          color = "blue",
+          size = 1,
+          alpha = .5) +
+  coord_sf(xlim = c(-92.40028, -92.09819), 
+           ylim = c(34.67453, 34.87742),
+           expand = FALSE)
+```
+
+```{r, echo = F, include = F, eval = F}
+NLR
+```
+
+
+
+## 20210319
+
+terrainr and progressr
+
+```{r, include = F}
+library(terrainr)
+library(sf)
+library(progressr)
+library(raster)
+library(osmdata)
+
+handlers("progress")
+
+simulated_data <- data.frame(id = seq(1, 100, 1),
+                             lat = runif(100, 44.04905, 44.17609), 
+                             lng = runif(100, -74.01188, -73.83493))
+
+simulated_data <- st_as_sf(simulated_data, coords = c("lng", "lat"))
+simulated_data <- st_set_crs(simulated_data, 4326)
+
+with_progress( # Only needed if you're using progressr
+  output_tiles <- get_tiles(simulated_data,
+                            services = c("elevation", "ortho"),
+                            resolution = 90 # pixel side length in meters
+                            )
+)
+```
+
+```{r, include = F}
+raster::plot(raster::raster(output_tiles[["elevation"]][[1]]))
+
+raster::plotRGB(raster::brick(output_tiles[["ortho"]][[1]]), scale = 1)
+
+```
+
+```{r}
+sui <- data.frame(id = seq(1, 100, 1),
+                             lat = runif(100, 47.5, 45.5), 
+                             lng = runif(100, 5.6, 10.8))
+  
+test <- getbb("North Little Rock", format_out = "data.frame")
+```
+
+## 20210322
+
+Trying cverdel's rayshader experiment
+
+```{r, include = F}
+p_load(rayshader, raster, rgl, rayrender)
+
+#Load image
+image_url<-"https://github.com/cverdel/rayshader_experiment/raw/main/Hermannsburg_map.tif"
+temp<-tempfile()
+download.file(image_url, temp, mode="wb")
+
+rgb = raster::brick(temp)
+raster::plotRGB(rgb, scale = 255)
+dim(rgb)
+
+#Load elevation data
+DEM_url<-"https://github.com/cverdel/rayshader_experiment/raw/main/Hermannsburg_DEM.tif"
+temp2<-tempfile()
+download.file(DEM_url, temp2, mode="wb")
+
+elevation1 = raster::raster(temp2)
+res(elevation1) #Resolution of a pixel
+extent(elevation1) #Extent of raster
+dim(elevation1) #Dimensions of raster
+
+elevation<-aggregate(elevation1,fact=1)
+res(elevation) #Resolution of a pixel
+extent(elevation) #Extent of raster
+dim(elevation) #Dimensions of raster
+
+height_shade(raster_to_matrix(elevation)) %>%
+  plot_map()
+
+#Splits image up into rgb
+names(rgb) = c("r","g","b", "a")
+rgb_r = rayshader::raster_to_matrix(rgb$r)
+rgb_g = rayshader::raster_to_matrix(rgb$g)
+rgb_b = rayshader::raster_to_matrix(rgb$b)
+rgb
+
+#Check CRS
+raster::crs(rgb)
+raster::crs(elevation)
+
+#Raster to matrix
+el_matrix = rayshader::raster_to_matrix(elevation)
+
+map_array = array(0,dim=c(nrow(rgb_r),ncol(rgb_r),3))
+
+map_array[,,1] = rgb_r/255 #Red 
+map_array[,,2] = rgb_g/255 #Blue 
+map_array[,,3] = rgb_b/255 #Green 
+map_array = aperm(map_array, c(2,1,3))
+
+plot_map(map_array)
+
+#Reduce the size of the elevation data, for speed
+small_el_matrix = reduce_matrix_size(el_matrix, scale = 1) #Numbers less than 1 reduce the size of the elevation data
+
+#Resize map to match elevation
+resized_overlay_file = paste0(tempfile(),".png")
+grDevices::png(filename = resized_overlay_file, width = dim(small_el_matrix)[1], height = dim(small_el_matrix)[2])
+par(mar = c(0,0,0,0))
+plot(as.raster(map_array))
+dev.off()
+overlay_img = png::readPNG(resized_overlay_file)
+
+zscale=30 #Larger number makes less vertical exaggeration
+
+#Render
+ambient_layer = ambient_shade(small_el_matrix, zscale = zscale, multicore = TRUE, maxsearch = 200)
+ray_layer = ray_shade(small_el_matrix, zscale = zscale, multicore = TRUE)
+
+rgl::rgl.close() #Closes the rgl window
+
+#Plot in 3D
+(overlay_img) %>%
+  add_shadow(ray_layer,0.3) %>%
+  add_shadow(ambient_layer,0) %>%
+  plot_3d(small_el_matrix,zscale=zscale)
+```
+
+
+
+``` {r}
+#Plot in 2D
+(map_array) %>%
+  add_shadow(ray_layer,0.3) %>%
+  add_shadow(ambient_layer,0.3) %>%
+  plot_map()
+
+```
+
+## 20210323
+
+Tidy Tuesday - UN Votes
+
+```{r, include = F}
+tt <- tt_load("2021-03-23")
+readme(tt)
+
+library(unvotes)
+
+votes <- tt$unvotes
+issues <- tt$issues
+roll <- tt$roll_calls
+
+rm(tt)
+
+all <- list(votes, issues, roll) %>% reduce(left_join)
+
+```
+
+```{r}
+all %>% 
+  ggplot(aes(issue, vote)) + 
+  geom_count() + 
+  coord_flip()
+```
+
+```{r}
+all %>% 
+  filter(country %in% c("United States", "Canada", "Mexico", "Russia", "China", "Japan"),
+         !is.na(issue)) %>% 
+  ggplot(aes(session, country, color = vote)) + 
+  geom_jitter(width = 0.2, alpha = 0.5) + 
+  scale_color_manual(values = c("gray90", "firebrick4", "palegreen4"), "Vote") + 
+  facet_wrap(~issue) + 
+  labs(y = "", x = "Session") + 
+  theme(legend.position = "bottom")
+```
+
+
+
+## 20210324
+
+ggbeeswarm
+
+```{r, include = F}
+library(ggbeeswarm)
+
+mtcars %>% 
+  ggplot(aes(as.factor(cyl), mpg)) + 
+  geom_point()
+
+mtcars %>% 
+  ggplot(aes(as.factor(cyl), mpg)) + 
+  geom_jitter(width = 0.1)
+
+mtcars %>% 
+  ggplot(aes(as.factor(cyl), mpg)) + 
+  geom_beeswarm()
+
+```
+
+```{r}
+all %>% 
+  filter(country %in% c("United States", "Iraq", "Israel"),
+         !is.na(issue)) %>% 
+  ggplot(aes(session, country, color = vote)) + 
+  geom_jitter(alpha = 0.5, width = 0.2) + 
+  scale_color_manual(values = c("gray90", "firebrick4", "palegreen4"), "Vote") + 
+  facet_wrap(~issue) + 
+  labs(y = "", x = "Session") + 
+  theme(legend.position = "bottom")
+
+all %>% 
+  filter(country %in% c("United States", "Iraq", "Israel"),
+         !is.na(issue)) %>% 
+  ggplot(aes(session, country, color = vote)) + 
+  geom_beeswarm(alpha = 0.5, groupOnX = F, dodge.width = 0.2) + 
+  scale_color_manual(values = c("gray90", "firebrick4", "palegreen4"), "Vote") + 
+  facet_wrap(~issue) + 
+  labs(y = "", x = "Session") + 
+  theme(legend.position = "bottom")
+```
+
+## 20210325
+
+ggforce and Palmer Penguins and hex colors
+
+```{r, echo = F, include = F}
+p_load(ggforce, palmerpenguins)
+
+browseURL("https://ggforce.data-imaginist.com/reference/index.html")
+
+browseURL("https://allisonhorst.github.io/palmerpenguins/")
+```
+
+```{r}
+penguins %>% 
+  filter(!is.na(sex)) %>% 
+  ggplot(aes(flipper_length_mm, bill_length_mm, color = species)) + 
+  geom_point() + 
+  geom_mark_hull() +
+  facet_wrap(~sex)
+
+penguins %>% 
+  filter(!is.na(sex)) %>% 
+  ggplot(aes(flipper_length_mm, bill_length_mm, color = species)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = F) +
+  facet_zoom(x = species == "Gentoo") +
+  labs(x = "Flipper Length (mm)", y = "Bill Length (mm)") + 
+  theme(legend.position = "bottom") + 
+  scale_color_manual("Species", values = c("#66ff00", "#ff9933", "#990000"))
+
+
+```
+
+## 20210326
+
+Modeling with Palmer Penguins using broom
+
+```{r, echo = F}
+p_load(palmerpenguins)
+
+
+pp_1 <- penguins %>% 
+  lm(bill_length_mm ~ species + sex + flipper_length_mm + island, 
+     data = .)
+
+summary(pp_1)
+tidy(pp_1)
+vif(pp_1)
+anova(pp_1)
+
+penguins_2 <- augment(pp_1)
+
+penguins_2 %>% 
+  ggplot(aes(bill_length_mm, .fitted, color = species)) + 
+  geom_point()
+
+pp_2 <- penguins %>% 
+  lm(bill_length_mm ~ species + sex + body_mass_g + island, 
+     data = .)
+
+summary(pp_2)
+tidy(pp_2)
+vif(pp_2)
+anova(pp_2)
+
+
+penguins_3 <- augment(pp_2)
+
+penguins_3 %>% 
+  ggplot(aes(bill_length_mm, .fitted, color = species)) + 
+  geom_point()
+
+
+
+```
+
+## 20210329
+
+penguins_raw and visdat
+
+```{r echo = F}
+
+p_load(palmerpenguins, lme4, emmeans)
+
+p_raw <- penguins_raw %>% 
+  clean_names()
+
+length_lmer <- p_raw %>% lmer(culmen_length_mm ~ species + island + (1|individual_id), data = .)
+
+tidy(length_lmer)
+Anova(length_lmer)
+
+#length_rg <- ref_grid(length_lmer)
+
+#emmip(length_rg, body_mass_g ~ species)
+
+```
+
+
+```{r, echo = F}
+p_load(visdat)
+
+visdat::vis_dat(penguins)
+
+penguins_4 <- penguins %>% 
+  select_if(is.numeric) %>% 
+  dplyr::select(-year)
+
+visdat::vis_cor(penguins_4)
+```
+
+## 20210330
+
+Tidy Tuesday
+
+```{r, echo = F}
+tt <- tt_load("2021-03-30")
+readme(tt)
+
+all_shades <- tt$allShades
+
+all_shades <- all_shades %>% 
+  mutate(brand_lump = fct_lump_min(brand, min = 150))
+
+may <- all_shades %>% 
+  filter(brand == "Maybelline")
+
+(may_p <- may %>% 
+  ggplot(aes(name, lightness, fill = name)) + 
+  theme_void() + 
+  geom_col(position = "fill") +
+  scale_fill_manual(values = may$hex, labels = may$hex) +
+  theme(legend.position = "none") + 
+  facet_wrap(~product, scales = "free") + 
+  labs(x = NULL, y = NULL)
+)
+
+ggplotly(may_p)
+
+```
+
+## 20210331
+
+Just working on completing the month/knitting
+```{r}
+
+```
+
+
+
