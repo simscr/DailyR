@@ -1,0 +1,9 @@
+library(CastleOfR)
+
+
+startGame()
+
+
+
+
+endGame()
