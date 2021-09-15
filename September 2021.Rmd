@@ -387,17 +387,37 @@ bb100_l %>%
 
 # 20210916 - GIT
 
-```{r}
-p_load(usethis)
+```{r, include = F, eval = F}
+p_load(usethis, gitcreds)
+
+use_git_config(user.name = "simscr", user.email = "simscr90@gmail.com")
+
+
+# edit_git_config()
+
+# create_github_token()
+
+gitcreds_get()
+
+gitcreds::gitcreds_set()
+
+gh_token_help()
+
+gh::gh_whoami()
+
+git_sitrep()
+
 ```
 
+git remote add origin https://github.com/simscr/DailyR.git
+git branch -M main
+git push -u origin main
 
 # 20210917 - try {tidylog}
 
 ```{r}
 p_load(tidylog)
 
-use_git_config(user.name = "simscr", user.email = "simscr90@gmail.com")
 ```
 
 
