@@ -409,9 +409,6 @@ git_sitrep()
 
 ```
 
-git remote add origin https://github.com/simscr/DailyR.git
-git branch -M main
-git push -u origin main
 
 # 20210917 - try {tidylog}
 
