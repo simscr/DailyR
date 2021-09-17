@@ -410,17 +410,25 @@ git_sitrep()
 ```
 
 
-# 20210917 - try {tidylog}
+# 20210917 - trying {Lahman} and {baseballr}
 
 ```{r}
-p_load(tidylog)
+p_load(Lahman, baseballr)
 
+Lahman::Schools %>% 
+  filter(str_detect(name_full, "Hendrix"))
+
+#school_id_lu("drix")
+
+# viz_gb_on_period("2021-08-02","2021-09-16", "NL Central")
 ```
+
+
 
 
 # Ideas
 
-template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {dotwhisker}, {infer}, {aRtsy}, debug = T for geom_text, {Lahman}
+template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {dotwhisker}, {infer}, {aRtsy}, debug = T for geom_text, {lcmm}
 
 <https://www.swisstopo.admin.ch/>
 
