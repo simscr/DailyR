@@ -423,12 +423,35 @@ Lahman::Schools %>%
 # viz_gb_on_period("2021-08-02","2021-09-16", "NL Central")
 ```
 
+```{r, eval = F}
+browseURL("http://billpetti.github.io/baseballr/articles/plotting_statcast.html")
+
+# betts_id <- playerid_lookup("Betts") %>%
+#   filter(first_name == "Mookie") %>%
+#   select(mlbam_id, first_name, last_name)
+```
+
+# 20210920 - trying {dotwhisker}
+
+```{r, include = F}
+p_load(dotwhisker)
+
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp)
+```
+
+```{r}
+
+dwplot(m1)
+
+dwplot(list(m1, m2))
+```
 
 
 
 # Ideas
 
-template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {dotwhisker}, {infer}, {aRtsy}, debug = T for geom_text, {lcmm}
+template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {infer}, {aRtsy}, debug = T for geom_text, {lcmm}
 
 <https://www.swisstopo.admin.ch/>
 
