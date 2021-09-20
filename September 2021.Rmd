@@ -438,20 +438,30 @@ p_load(dotwhisker)
 
 m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
 m2 <- update(m1, . ~ . + hp)
+m3 <- update(m2, . ~ .  + am)
 ```
 
 ```{r}
 
 dwplot(m1)
 
-dwplot(list(m1, m2))
+dwplot(list(m1, m2, m3))
 ```
 
+# 20210921 - #TidyTuesday and 
+
+```{r, include = F}
+p_load(tidytuesdayR)
+
+tt <- tt_load("2021-09-21")
+readme(tt)
+
+```
 
 
 # Ideas
 
-template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {infer}, {aRtsy}, debug = T for geom_text, {lcmm}
+template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}
 
 <https://www.swisstopo.admin.ch/>
 
