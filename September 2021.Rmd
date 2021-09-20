@@ -463,6 +463,9 @@ readme(tt)
 
 template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}
 
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
 <https://www.swisstopo.admin.ch/>
 
 <https://www.ign.es/web/ign/portal/cbg-area-cartografia>
