@@ -448,7 +448,7 @@ dwplot(m1)
 dwplot(list(m1, m2, m3))
 ```
 
-# 20210921 - #TidyTuesday and 
+# 20210921 - #TidyTuesday and the Emmy's
 
 ```{r, include = F}
 p_load(tidytuesdayR)
@@ -456,12 +456,43 @@ p_load(tidytuesdayR)
 tt <- tt_load("2021-09-21")
 readme(tt)
 
+emmy <- tt$nominees
+
+skim(emmy)
+```
+
+```{r}
+
+
+emmy_25 <- emmy %>% 
+  group_by(distributor) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  head(10)
+
+emmy_sum <- emmy %>% 
+  filter(distributor %in% pluck(emmy_25, "distributor")) %>% 
+  group_by(year, distributor) %>% 
+  count()
+
+p <- emmy_sum %>% 
+  ggplot(aes(year, n, color = distributor)) + 
+  lims(x = c(1990, 2021)) +
+  geom_line() +
+  scale_color_paletteer_d("yarrr::basel") +
+  labs(x = NULL, y = "Number of Nominations", title = "Emmy Nominations for Top 10 Distributors") + 
+  theme(legend.title = element_blank(), plot.title.position = "plot")
+
+p + geom_vline(xintercept = 2014, lty = 3) + 
+  annotate(geom = "label", x = 2012, y = 500, label = "What happened\n in 2014?") +
+  geom_vline(xintercept = 2006, lty = 3) + 
+  annotate(geom = "label", x = 2003, y = 75, label = "What happened\n in 2006?")
 ```
 
 
 # Ideas
 
-template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}
+template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
