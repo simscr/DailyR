@@ -511,10 +511,54 @@ md_text(head(mtcars) %>%
   glue_data("A {rownames(.)} has {hp} hp and gets {mpg} mpg."))
 ```
 
+# 20210923 - Nothing
+
+# 20210924 - trying {ggsankey}
+
+```{r}
+p_load(ggsankey, gapminder)
+
+df <- mtcars %>% 
+  make_long(cyl, vs, am, gear, carb)
+
+ggplot(df, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = factor(node), label = node)) +
+  geom_sankey(flow.alpha = .6,
+              node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
+  scale_fill_viridis_d() +
+  theme_sankey(base_size = 18) +
+  labs(x = NULL) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5)) +
+  ggtitle("Car features")
+```
+
+```{r}
+df <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(gdp = (sum(pop * gdpPercap)/1e9) %>% round(0), .groups = "keep") %>%
+  ungroup()
+
+ggplot(df, aes(x = year,
+               node = continent,
+               fill = continent,
+               value = gdp)) +
+  geom_sankey_bump(space = 0, type = "alluvial", color = "transparent", smooth = 6) +
+  scale_fill_viridis_d(option = "A", alpha = .8) +
+  theme_sankey_bump(base_size = 16) +
+  labs(x = NULL,
+       y = "GDP ($ bn)",
+       fill = NULL,
+       color = NULL) +
+  theme(legend.position = "bottom") +
+  labs(title = "GDP development per continent")
+
+```
+
 
 # Ideas
 
-template, officedown/officer, glue/, gluedown, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
+template, officedown/officer, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
