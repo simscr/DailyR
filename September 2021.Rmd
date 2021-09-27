@@ -556,9 +556,22 @@ ggplot(df, aes(x = year,
 ```
 
 
+
+# 20210927 - trying {officer} and maybe {officedown}
+
+It looks like {officer} is better for just plain documents with tables, graphs, and tables of contents. {officedown} is used to create Word and PowerPoint documents from `R Markdown` files.
+
+```{r, include = F}
+p_load(officer, officedown)
+
+#browseURL("https://ardata-fr.github.io/officeverse/index.html")
+
+```
+
+
 # Ideas
 
-template, officedown/officer, tidymodels, ggsankey, groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
+template, tidymodels, , groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
