@@ -569,6 +569,68 @@ p_load(officer, officedown)
 ```
 
 
+
+# 20210928 - #TidyTuesday and NBER papers
+
+```{r, include = F}
+p_load(tidytuesdayR, nberwp)
+
+# tt <- tt_load("2021-09-28")  # doesn't work as of 2021-09-28
+
+papers <- nberwp::papers
+authors <- nberwp::authors
+programs <- nberwp::programs
+paper_authors <- nberwp::paper_authors
+paper_programs <- nberwp::paper_programs
+
+nber <- left_join(papers, paper_authors) %>% 
+  left_join(authors) %>% 
+  left_join(paper_programs) %>% 
+  left_join(programs)%>% 
+  mutate(
+    catalogue_group = str_sub(paper, 1, 1),
+    catalogue_group = case_when(
+      catalogue_group == "h" ~ "Historical",
+      catalogue_group == "t" ~ "Technical",
+      catalogue_group == "w" ~ "General"
+    ),
+    .after = paper
+  ) 
+
+skim(nber)
+
+```
+
+```{r, include = F}
+nber %>% 
+  filter(!is.na(program_category)) %>% 
+  group_by(year, program_desc, program_category) %>% 
+  count()
+
+authors_per_year <- nber %>% 
+  group_by(year, paper) %>% 
+  count(author)  %>% 
+  mutate(
+    catalogue_group = str_sub(paper, 1, 1),
+    catalogue_group = case_when(
+      catalogue_group == "h" ~ "Historical",
+      catalogue_group == "t" ~ "Technical",
+      catalogue_group == "w" ~ "General"
+    ),
+    .after = paper
+  ) %>% 
+  ungroup() %>% 
+  group_by(year, catalogue_group) %>% 
+  summarize(mean_authors = mean(n)) %>% 
+  ungroup()
+```
+
+```{r}
+authors_per_year %>% 
+  ggplot(aes(year, mean_authors, color = catalogue_group)) +
+  geom_smooth(method = "lm", se = F)
+```
+
 # Ideas
 
 template, tidymodels, , groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
