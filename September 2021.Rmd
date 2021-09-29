@@ -631,9 +631,21 @@ authors_per_year %>%
   geom_smooth(method = "lm", se = F)
 ```
 
+# 20210929 - trying {ggstream}
+
+```{r, include = F}
+p_load(ggstream)
+
+ggplot(blockbusters, aes(year, box_office, fill = genre)) +
+  geom_stream(type = "proportional") +
+  geom_stream_label(aes(label = genre), type = "proportional") +
+  theme(legend.position = "none")
+
+```
+
 # Ideas
 
-template, tidymodels, , groundhog, ezknitr, rprojroot, colorspace, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
+template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
