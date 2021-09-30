@@ -633,7 +633,7 @@ authors_per_year %>%
 
 # 20210929 - trying {ggstream}
 
-```{r, include = F}
+```{r, include = T}
 p_load(ggstream)
 
 ggplot(blockbusters, aes(year, box_office, fill = genre)) +
@@ -643,9 +643,43 @@ ggplot(blockbusters, aes(year, box_office, fill = genre)) +
 
 ```
 
+# 20210930 - trying {magick}
+
+```{r, include = F}
+p_load(magick)
+
+acnc <- image_read("https://acnc.uams.edu/wp-content/uploads/2015/04/New-Banner-Transparent1.png")
+
+print(acnc)
+```
+
+```{r}
+image_border(acnc, "black", "2x2")
+
+image_charcoal(acnc)
+
+image_oilpaint(acnc)
+```
+
+```{r, eval = F}
+
+# browseURL("https://themockup.blog/posts/2019-01-09-add-a-logo-to-your-plot/")
+acnc_ras <- as.raster(acnc)
+
+mt_plot <- mtcars %>% 
+  ggplot(aes(as.factor(cyl), mpg)) +
+  geom_boxplot()
+
+
+plot_height <- image_info(mt_plot)$height
++
+  annotation_raster(acnc_ras, 5, 6, 15, 25)
+```
+
+
 # Ideas
 
-template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping), geoviz, magick, ggmap, ggstream, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}
+template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping), geoviz, magick, ggmap, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
