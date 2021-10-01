@@ -36,6 +36,10 @@ canvas_squares(colors = paletteer_d("wesanderson::Zissou1"))
 
 ```
 
+
+# 20211002 - [WIC Data](https://www.fns.usda.gov/pd/wic-program) and [{polite}](https://dmi3kno.github.io/polite/)
+
+
 # Ideas
 
 template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping), geoviz, ggmap, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}
