@@ -37,8 +37,66 @@ canvas_squares(colors = paletteer_d("wesanderson::Zissou1"))
 ```
 
 
-# 20211002 - [WIC Data](https://www.fns.usda.gov/pd/wic-program) and [{polite}](https://dmi3kno.github.io/polite/)
+# 20211004 - [WIC Data](https://www.fns.usda.gov/pd/wic-program)
 
+```{r, include = F}
+p_load(polite, rvest)
+
+# doesn't work
+session <- bow("https://www.fns.usda.gov/pd/wic-program")
+
+wic_nodes <- scrape(session) %>% 
+  html_nodes("#main > div > div > div.l-constrain > div > div > div > section > table")
+
+
+wic_data <- wic_nodes %>% 
+  html_table() %>% 
+  flatten_df()
+```
+
+```{r, eval = F}
+# doesn't work
+pg <- read_html("https://www.fns.usda.gov/pd/wic-program")
+
+# doesn't work
+excel_links <- html_nodes(pg, xpath=".//a[contains(@href, '.xls')]") %>% 
+  html_attr("href") %>% 
+  sprintf("http://www.fns.usda.gov/pd/wic-program", .)
+
+```
+
+```{r, eval = F}
+# doesn't work
+test <- bow("https://www.fns.usda.gov/pd/wic-program") %>% 
+  nod("https://www.fns.usda.gov/sites/default/files/resource-files/26wifypart-9.xls") %>% 
+  rip() %>% 
+  as.data.frame()
+```
+
+```{r}
+# works
+
+wic_files <- c("https://www.fns.usda.gov/sites/default/files/resource-files/26wifypart-9.xls",
+               "https://www.fns.usda.gov/sites/default/files/resource-files/24wicfood$-9.xls",
+               "https://www.fns.usda.gov/sites/default/files/resource-files/25wifyavgfd$-9.xls",
+               "https://www.fns.usda.gov/sites/default/files/resource-files/23WICAdm$-9.xls")
+
+wic_data <- reduce(map(wic_files, ~import(.)), bind_rows)
+```
+
+# 20211005 - #TidyTuesday and 
+
+```{r}
+p_load(tidytuesdayR)
+
+tt <- tt_load("2021-10-06")
+```
+
+# 20211006 - Clean WIC data
+
+```{r}
+
+```
 
 # Ideas
 
