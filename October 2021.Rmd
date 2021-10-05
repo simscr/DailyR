@@ -9,7 +9,8 @@ knitr::opts_chunk$set(
   message = FALSE,
   echo = FALSE,
   fig.retina = 3,
-  fig.path = here::here("exports", "October", "/")
+  fig.path = here::here("exports", "October", "/"),
+  out.width = "100%"
 )
 
 pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr, paletteer)
@@ -84,18 +85,30 @@ wic_files <- c("https://www.fns.usda.gov/sites/default/files/resource-files/26wi
 wic_data <- reduce(map(wic_files, ~import(.)), bind_rows)
 ```
 
-# 20211005 - #TidyTuesday and 
+# 20211005 - #TidyTuesday and Registered Nurses
 
 ```{r}
-p_load(tidytuesdayR)
+p_load(tidytuesdayR, usmap)
 
-tt <- tt_load("2021-10-06")
+tt <- tt_load("2021-10-05")
+readme(tt)
+
+
+nurses <- tt$nurses %>% 
+  clean_names()
+
+skim(nurses)
 ```
 
 # 20211006 - Clean WIC data
 
 ```{r}
-
+plot_usmap(regions = "states", data = nurses, values = "hourly_wage_avg") + 
+  scale_fill_paletteer_c("harrypotter::ravenclaw") + 
+  labs(fill =  "Mean Hourly Wage ($)") + 
+  theme(legend.position = c(0.85, 0.02)) +
+  facet_wrap(~year)
+  
 ```
 
 # Ideas
