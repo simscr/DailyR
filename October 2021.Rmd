@@ -44,15 +44,15 @@ canvas_squares(colors = paletteer_d("wesanderson::Zissou1"))
 p_load(polite, rvest)
 
 # doesn't work
-session <- bow("https://www.fns.usda.gov/pd/wic-program")
-
-wic_nodes <- scrape(session) %>% 
-  html_nodes("#main > div > div > div.l-constrain > div > div > div > section > table")
-
-
-wic_data <- wic_nodes %>% 
-  html_table() %>% 
-  flatten_df()
+# session <- bow("https://www.fns.usda.gov/pd/wic-program")
+# 
+# wic_nodes <- scrape(session) %>% 
+#   html_nodes("#main > div > div > div.l-constrain > div > div > div > section > table")
+# 
+# 
+# wic_data <- wic_nodes %>% 
+#   html_table() %>% 
+#   flatten_df()
 ```
 
 ```{r, eval = F}
@@ -82,7 +82,7 @@ wic_files <- c("https://www.fns.usda.gov/sites/default/files/resource-files/26wi
                "https://www.fns.usda.gov/sites/default/files/resource-files/25wifyavgfd$-9.xls",
                "https://www.fns.usda.gov/sites/default/files/resource-files/23WICAdm$-9.xls")
 
-wic_data <- reduce(map(wic_files, ~import(.)), bind_rows)
+#wic_data <- reduce(map(wic_files, ~import(.)), bind_rows)
 ```
 
 # 20211005 - #TidyTuesday and Registered Nurses
@@ -100,18 +100,62 @@ nurses <- tt$nurses %>%
 skim(nurses)
 ```
 
-# 20211006 - Clean WIC data
-
 ```{r}
 plot_usmap(regions = "states", data = nurses, values = "hourly_wage_avg") + 
   scale_fill_paletteer_c("harrypotter::ravenclaw") + 
   labs(fill =  "Mean Hourly Wage ($)") + 
   theme(legend.position = c(0.85, 0.02)) +
   facet_wrap(~year)
-
-
-  
 ```
+
+
+# 20211006 - Clean WIC data
+
+```{r}
+wic_raw <- map(wic_files, ~import(.))
+
+clean_wic <- function(df, category){
+  
+  new_df <- df %>% 
+    slice(-c(1, 3, 95, 96, 110, 111)) %>% 
+    row_to_names(row_number = 1) %>% 
+    clean_names() %>% 
+    mutate(across(2:6, as.numeric)) %>% 
+    pivot_longer(cols = 2:6) %>% 
+    rename(year = name) %>% 
+    separate(year, into = c("fy", "year"), sep = "_") %>% 
+    select(-fy) %>% 
+    mutate(year = as.numeric(year))
+  
+  names(new_df)[3] <- category
+  
+  return(new_df)
+}
+
+total <- wic_raw[[1]] %>% 
+  clean_wic(category = "total_participation")
+
+food_cost <- wic_raw[[2]] %>% 
+  clean_wic(category = "food_cost")
+
+avg_benefit <- wic_raw[[3]] %>% 
+  clean_wic(category = "avg_benefit")
+
+admin_cost <- wic_raw[[4]] %>% 
+  clean_wic(category = "admin_cost")
+
+all_wic <- list(total, food_cost, avg_benefit, admin_cost) %>% 
+  reduce(left_join)
+```
+
+# 20211006 - More Cleaning of the WIC Data
+
+I need to figure out how to track their indentions.
+
+```{r}
+
+```
+
 
 # Ideas
 
