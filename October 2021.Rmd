@@ -111,7 +111,10 @@ plot_usmap(regions = "states", data = nurses, values = "hourly_wage_avg") +
 
 # 20211006 - Clean WIC data
 
-```{r}
+```{r, eval = F}
+states <- bind_cols(datasets::state.name, datasets::state.abb) %>% 
+  rename(state = 1, abb = 2)
+
 wic_raw <- map(wic_files, ~import(.))
 
 clean_wic <- function(df, category){
@@ -121,11 +124,18 @@ clean_wic <- function(df, category){
     row_to_names(row_number = 1) %>% 
     clean_names() %>% 
     mutate(across(2:6, as.numeric)) %>% 
-    pivot_longer(cols = 2:6) %>% 
-    rename(year = name) %>% 
-    separate(year, into = c("fy", "year"), sep = "_") %>% 
-    select(-fy) %>% 
-    mutate(year = as.numeric(year))
+    mutate(division = case_when(state_indian_tribe %in% states$state ~ "State",
+                              TRUE ~ "Tribe")) %>% 
+    mutate(subdivision = case_when(division == "Tribe" & lag(division == "State") ~ lag(state_indian_tribe), 
+                                   division == "Tribe" & lag(division == "Tribe") ~ lag(state_indian_tribe, 2),
+#                                   division == "Tribe" & lag(division == "Tribe") & 
+                                   TRUE ~ NA_character_))# %>%  # don't forget DC, Guam, Puerto Rico, Virgin Islands, Northern Marianas, etc.
+    # pivot_longer(cols = 2:6) %>% 
+    # rename(year = name) %>% 
+    # separate(year, into = c("fy", "year"), sep = "_") %>% 
+    # select(-fy) %>% 
+    # mutate(year = as.numeric(year))
+
   
   names(new_df)[3] <- category
   
@@ -145,15 +155,21 @@ admin_cost <- wic_raw[[4]] %>%
   clean_wic(category = "admin_cost")
 
 all_wic <- list(total, food_cost, avg_benefit, admin_cost) %>% 
-  reduce(left_join)
+  reduce(left_join) %>% 
+  mutate(division = case_when(state_indian_tribe %in% datasets::state.name ~ "State",
+                              TRUE ~ "Tribe"))
 ```
 
 # 20211006 - More Cleaning of the WIC Data
 
-I need to figure out how to track their indentions.
+I need to figure out how to track their indentations.
 
-```{r}
+I used `lag`, but I can't figure out how to make the `n` dynamically change based on the number of tribes within each state.
 
+Moving on, because I don't feel passionate about this dataset.
+
+```{r, eval = F}
+# worked in previous day
 ```
 
 
@@ -185,3 +201,11 @@ template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping
 <https://github.com/thebioengineer/camcorder>
 
 <https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
+
+
+```{r, eval = F}
+library(ezknitr)
+
+ezknit(file = "October 2021.Rmd", out_dir = "html files", fig_dir = "exports/October", keep_md = F)
+```
+
