@@ -160,7 +160,7 @@ all_wic <- list(total, food_cost, avg_benefit, admin_cost) %>%
                               TRUE ~ "Tribe"))
 ```
 
-# 20211006 - More Cleaning of the WIC Data
+# 20211007 - More Cleaning of the WIC Data
 
 I need to figure out how to track their indentations.
 
@@ -173,9 +173,21 @@ Moving on, because I don't feel passionate about this dataset.
 ```
 
 
+# 20211008 - checking out [{groundhog}](https://groundhogr.com/)
+
+{groundhog} lets you use packages based on a certain date. For example, if you ran your script on 2021-10-08 and you want the packages to be exactly the same (i.e. version number), you can use this package.
+
+```{r, include = F}
+p_load(groundhog)
+
+groundhog_day = "2021-10-08"  # date you want the packages to be from. Maybe date of last save or date of initiation.
+
+groundhog.library("package", groundhog_day)  # load packages as they were on `groundhog_day`
+```
+
 # Ideas
 
-template, tidymodels, groundhog, ezknitr, rprojroot, rgbif, polite (web scraping), geoviz, ggmap, rayvista, circlize, camcorder, {renv}, {rayvertex}, {labelled}, {report}, {insight}, {performance}, {parameters}, {correlation}, {easystats}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, {aRtsy}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}
+template, tidymodels, groundhog, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
