@@ -177,17 +177,94 @@ Moving on, because I don't feel passionate about this dataset.
 
 {groundhog} lets you use packages based on a certain date. For example, if you ran your script on 2021-10-08 and you want the packages to be exactly the same (i.e. version number), you can use this package.
 
-```{r, include = F}
+```{r, eval = F}
 p_load(groundhog)
 
 groundhog_day = "2021-10-08"  # date you want the packages to be from. Maybe date of last save or date of initiation.
 
-groundhog.library("package", groundhog_day)  # load packages as they were on `groundhog_day`
+# groundhog.library("package", groundhog_day)  # load packages as they were on `groundhog_day`
 ```
+
+
+# 20211011 - trying [{tidymodels}](https://www.tidymodels.org/)
+
+This week (except for Tuesday), I am going to work on the tidymodels framework.
+
+```{r data import, include = F}
+p_load(tidymodels, broom.mixed, dotwhisker, readr)
+
+urchins <- read_csv("https://tidymodels.org/start/models/urchins.csv") %>% 
+  setNames(c("food_regime", "initial_volume", "width")) %>% 
+  mutate(food_regime = factor(food_regime, levels = c("Initial", "Low", "High")))
+```
+
+Plot of raw data.
+
+```{r}
+ggplot(urchins,
+       aes(x = initial_volume, 
+           y = width, 
+           group = food_regime, 
+           col = food_regime)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = "plasma", end = .7)
+```
+
+```{r, include = F}
+lm_mod <- linear_reg() %>% 
+  set_engine("lm")
+
+lm_fit <- lm_mod %>% 
+  fit(width ~ initial_volume * food_regime, data = urchins)
+
+lm_fit
+```
+
+Model summary (table and dot-whisker plot).
+
+```{r}
+tidy(lm_fit)
+
+tidy(lm_fit) %>% 
+  dwplot(dot_args = list(size = 2, color = "black"),
+         whisker_args = list(color = "black"),
+         vline = geom_vline(xintercept = 0, colour = "grey50", linetype = 2))
+
+```
+
+Predictions
+
+```{r}
+new_points <- expand.grid(initial_volume = 20,
+                          food_regime = c("Initial", "Low", "High"))
+
+mean_pred <- predict(lm_fit, new_data = new_points)
+
+conf_int_pred <- predict(lm_fit,
+                         new_data = new_points,
+                         type = "conf_int")
+
+plot_data <- new_points %>% 
+  bind_cols(mean_pred) %>% 
+  bind_cols(conf_int_pred)
+```
+
+Plot of predictions
+
+```{r}
+ggplot(plot_data, aes(x = food_regime)) + 
+  geom_point(aes(y = .pred)) + 
+  geom_errorbar(aes(ymin = .pred_lower,
+                    ymax = .pred_upper),
+                width = 0.2) + 
+  labs(y = "urchin size")
+```
+
 
 # Ideas
 
-template, tidymodels, groundhog, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}
+template, tidymodels, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
