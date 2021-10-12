@@ -261,6 +261,44 @@ ggplot(plot_data, aes(x = food_regime)) +
   labs(y = "urchin size")
 ```
 
+# 20211012 - #TidyTuesday and Seafood Production
+
+```{r, include = F}
+p_load(tidytuesdayR, countrycode)
+
+tt <- tt_load("2021-10-12")
+readme(tt)
+
+fish <- tt %>% 
+  reduce(left_join) %>% 
+  rename(pelagic_fish = 14, crustaceans = 15, cephalopods = 16, demersal_fish = 17,
+         freshwater_fish = 18, molluscs = 19, other = 20) %>% 
+  clean_names()
+
+fish$continent <- countrycode(sourcevar = fish$entity,
+                              origin = "country.name",
+                              destination = "continent")
+
+fish_sum <- fish %>% 
+  select(continent, year, 14:20) %>% 
+  filter(!is.na(continent)) %>% 
+  group_by(continent, year) %>% 
+  summarize(across(everything(), sum, na.rm = T)) %>% 
+  pivot_longer(cols = 3:9) %>% 
+  rename(fish_type = name, production = value)
+
+```
+
+```{r}
+fish_sum %>% 
+  ggplot(aes(year, production, color = fish_type)) + 
+  geom_point() + 
+  scale_color_paletteer_d("ggthemes::few_Dark") + 
+  scale_y_continuous(labels = scales::comma_format()) + 
+  facet_wrap(~ continent) + 
+  theme(legend.position = c(0.8, 0.22))
+```
+
 
 # Ideas
 
