@@ -544,6 +544,109 @@ rf_fit_rs
 collect_metrics(rf_fit_rs)
 ```
 
+# 20211015 - More {tidymodels} - [{tuning}](https://www.tidymodels.org/start/tuning/)
+
+```{r data prep, include = FALSE}
+p_load(tidymodels, rpart.plot, vip)
+
+data(cells, package = "modeldata")
+
+set.seed(123)
+
+cell_split <- initial_split(cells %>% select(-case), 
+                            strata = class)
+cell_train <- training(cell_split)
+cell_test  <- testing(cell_split)
+
+```
+
+```{r tuning, include = FALSE}
+tune_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_dept = tune()
+) %>% 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+tree_grid <- grid_regular(cost_complexity(),
+                          tree_depth(),
+                          levels = 5)
+
+set.seed(234)
+
+cell_folds <- vfold_cv(cell_train)
+
+set.seed(345)
+
+tree_wf <- workflow() %>% 
+  add_model(tune_spec) %>% 
+  add_formula(class ~ .)
+
+tree_res <- tree_wf %>% 
+  tune_grid(
+    resamples = cell_folds,
+    grid = tree_grid
+  )
+
+tree_res
+
+tree_res %>% 
+  collect_metrics()
+```
+
+```{r results plot, include = TRUE}
+tree_res %>%
+  collect_metrics() %>%
+  mutate(tree_depth = factor(tree_depth)) %>%
+  ggplot(aes(cost_complexity, mean, color = tree_depth)) +
+  geom_line(size = 1.5, alpha = 0.6) +
+  geom_point(size = 2) +
+  facet_wrap(~ .metric, scales = "free", nrow = 2) +
+  scale_x_log10(labels = scales::label_number()) +
+  scale_color_viridis_d(option = "plasma", begin = .9, end = 0)
+
+```
+
+```{r best, include = FALSE}
+tree_res %>%
+  show_best("accuracy")
+
+best_tree <- tree_res %>%
+  select_best("accuracy")
+
+best_tree
+```
+
+```{r final-wf, include = F}
+final_wf <- 
+  tree_wf %>% 
+  finalize_workflow(best_tree)
+```
+
+```{r final-fit, include = TRUE}
+final_fit <- 
+  final_wf %>%
+  last_fit(cell_split) 
+
+final_fit %>%
+  collect_metrics()
+
+final_fit %>%
+  collect_predictions() %>% 
+  roc_curve(class, .pred_PS) %>% 
+  autoplot()
+
+final_tree <- extract_workflow(final_fit)
+
+final_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+final_tree %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+
+```
 # Ideas
 
 template, tidymodels, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}
