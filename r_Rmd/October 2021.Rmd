@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 
 pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr, paletteer, crsp)
 
-theme_set(theme_bw(base_size = 15))
+theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
 ```
 
@@ -736,6 +736,51 @@ lr_auc <-
 
 autoplot(lr_auc)
 
+```
+# 20211019 - #TidyTuesday and Pumpkins
+
+```{r pumpkin-data, include = F}
+p_load(tidytuesdayR)
+
+tt <- tt_load(Sys.Date())
+readme(tt)
+
+pumpkins_raw <- tt$pumpkins
+
+types <- tibble(
+  category = c("Field Pumpkin", "Giant Pumpkin", "Giant Squash", "Giant Watermelon", "Long Gourd", "Tomato"),
+  type = c("F", "P", "S", "W", "L", "T")
+)
+
+pumpkins <- pumpkins_raw  %>% 
+  separate(id, into = c("year", "type"), sep = "-") %>% 
+  left_join(types) %>% 
+  mutate(across(c(weight_lbs, ott, est_weight), .fns = as.numeric))
+
+skim(pumpkins)
+```
+
+```{r pumpkin-plots-1, include = TRUE}
+pumpkins %>% 
+  filter(ott > 0) %>% 
+  ggplot(aes(ott, weight_lbs)) + 
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = F, color = "red") +
+  facet_wrap(~category, scales = "free")
+
+```
+
+```{r yearly-winner, include = TRUE}
+pumpkins_sum <- pumpkins %>% 
+  group_by(year, category) %>% 
+  summarize(winner = max(weight_lbs, na.rm = T))
+
+pumpkins_sum %>% 
+  ggplot(aes(year, winner, color = category)) + 
+  geom_line(aes(group = category)) + 
+  geom_point(shape = 21, aes(fill = category), color = "white", stroke = 1.5, size = 3) +
+  scale_color_paletteer_d("ggpomological::pomological_palette", direction = -1) + 
+  scale_fill_paletteer_d("ggpomological::pomological_palette", direction = -1)
 ```
 # Ideas
 
