@@ -883,6 +883,7 @@ last_rf_fit %>%
 
 # Ideas
 
+
 template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}
 
 
