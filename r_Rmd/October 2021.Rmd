@@ -792,7 +792,7 @@ cores
 
 rf_mod <- 
   rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
-  set_engine("ranger", num.threads = cores) %>%  # ususally let {tune} do the parallel processing
+  set_engine("ranger", num.threads = cores) %>%  # usually let {tune} do the parallel processing
   set_mode("classification")
 
 rf_recipe <- 
@@ -845,9 +845,45 @@ bind_rows(rf_auc, lr_auc) %>%
   scale_color_viridis_d(option = "plasma", end = .6)
 ```
 
+# 20211020 - More {tidymodels} - [{case study - part 3}](https://www.tidymodels.org/start/case-study/)
+
+```{r part-3, include = FALSE}
+p_load(tidymodels)
+
+last_rf_mod <- 
+  rand_forest(mtry = 8, min_n = 7, trees = 1000) %>% 
+  set_engine("ranger", num.threads = cores, importance = "impurity") %>% 
+  set_mode("classification")
+
+last_rf_workflow <- 
+  rf_workflow %>% 
+  update_model(last_rf_mod)
+
+set.seed(345)
+
+last_rf_fit <- 
+  last_rf_workflow %>% 
+  last_fit(splits)
+
+last_rf_fit %>% 
+  collect_metrics()
+```
+
+```{r part-3-vip, include = TRUE}
+last_rf_fit %>% 
+  pluck(".workflow", 1) %>% 
+  extract_fit_parsnip() %>% 
+  vip(num_features = 20)
+
+last_rf_fit %>% 
+  collect_predictions() %>% 
+  roc_curve(children, .pred_children) %>% 
+  autoplot()
+```
+
 # Ideas
 
-template, tidymodels, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
