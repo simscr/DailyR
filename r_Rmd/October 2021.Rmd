@@ -845,7 +845,7 @@ bind_rows(rf_auc, lr_auc) %>%
   scale_color_viridis_d(option = "plasma", end = .6)
 ```
 
-# 20211020 - More {tidymodels} - [{case study - part 3}](https://www.tidymodels.org/start/case-study/)
+# 20211021 - More {tidymodels} - [{case study - part 3}](https://www.tidymodels.org/start/case-study/)
 
 ```{r part-3, include = FALSE}
 p_load(tidymodels)
@@ -881,6 +881,75 @@ last_rf_fit %>%
   autoplot()
 ```
 
+# 20211022 - trying [{biscale}](https://slu-opengis.github.io/biscale/articles/biscale.html)
+
+```{r biscale-setup, include = FALSE}
+p_load(sf, biscale, cowplot)
+
+data <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "quantile", dim = 3)
+```
+
+# V1
+
+```{r biscale-plot-1, include = TRUE, fig.cap = "St. Louis - Biscale Map V1"}
+(map <- ggplot() +
+  geom_sf(data = data, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  labs(
+    title = "Race and Income in St. Louis, MO",
+    subtitle = "Dark Blue (DkBlue) Palette"
+  ) +
+  bi_theme() +
+  theme(title = element_text(size = 10))
+)
+```
+
+```{r biscale-plot-2, include = TRUE, fig.cap = "St. Louis - Biscale Map V2"}
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher % White ",
+                    ylab = "Higher Income ",
+                    size = 8)
+
+# combine map with legend
+(finalPlot <- ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.2, .65, 0.2, 0.2)
+)
+```
+
+# V2
+
+```{r biscale-plot-3, include = TRUE, fig.cap = "St. Louis - Biscale Map V3"}
+data2 <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "equal", dim = 3)
+
+
+(map2 <- ggplot() +
+  geom_sf(data = data2, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", dim = 3) +
+  labs(
+    title = "Race and Income in St. Louis, MO",
+    subtitle = "Dark Blue (DkBlue) Palette"
+  ) +
+  bi_theme() +
+  theme(title = element_text(size = 10))
+)
+```
+
+```{r biscale-plot-4, include = TRUE, fig.cap = "St. Louis - Biscale Map V4"}
+legend2 <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher % White ",
+                    ylab = "Higher Income ",
+                    size = 8)
+
+# combine map with legend
+(finalPlot2 <- ggdraw() +
+  draw_plot(map2, 0, 0, 1, 1) +
+  draw_plot(legend2, 0.2, .65, 0.2, 0.2)
+)
+
+```
 # Ideas
 
 
