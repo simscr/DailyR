@@ -889,7 +889,7 @@ p_load(sf, biscale, cowplot)
 data <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "quantile", dim = 3)
 ```
 
-# V1
+## V1
 
 ```{r biscale-plot-1, include = TRUE, fig.cap = "St. Louis - Biscale Map V1"}
 (map <- ggplot() +
@@ -918,7 +918,7 @@ legend <- bi_legend(pal = "DkBlue",
 )
 ```
 
-# V2
+## V2
 
 ```{r biscale-plot-3, include = TRUE, fig.cap = "St. Louis - Biscale Map V3"}
 data2 <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "equal", dim = 3)
@@ -950,6 +950,52 @@ legend2 <- bi_legend(pal = "DkCyan",
 )
 
 ```
+
+I think this is cool. I'll be on the lookout for data that I could use in the future.
+
+# 20211025 - trying [{ggdag}](https://cran.r-project.org/web/packages/ggdag/vignettes/intro-to-ggdag.html)
+
+```{r ggdag-setup, include = T}
+p_load(dagitty, ggdag)
+
+bigger_dag <- dagify(y ~ x + a + b,
+                     x ~ a + b,
+                     exposure = "x",
+                     outcome = "y")
+
+dag_paths(bigger_dag)
+
+bigger_dag %>% 
+  dag_paths() %>%
+  group_by(set) %>%
+  filter(!is.na(path) & !is.na(name)) %>% 
+  summarize(n_vars_between = n() - 1)
+
+```
+
+```{r ggdat-plots-1, include = T}
+ggdag_paths(bigger_dag) + theme_void()
+
+ggdag_parents(bigger_dag, "x") + theme_void()
+```
+
+```{r ggdat-ggplot, include = T}
+bigger_dag %>% 
+  node_parents("x") %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend, color = parent)) +
+      geom_dag_point() +
+      geom_dag_edges_diagonal() +
+      geom_dag_text(col = "white") +
+      theme_dag() +
+      scale_color_manual(values = c("#F87050FF", "#7870B0FF"), breaks  = c("parent", "child"))
+
+
+
+```
+
+
+
+
 # Ideas
 
 
