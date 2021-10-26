@@ -996,6 +996,47 @@ bigger_dag %>%
 
 
 
+
+# 20211026 - #TidyTuesday and Trail Running
+
+```{r trail-setup, include = FALSE, eval = F}
+p_load(tidytuesdayR, RCurl)
+
+tt <- tt_load(2021, week = 44)
+
+```
+
+```{r trail-data, include = F}
+race_raw <- import(here("data", "tt_wk44.xlsx"), which = "race")
+
+ultra_rankings_raw <- import(here("data", "tt_wk44.xlsx"), which = "ultra_rankings")
+
+skim(race_raw)
+
+skim(ultra_rankings_raw)
+
+race <- race %>% 
+  mutate(country = case_when(str_detect(country, "United States") ~ "United States", 
+                             TRUE ~ country))
+```
+
+```{r race-country, include = T}
+# race %>% 
+#   count(city, country)
+
+race %>% 
+  count(country) %>% 
+  arrange(desc(n)) %>% 
+  mutate(country = fct_reorder(country, n)) %>% 
+  slice(1:15) %>% 
+  ggplot(aes(reorder(country, n), n)) + 
+  geom_segment(aes(x = country, xend = country, y = n, yend = 0)) +
+  geom_point() + 
+  coord_flip() + 
+  labs(x = NULL, y = "Number of Ultra-Marathons")
+```
+
+
 # Ideas
 
 
