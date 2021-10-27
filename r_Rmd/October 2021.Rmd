@@ -1015,7 +1015,7 @@ skim(race_raw)
 
 skim(ultra_rankings_raw)
 
-race <- race %>% 
+race <- race_raw %>% 
   mutate(country = case_when(str_detect(country, "United States") ~ "United States", 
                              TRUE ~ country))
 ```
@@ -1036,7 +1036,28 @@ race %>%
   labs(x = NULL, y = "Number of Ultra-Marathons")
 ```
 
+# 20211027 - More #TidyTuesday ant Trail Running
 
+```{r , include = T}
+p_load(ggrepel)
+
+race %>% 
+  count(country) %>% 
+  arrange(desc(n)) %>% 
+  mutate(country = fct_reorder(country, n)) %>% 
+  slice(1:15) %>% 
+  ggplot(aes(n, reorder(country, n))) + 
+  geom_segment(aes(y = country, yend = country, x = n, xend = 0)) +
+  geom_point() + 
+  geom_text_repel(aes(x = n, y = country, label = country)) +
+  coord_polar() + 
+  labs(x = NULL, y = "Number of Ultra-Marathons") + 
+  theme_void()
+```
+
+```{r trying-biscale-trail, include = TRUE}
+# use participants and distance
+```
 
 # Ideas
 
