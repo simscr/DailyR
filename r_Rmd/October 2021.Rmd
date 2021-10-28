@@ -13,7 +13,24 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr, paletteer, crsp)
+pacman::p_load(
+# import/cleaning
+  janitor, pacman, job, rio, skimr, here,
+
+# stats/model summaries
+  easystats, rstatix, corrr, modelsummary,
+
+# plotting
+  paletteer, gghalves, ggcorrplot, ggstatsplot, ggpubr, ggbeeswarm, 
+
+# tables
+  flextable, gt,
+
+# tidy/everything
+  tidyverse, crsp
+)
+
+clean_names <- janitor::clean_names  # this is because both {insight} and {janitor} have a clean_names()
 
 theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
@@ -1036,7 +1053,7 @@ race %>%
   labs(x = NULL, y = "Number of Ultra-Marathons")
 ```
 
-# 20211027 - More #TidyTuesday ant Trail Running
+# 20211027 - More #TidyTuesday and Trail Running
 
 ```{r , include = T}
 p_load(ggrepel)
@@ -1055,14 +1072,46 @@ race %>%
   theme_void()
 ```
 
-```{r trying-biscale-trail, include = TRUE}
-# use participants and distance
+# 20211028 - trying [{labelled}](https://larmarange.github.io/labelled/articles/intro_labelled.html)
+
+This package can be used to label the variables in your dataset. I am thinking about our lab data dictionary as a use.
+
+```{r labelled-setup, include = TRUE, echo = TRUE}
+p_load(labelled)
+
+var_label(iris$Sepal.Length) <- "Length of sepal"
+
+var_label(iris) <- list(Petal.Length = "Length of petal", Petal.Width = "Width of Petal")
+
+var_label(iris$Petal.Width)
+
+var_label(iris)
+
+var_label(iris$Sepal.Length) <- NULL
+
+View(iris)  # shows labels in viewer under column name
+
+look_for(iris)
+
+v <- labelled(c(1,2,2,2,3,9,1,3,2,NA), c(yes = 1, no = 3, "don't know" = 8, refused = 9))
+v
+
+val_labels(v)
+
+val_labels(v) <- NULL
+v
+
+val_label(v, 1) <- "yes"
+v
+
+
+
 ```
 
 # Ideas
 
 
-template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
