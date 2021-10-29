@@ -13,7 +13,24 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-pacman::p_load(pacman, tidyverse, janitor, here, rio, job, skimr, paletteer, crsp)
+pacman::p_load(
+# import/cleaning
+  janitor, pacman, job, rio, skimr, here,
+
+# stats/model summaries
+  easystats, rstatix, corrr, modelsummary,
+
+# plotting
+  paletteer, gghalves, ggcorrplot, ggstatsplot, ggpubr, ggbeeswarm, 
+
+# tables
+  flextable, gt,
+
+# tidy/everything
+  tidyverse, crsp
+)
+
+clean_names <- janitor::clean_names  # this is because both {insight} and {janitor} have a clean_names()
 
 theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
@@ -845,7 +862,7 @@ bind_rows(rf_auc, lr_auc) %>%
   scale_color_viridis_d(option = "plasma", end = .6)
 ```
 
-# 20211020 - More {tidymodels} - [{case study - part 3}](https://www.tidymodels.org/start/case-study/)
+# 20211021 - More {tidymodels} - [{case study - part 3}](https://www.tidymodels.org/start/case-study/)
 
 ```{r part-3, include = FALSE}
 p_load(tidymodels)
@@ -881,10 +898,220 @@ last_rf_fit %>%
   autoplot()
 ```
 
+# 20211022 - trying [{biscale}](https://slu-opengis.github.io/biscale/articles/biscale.html)
+
+```{r biscale-setup, include = FALSE}
+p_load(sf, biscale, cowplot)
+
+data <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "quantile", dim = 3)
+```
+
+## V1
+
+```{r biscale-plot-1, include = TRUE, fig.cap = "St. Louis - Biscale Map V1"}
+(map <- ggplot() +
+  geom_sf(data = data, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  labs(
+    title = "Race and Income in St. Louis, MO",
+    subtitle = "Dark Blue (DkBlue) Palette"
+  ) +
+  bi_theme() +
+  theme(title = element_text(size = 10))
+)
+```
+
+```{r biscale-plot-2, include = TRUE, fig.cap = "St. Louis - Biscale Map V2"}
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher % White ",
+                    ylab = "Higher Income ",
+                    size = 8)
+
+# combine map with legend
+(finalPlot <- ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.2, .65, 0.2, 0.2)
+)
+```
+
+## V2
+
+```{r biscale-plot-3, include = TRUE, fig.cap = "St. Louis - Biscale Map V3"}
+data2 <- bi_class(stl_race_income, x = pctWhite, y = medInc, style = "equal", dim = 3)
+
+
+(map2 <- ggplot() +
+  geom_sf(data = data2, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", dim = 3) +
+  labs(
+    title = "Race and Income in St. Louis, MO",
+    subtitle = "Dark Blue (DkBlue) Palette"
+  ) +
+  bi_theme() +
+  theme(title = element_text(size = 10))
+)
+```
+
+```{r biscale-plot-4, include = TRUE, fig.cap = "St. Louis - Biscale Map V4"}
+legend2 <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher % White ",
+                    ylab = "Higher Income ",
+                    size = 8)
+
+# combine map with legend
+(finalPlot2 <- ggdraw() +
+  draw_plot(map2, 0, 0, 1, 1) +
+  draw_plot(legend2, 0.2, .65, 0.2, 0.2)
+)
+
+```
+
+I think this is cool. I'll be on the lookout for data that I could use in the future.
+
+# 20211025 - trying [{ggdag}](https://cran.r-project.org/web/packages/ggdag/vignettes/intro-to-ggdag.html)
+
+```{r ggdag-setup, include = T}
+p_load(dagitty, ggdag)
+
+bigger_dag <- dagify(y ~ x + a + b,
+                     x ~ a + b,
+                     exposure = "x",
+                     outcome = "y")
+
+dag_paths(bigger_dag)
+
+bigger_dag %>% 
+  dag_paths() %>%
+  group_by(set) %>%
+  filter(!is.na(path) & !is.na(name)) %>% 
+  summarize(n_vars_between = n() - 1)
+
+```
+
+```{r ggdat-plots-1, include = T}
+ggdag_paths(bigger_dag) + theme_void()
+
+ggdag_parents(bigger_dag, "x") + theme_void()
+```
+
+```{r ggdat-ggplot, include = T}
+bigger_dag %>% 
+  node_parents("x") %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend, color = parent)) +
+      geom_dag_point() +
+      geom_dag_edges_diagonal() +
+      geom_dag_text(col = "white") +
+      theme_dag() +
+      scale_color_manual(values = c("#F87050FF", "#7870B0FF"), breaks  = c("parent", "child"))
+
+
+
+```
+
+
+
+
+
+# 20211026 - #TidyTuesday and Trail Running
+
+```{r trail-setup, include = FALSE, eval = F}
+p_load(tidytuesdayR, RCurl)
+
+tt <- tt_load(2021, week = 44)
+
+```
+
+```{r trail-data, include = F}
+race_raw <- import(here("data", "tt_wk44.xlsx"), which = "race")
+
+ultra_rankings_raw <- import(here("data", "tt_wk44.xlsx"), which = "ultra_rankings")
+
+skim(race_raw)
+
+skim(ultra_rankings_raw)
+
+race <- race_raw %>% 
+  mutate(country = case_when(str_detect(country, "United States") ~ "United States", 
+                             TRUE ~ country))
+```
+
+```{r race-country, include = T}
+# race %>% 
+#   count(city, country)
+
+race %>% 
+  count(country) %>% 
+  arrange(desc(n)) %>% 
+  mutate(country = fct_reorder(country, n)) %>% 
+  slice(1:15) %>% 
+  ggplot(aes(reorder(country, n), n)) + 
+  geom_segment(aes(x = country, xend = country, y = n, yend = 0)) +
+  geom_point() + 
+  coord_flip() + 
+  labs(x = NULL, y = "Number of Ultra-Marathons")
+```
+
+# 20211027 - More #TidyTuesday and Trail Running
+
+```{r , include = T}
+p_load(ggrepel)
+
+race %>% 
+  count(country) %>% 
+  arrange(desc(n)) %>% 
+  mutate(country = fct_reorder(country, n)) %>% 
+  slice(1:15) %>% 
+  ggplot(aes(n, reorder(country, n))) + 
+  geom_segment(aes(y = country, yend = country, x = n, xend = 0)) +
+  geom_point() + 
+  geom_text_repel(aes(x = n, y = country, label = country)) +
+  coord_polar() + 
+  labs(x = NULL, y = "Number of Ultra-Marathons") + 
+  theme_void()
+```
+
+# 20211028 - trying [{labelled}](https://larmarange.github.io/labelled/articles/intro_labelled.html)
+
+This package can be used to label the variables in your dataset. I am thinking about our lab data dictionary as a use.
+
+```{r labelled-setup, include = TRUE, echo = TRUE}
+p_load(labelled)
+
+var_label(iris$Sepal.Length) <- "Length of sepal"
+
+var_label(iris) <- list(Petal.Length = "Length of petal", Petal.Width = "Width of Petal")
+
+var_label(iris$Petal.Width)
+
+var_label(iris)
+
+var_label(iris$Sepal.Length) <- NULL
+
+View(iris)  # shows labels in viewer under column name
+
+look_for(iris)
+
+v <- labelled(c(1,2,2,2,3,9,1,3,2,NA), c(yes = 1, no = 3, "don't know" = 8, refused = 9))
+v
+
+val_labels(v)
+
+val_labels(v) <- NULL
+v
+
+val_label(v, 1) <- "yes"
+v
+
+
+
+```
+
 # Ideas
 
 
-template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, {ggdag}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {labelled}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {ggperiodic}, {codebook}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}
 
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
