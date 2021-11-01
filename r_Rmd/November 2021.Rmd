@@ -1,0 +1,113 @@
+---
+title: "Daily R - November 2021"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "November", "/"),
+  out.width = "100%"
+)
+
+knitr::opts_knit$set(
+#  root.dir = here::here(),
+  output.dir = here::here("html files")
+)
+
+pacman::p_load(
+# import/cleaning
+  janitor, pacman, job, rio, skimr, here,
+
+# stats/model summaries
+  easystats, rstatix, corrr, modelsummary,
+
+# plotting
+  paletteer, gghalves, ggcorrplot, ggstatsplot, ggpubr, ggbeeswarm, 
+
+# tables
+  flextable, gt,
+
+# tidy/everything
+  tidyverse, crsp
+)
+
+clean_names <- janitor::clean_names  # this is because both {insight} and {janitor} have a clean_names()
+
+theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
+
+```
+
+# 20211101 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
+
+```{r ggeasy-setup, include = F}
+p_load(ggeasy, palmerpenguins, labelled)
+
+penguins_labs <- penguins %>% 
+  set_variable_labels(species = "Species", island = "Island")
+```
+
+```{r ggeasy-plot, include = T, echo = T}
+penguins_labs %>% 
+  ggplot(aes(bill_length_mm, bill_depth_mm, color = island)) + 
+  geom_point() + 
+  easy_add_legend_title("Island", teach = T)
+
+penguins_labs %>% 
+  ggplot(aes(bill_length_mm, bill_depth_mm, color = species)) + 
+  geom_point() + 
+  easy_labs()  # gets label from labelled data frame
+```
+
+
+
+
+```{r, eval = F}
+library(rmarkdown)
+
+render(input = here::here("r_Rmd", "November 2021.Rmd"),
+     output_dir = here::here("html files"),
+     output_format = c("html_document", "md_document"))
+
+# library(knitr)
+# 
+# knit(input = here::here("r_Rmd", "November 2021.Rmd"),
+#      output = here::here("html files", "November 2021.html"))
+# 
+# library(ezknitr)
+# 
+# ezknit(file = "r_Rmd/November 2021.Rmd", out_dir = "html files", fig_dir = "exports/November", keep_md = T)
+```
+
+# Ideas
+
+
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, 
+
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
+
+
+
+

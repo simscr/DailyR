@@ -1,0 +1,43 @@
+# 20211101 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
+
+    penguins_labs %>% 
+      ggplot(aes(bill_length_mm, bill_depth_mm, color = island)) + 
+      geom_point() + 
+      easy_add_legend_title("Island", teach = T)
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/ggeasy-plot-1.png" width="100%" />
+
+    penguins_labs %>% 
+      ggplot(aes(bill_length_mm, bill_depth_mm, color = species)) + 
+      geom_point() + 
+      easy_labs()  # gets label from labelled data frame
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/ggeasy-plot-2.png" width="100%" />
+
+# Ideas
+
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv},
+{rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug
+= T for geom\_text, {lcmm}, {rolldown}, {muvr}, {pcalg},
+{packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale},
+{prettydoc}, {annotate},
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
