@@ -1,6 +1,9 @@
 ---
 title: "Daily R - November 2021"
-output: html_document
+output: 
+  html_document:
+    keep_md: true
+knit: crsp::knit_to
 ---
 
 ```{r setup, include = FALSE}
@@ -117,7 +120,7 @@ ar_roads <- roads("AR", "Pulaski")
 
 ```
 
-```{r day-2-map, include = T}
+```{r day-2-map, include = FALSE, eval = FALSE}
 ggplot(ar_roads) + 
   geom_sf(lwd = 0.2, alpha = 0.75, color = "darkred") + 
   theme_void() + 
@@ -126,7 +129,9 @@ ggplot(ar_roads) +
         plot.background = element_rect(fill = "beige", color = "beige"))
 ```
 
-
+```{r day-2-png, include = T}
+knitr::include_graphics(path = here("exports", "November", "day-2-map-1.png"))
+```
 
 
 # Render 
@@ -146,6 +151,17 @@ render(input = here::here("r_Rmd", "November 2021.Rmd"),
 # library(ezknitr)
 # 
 # ezknit(file = "r_Rmd/November 2021.Rmd", out_dir = "html files", fig_dir = "exports/November", keep_md = T)
+
+
+(function(input, output_dir = here::here("html files"), output_format = c("md_document", "html_document"),...){
+
+    rmarkdown::render(
+      input,
+      output_dir = output_dir,
+      output_format = output_format,
+      envir = globalenv()
+    )
+  })
 ```
 
 # Ideas
