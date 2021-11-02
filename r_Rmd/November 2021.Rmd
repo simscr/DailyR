@@ -106,6 +106,31 @@ plot_usmap(fill = "#D1E5C6FF") +
 ```
 
 
+# 20211102: Day 2 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 2**: Lines
+
+```{r day-2-setup, include = F}
+p_load(usmap, tigris)
+
+ar_roads <- roads("AR", "Pulaski")
+
+```
+
+```{r day-2-map, include = T}
+ggplot(ar_roads) + 
+  geom_sf(lwd = 0.2, alpha = 0.75, color = "darkred") + 
+  theme_void() + 
+  labs(title = "Pulaski County, Arkansas") + 
+  theme(text = element_text(family = "Times New Roman", size = 16, color = "darkred"),
+        plot.background = element_rect(fill = "beige", color = "beige"))
+```
+
+
+
+
+# Render 
+
 ```{r, eval = F}
 library(rmarkdown)
 
