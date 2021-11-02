@@ -41,7 +41,7 @@ theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
 ```
 
-# 20211101 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
+# 20211101: Part 1 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
 
 ```{r ggeasy-setup, include = F}
 p_load(ggeasy, palmerpenguins, labelled)
@@ -62,7 +62,48 @@ penguins_labs %>%
   easy_labs()  # gets label from labelled data frame
 ```
 
+# 20211101: Part 2 - Day 1 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
+**Day 1**: Points
+
+The 30 day map challenge is a way to try different map styles and to get more familiar with mapping in R.
+
+```{r day-1-setup, include = FALSE}
+p_load(usmap, rgdal)
+
+usmap::plot_usmap()
+
+cities_t <- usmap_transform(citypop)
+```
+
+
+```{r day-1-map, include = TRUE}
+
+plot_usmap(fill = "#D1E5C6FF") +
+  # ggrepel::geom_label_repel(data = cities_t,
+  #            aes(x = lon.1, y = lat.1, label = most_populous_city),
+  #            size = 3, alpha = 0.8,
+  #            label.r = unit(0.5, "lines"), label.size = 0.5,
+  #            segment.color = "red", segment.size = 1,
+  #            seed = 1002) +
+  geom_point(data = cities_t,
+             aes(x = lon.1, y = lat.1, size = city_pop),
+             color = "#AD3D27FF", alpha = 0.5) +
+  scale_size_continuous(range = c(1, 16),
+                        label = scales::comma) +
+  labs(title = "Most Populous City in Each US State",
+       subtitle = "Source: US Census 2010",
+       size = "City Population") +
+  theme(legend.position = "right", 
+        plot.background = element_rect(fill = "#255025FF", ),
+        legend.background = element_rect("#D1E5C6FF"), 
+        legend.key = element_rect("#D1E5C6FF"), 
+        text = element_text(color = "#D1E5C6FF"),
+        legend.text = element_text(color = "#255025FF"), 
+        legend.title = element_text(color = "#255025FF"))
+
+
+```
 
 
 ```{r, eval = F}
