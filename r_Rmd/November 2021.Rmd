@@ -3,7 +3,7 @@ title: "Daily R - November 2021"
 output: 
   html_document:
     keep_md: true
-knit: crsp::knit_to
+knit: crsp::knit_to_outputs_folder
 ---
 
 ```{r setup, include = FALSE}
@@ -133,6 +133,54 @@ ggplot(ar_roads) +
 knitr::include_graphics(path = here("exports", "November", "day-2-map-1.png"))
 ```
 
+# 20211103: Day 3 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 3**: Polygons
+
+```{r day-3-setup, include = FALSE}
+p_load(tigris, maps, sf, rnaturalearth, rnaturalearthdata, gganimate, transformr)
+
+ar_counties <- st_as_sf(map("county", plot = FALSE, fill = TRUE)) %>% 
+  filter(str_detect(ID, "arkansas")) %>% 
+  mutate(area = as.numeric(st_area(.))) %>% 
+  separate(ID, into = c("state", "county"), sep = ",") %>% 
+  mutate(county = str_to_title(county))
+
+
+fertility <- cs_import(here("data", "ar_county_fertility.xlsx")) %>% 
+  fill(county) %>% 
+  mutate(county = str_remove(county, " County")) %>% 
+  left_join(ar_counties) %>% 
+  rename("fertility_rate" = "general_fertility_rate_per_1000_women_ages_15_44")
+
+```
+
+```{r day-3-map-static, include = TRUE}
+fertility %>% 
+  ggplot(aes(geometry = geom, fill = fertility_rate)) +
+  geom_sf(color = "black") + 
+#  transition_states(birth_year, transition_length = 5) +
+  scale_fill_paletteer_c("harrypotter::harrypotter") +
+  labs(fill = "Fertility Rate per 1000 Women (Age: 15-44)") + 
+  theme_void() + 
+  facet_wrap(~ birth_year)
+```
+
+I tried to animate this using `gganimate`, but I couldn't get it to work. I think I will have more opportunites to try this.
+
+```{r day-3-map-animated, include = FALSE}
+ar_fertility <- fertility %>% 
+  ggplot(aes(geometry = geom, fill = fertility_rate)) +
+  geom_sf(color = "black") + 
+  transition_manual(birth_year, cumulative = TRUE) +
+  scale_fill_paletteer_c("harrypotter::harrypotter") +
+  labs(fill = "Fertility Rate per 1000 Women (Age: 15-44)", title = "{current_frame") + 
+  theme_void()
+
+anim <- animate(ar_fertility)
+
+anim
+```
 
 # Render 
 
