@@ -168,7 +168,7 @@ fertility %>%
 
 I tried to animate this using `gganimate`, but I couldn't get it to work. I think I will have more opportunites to try this.
 
-```{r day-3-map-animated, include = FALSE}
+```{r day-3-map-animated, include = FALSE, eval = F}
 ar_fertility <- fertility %>% 
   ggplot(aes(geometry = geom, fill = fertility_rate)) +
   geom_sf(color = "black") + 
@@ -244,7 +244,7 @@ africa2 %>%
 
 ```
 
-```{r day-4-setup-b, include = FALSE}
+```{r day-4-setup-b, include = FALSE, eval = FALSE}
 p_load(geojsonio, rgeos, shadowtext)
 
 spdf <- geojson_read("data/us_states_hexgrid.geojson", what = "sp")
@@ -276,15 +276,30 @@ us_farms <- cs_import(here("data", "us_farms.csv")) %>%
   right_join(spdf_fortified)
 ```
 
-```{r day-4-plotb, include = FALSE}
+```{r day-4-plotb, include = FALSE, eval = FALSE}
 ggplot() + 
-  geom_polygon(data = us_farms, aes(fill = farms, x = long, y = lat, group = group)) + 
+  geom_polygon(data = us_farms, aes(fill = farms, x = long, y = lat, group = group), 
+               color = "black") + 
   theme_void() + 
-  geom_shadowtext(data=centers, aes(x=x, y=y, label=id), color="white", size=3, alpha=0.6) + 
-  scale_fill_paletteer_c("pals::ocean.algae", direction = -1) + 
-  theme(legend.position = c(0.5, 0.8), legend.direction = "horizontal")
+  geom_shadowtext(data=centers, aes(x=x, y=y, label=id), 
+                  color = "white", size = 4, 
+                  alpha = 0.6, family = "Times") + 
+  scale_fill_paletteer_c("pals::ocean.algae", direction = -1,
+                         na.value = "#C5AA73FF", labels = scales::comma) + 
+  guides(fill = guide_colorbar(title = "Number of Farms (2020)", title.position = "top",
+                               title.hjust = 0.5, barwidth = 20, barheight = 0.5)) + 
+  theme(legend.position = c(0.5, 0.9), legend.direction = "horizontal",
+        plot.background = element_rect(fill = "#C5AA73FF"),
+        legend.title = element_text(family = "Times", size = 15), 
+        panel.background = element_rect(color = "black", fill = "#C5AA73FF")) + 
+  coord_map()
+
+# ggsave(filename = here("exports", "November", "day-4-plotb-1.png"))
 ```
 
+```{r day-4-plot-png, include = T}
+knitr::include_graphics(path = here("exports", "November", "day-4-plotb-1.png"))
+```
 
 # Render 
 
@@ -292,7 +307,7 @@ ggplot() +
 library(rmarkdown)
 
 render(input = here::here("r_Rmd", "November 2021.Rmd"),
-     output_dir = here::here("html files"),
+     output_dir = here::here("outputs"),
      output_format = c("html_document", "md_document"))
 
 # library(knitr)

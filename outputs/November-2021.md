@@ -29,6 +29,21 @@ more familiar with mapping in R.
 
 <img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-2-map-1.png" width="100%" />
 
+# 20211103: Day 3 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 3**: Polygons
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-3-map-static-1.png" width="100%" />
+
+I tried to animate this using `gganimate`, but I couldn’t get it to
+work. I think I will have more opportunites to try this.
+
+# 20211104: Day 4 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 4**: Hexagons
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-4-plotb-1.png" width="100%" />
+
 # Render
 
 # Ideas
@@ -38,6 +53,8 @@ template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv},
 = T for geom\_text, {lcmm}, {rolldown}, {muvr}, {pcalg},
 {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale},
 {prettydoc}, {annotate},
+
+<https://github.com/richardvogg/30DayMapChallenge21>
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
 
