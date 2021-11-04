@@ -182,6 +182,110 @@ anim <- animate(ar_fertility)
 anim
 ```
 
+
+# 20211104: Day 4 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 4**: Hexagons
+
+```{r day-4-setup-a, include = FALSE}
+p_load(tigris, maps, sf, rnaturalearth, rnaturalearthdata, gganimate, transformr, fuzzyjoin)
+
+
+world <- st_as_sf(map(plot = FALSE, fill = TRUE))
+
+africa_internet <- cs_import(here("data", "africa_internet.xlsx")) %>% 
+  rename(ID = africa) %>% 
+  head(-3) %>% 
+  mutate(ID = case_when(ID == "Congo,\r\n Dem. Rep." ~ "Democratic Republic of the Congo",
+                        ID == "Cote\r\n d'Ivoire" ~ "Ivory Coast",
+                        ID == "Cabo\r\n Verde" ~ "Cape Verde",
+                        ID == "Congo" ~ "Republic of Congo",
+                        TRUE ~ ID)) %>% 
+  mutate(across(2:7, parse_number))
+
+africa2 <- stringdist_left_join(africa_internet, world,
+                                by = "ID", 
+                                ignore_case = TRUE,
+                                method = "jw", 
+                                max_dist = 2,
+                                distance_col = "dist") %>% 
+  group_by(ID.x) %>% 
+  slice_min(order_by = dist, n = 1) %>% 
+  mutate(point = st_point_on_surface(geom)) %>% 
+  mutate(lat = unlist(point)[1],
+         lon = unlist(point)[2])
+
+
+```
+
+```{r day-4-plot-a, include = FALSE}
+africa2 %>% 
+  ggplot(aes(geometry = geom, fill = penetration_percent_population)) +
+  geom_sf(color = "black") + 
+  coord_sf() + 
+  theme_void()
+
+africa2 %>% 
+  ggplot(aes(x = lat, y = lon, color = )) + 
+  geom_point(shape = "\u2b22", size = 10) +
+  theme_void()
+  coord_map()
+  
+africa2 %>% 
+  ggplot(aes(x = lat, y = lon, fill = penetration_percent_population, group = 1)) + 
+  geom_polygon(aes(group = ID.x)) + 
+  geom_hex(bins = 58) + 
+  theme_void()
+
+africa2 %>% 
+  ggplot(aes(geometry = geom, fill = penetration_percent_population, x = lon, y = lat, group = ID.x)) + 
+  geom_sf(color = "black") + 
+  theme_void()
+
+```
+
+```{r day-4-setup-b, include = FALSE}
+p_load(geojsonio, rgeos, shadowtext)
+
+spdf <- geojson_read("data/us_states_hexgrid.geojson", what = "sp")
+
+spdf@data <- spdf@data %>%
+  mutate(google_name = gsub(" \\(United States\\)", "", google_name))
+
+#plot(spdf)
+
+spdf_fortified <- tidy(spdf, region = "google_name")
+
+centers <- cbind.data.frame(data.frame(gCentroid(spdf, byid=TRUE), id=spdf@data$iso3166_2))
+
+ggplot() +
+  geom_polygon(data = spdf_fortified, aes( x = long, y = lat, group = group), fill="skyblue", color="white") +
+  geom_text(data=centers, aes(x=x, y=y, label=id)) +
+  theme_void() +
+  coord_map()
+
+states <- cbind(datasets::state.name, datasets::state.abb) %>% 
+  as_tibble(.name_repair = "universal") %>% 
+  rename(id = 1, state.abbr = 2)
+
+us_farms <- cs_import(here("data", "us_farms.csv")) %>% 
+  mutate(across(8:10, parse_number)) %>% 
+  rename(farms = operations_in_operations) %>% 
+  mutate(id = str_to_title(location)) %>% 
+  left_join(states) %>% 
+  right_join(spdf_fortified)
+```
+
+```{r day-4-plotb, include = FALSE}
+ggplot() + 
+  geom_polygon(data = us_farms, aes(fill = farms, x = long, y = lat, group = group)) + 
+  theme_void() + 
+  geom_shadowtext(data=centers, aes(x=x, y=y, label=id), color="white", size=3, alpha=0.6) + 
+  scale_fill_paletteer_c("pals::ocean.algae", direction = -1) + 
+  theme(legend.position = c(0.5, 0.8), legend.direction = "horizontal")
+```
+
+
 # Render 
 
 ```{r, eval = F}
@@ -217,6 +321,7 @@ render(input = here::here("r_Rmd", "November 2021.Rmd"),
 
 template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, 
 
+https://github.com/richardvogg/30DayMapChallenge21
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
 
