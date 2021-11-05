@@ -301,6 +301,47 @@ ggplot() +
 knitr::include_graphics(path = here("exports", "November", "day-4-plotb-1.png"))
 ```
 
+# 20211104: Day 5 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 5**: [Open Street Map Data](https://docs.ropensci.org/osmdata/)
+
+Also uses ['ggmap'](https://www.nceas.ucsb.edu/sites/default/files/2020-04/ggmapCheatsheet.pdf)
+
+```{r day-5-setup, include = FALSE}
+p_load(osmdata, ggmap, sf)
+
+nlr_bbox <- getbb("north little rock arkansas")
+
+nlr_q <- opq(nlr_bbox) %>% 
+  add_osm_feature(key = "leisure", value = "park")
+
+nlr_map <- get_map(nlr_bbox, maptype = "osm")
+
+# ggmap(nlr_map)
+
+nlr_parks <- osmdata_sf(nlr_q)
+
+```
+
+```{r day-5-map, include = FALSE}
+ggmap(nlr_map) +
+  geom_sf(data = nlr_parks$osm_points,
+          inherit.aes = FALSE,
+          color = "black",
+          fill = "#F5A507FF", 
+          alpha = 0.5,
+          size = 2, 
+          shape = 21) + 
+  labs(x = NULL, y = NULL,
+       title = "Public Parks in Central Arkansas",
+       caption = "Source: © OpenStreetMap contributors") + 
+  theme_void()
+```
+
+```{r day-5-graphic, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "day-5-map-1.png"))
+```
+
 # Render 
 
 ```{r, eval = F}

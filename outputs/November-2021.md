@@ -44,6 +44,15 @@ work. I think I will have more opportunites to try this.
 
 <img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-4-plotb-1.png" width="100%" />
 
+# 20211104: Day 5 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 5**: [Open Street Map Data](https://docs.ropensci.org/osmdata/)
+
+Also uses
+[‘ggmap’](https://www.nceas.ucsb.edu/sites/default/files/2020-04/ggmapCheatsheet.pdf)
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-5-map-1.png" width="100%" />
+
 # Render
 
 # Ideas
