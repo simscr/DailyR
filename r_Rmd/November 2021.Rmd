@@ -411,6 +411,71 @@ ggplot(ar_map2) +
 knitr::include_graphics(path = here("exports", "November", "day-8-plot-1.png"))
 ```
 
+# 20211109: Day 9 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 9**: Monochrome
+
+```{r day-9-setup, include = FALSE, eval = FALSE}
+p_load(osmdata, elevatr, ggridges, raster, sf, rayshader)
+
+p_load(showtext, ragg)
+
+ar_bbox <- getbb("arkansas")
+
+ar_center <- data.frame(x = -92.2921301, y = 34.7391616) %>% 
+  st_as_sf(coords = c("x", "y"), crs = 4326)
+
+ar_elev <- get_elev_raster(ar_center, z = 8, expand = 5)
+
+ar_elev2 <- crop(ar_elev, extent(ar_map2))
+
+ar_elev3 <- mask(ar_elev2, ar_map2)
+
+ar_mat <- raster_to_matrix(ar_elev2)
+
+plot(ar_elev)
+plot(ar_elev2)
+plot(ar_elev3)
+
+
+ar_ridges <- data.frame(sampleRegular(ar_elev3, 40000, xy = TRUE)) %>% 
+  rename(elevation = 3)
+
+font_add_google("Cinzel")
+showtext_auto()
+```
+
+```{r day-9-mapping, include = FALSE, eval = FALSE}
+
+# rayshaded
+ar_mat %>% 
+  sphere_shade() %>% 
+  plot_3d(ar_mat)
+
+
+# ggridges
+
+ggplot() + 
+  geom_density_ridges(data = ar_ridges, aes(x, y, group = y, height = elevation),
+                      stat = "identity", scale = 20,
+                      fill = "white", color = "#BF0A30",
+                      position = position_nudge(y = -0.1)) + 
+  coord_map() + 
+  annotate(geom = "label", 
+           x = -92.5, y = 32.75, 
+           label = "Arkansas Elevation",
+           color = "#BF0A30", size = 25, 
+           family = "Cinzel", fill = "white") + 
+  theme_void()
+
+# ggsave(filename = here("exports", "November", "day-9-mapping-1.png"))
+
+```
+
+```{r day-9-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "day-9-mapping-1.png"))
+```
+
 # Render 
 
 ```{r, eval = F}

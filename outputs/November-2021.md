@@ -71,6 +71,12 @@ Weekend
 
 <img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-8-plot-1.png" width="100%" />
 
+# 20211109: Day 9 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 9**: Monochrome
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/day-9-mapping-1.png" width="100%" />
+
 # Render
 
 # Ideas
