@@ -352,7 +352,49 @@ Weekend
 
 **Day 7**: Green
 
-Weekend
+```{r day-7-setup, include = FALSE, eval = FALSE}
+p_load(osmdata, ggmap, sf, maps, showtext)
+
+ar_bbox <- getbb("arkansas")
+
+ar_q_golf <- opq(ar_bbox) %>% 
+  add_osm_feature(key = "sport", value = "golf")
+
+ar_golf_all <- osmdata_sf(ar_q_golf)
+
+ar_map <- st_as_sf(map("state", plot = FALSE, fill = TRUE)) %>% 
+  filter(ID == "arkansas")
+
+ar_golf_df <- ar_golf_all$osm_points %>% 
+  st_intersection(ar_map)
+
+ggplot(ar_map) + 
+  geom_sf()
+
+font_add_google("Rock Salt")
+showtext_auto()
+
+```
+
+```{r day-7-mapping, include = FALSE, eval = FALSE}
+ar_gc <- ggplot(ar_map) + 
+  geom_sf(fill = "#4F9D4EFF", color = "black") + 
+  geom_sf(data = ar_golf_df, aes(geometry = geometry), 
+          shape = 21, fill = "white", color = "black", size = 3) + 
+  theme_void() + 
+  annotate(geom = "text", 
+           x = -92.5, y = 36.75, 
+           label = "Golf Courses in Arkansas",
+           color = "#4F9D4EFF", size = 25, 
+           family = "Rock Salt")
+
+
+ggsave(ar_gc, filename = here("exports", "November", "golf.png"))
+```
+
+```{r day-7-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "golf.png"))
+```
 
 # 20211108: Day 8 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 

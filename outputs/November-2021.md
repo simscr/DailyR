@@ -63,7 +63,7 @@ Weekend
 
 **Day 7**: Green
 
-Weekend
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/golf.png" width="100%" />
 
 # 20211108: Day 8 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
