@@ -476,6 +476,41 @@ ggplot() +
 knitr::include_graphics(path = here("exports", "November", "day-9-mapping-1.png"))
 ```
 
+# 20211110: Day 10 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 10**: Raster
+
+```{r day-10-setup, include = FALSE, eval = FALSE}
+p_load(tidycensus, tmap, sf, raster, ggmap, maps)
+
+ar_map <- st_as_sf(map("county", "arkansas", plot = FALSE, fill = TRUE)) %>% 
+  st_transform(crs = st_crs(land))
+  
+
+land2 <- st_crop(land, ar_map)
+
+```
+ 
+```{r day-10-mapping, include = FALSE, eval = FALSE}
+ar_land_p <- tm_shape(land2, bbox = ar_map) + 
+  tm_raster("cover_cls", palette = paletteer_d("Redmonder::qMSOGnYl"),
+            title = " ") + 
+  tm_shape(ar_map) + 
+  tm_borders(alpha = 0.4, col = "black") +
+  tm_layout(inner.margins = c(0.06, 0.10, 0.10, 0.08), 
+            legend.position = c(0.75, 0.05),
+            title = "Land Cover in Arkansas",
+            title.size = 1.5,
+            title.position = c(0.25, 0.98))
+
+tmap_save(ar_land_p, filename = here("exports", "November", "day-10-mapping-1.png"))
+
+```
+
+```{r day-10-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "day-10-mapping-1.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
