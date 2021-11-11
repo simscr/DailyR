@@ -83,6 +83,12 @@ Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 <img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/day-10-mapping-1.png" width="100%" />
 
+# 20211111: Day 11 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 11**: 3D
+
+<img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/ar_rayshader.png" width="100%" />
+
 # Render
 
 # Ideas

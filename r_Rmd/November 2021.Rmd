@@ -600,6 +600,44 @@ tmap_save(ar_land_p, filename = here("exports", "November", "day-10-mapping-1.pn
 knitr::include_graphics(path = here("exports", "November", "day-10-mapping-1.png"))
 ```
 
+
+# 20211111: Day 11 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 11**: 3D
+
+```{r day-11-setup, include = FALSE, eval = FALSE}
+p_load(elevatr, rayshader, maps, sf, raster, magick)
+
+ar_map <- st_as_sf(map("state", plot = FALSE, fill = TRUE)) %>% 
+  filter(ID == "arkansas")
+
+ar_elev <- get_elev_raster(ar_map, z = 8)
+
+ar_elev2 <- crop(ar_elev, ar_map) %>% 
+  mask(ar_map)
+
+plot(ar_elev2)
+
+ar_mat <- raster_to_matrix(ar_elev2)
+```
+
+```{r day-11-mapping, include = FALSE, eval = FALSE}
+ar_mat %>%
+  sphere_shade(texture = "imhof3") %>%
+  plot_3d(ar_mat, zscale = 10, fov = 0, theta = 25, zoom = 0.75, phi = 60, windowsize = c(1000, 800))
+
+render_snapshot(title_text = "Arkansas", 
+               title_color = "white", title_bar_color = "#A7C2CDFF",
+               vignette = TRUE, title_offset=c(0,20),
+               title_font = "Helvetica", title_position = "north",
+               filename = here("exports", "November", "ar_rayshader.png"))
+
+```
+
+```{r day-11-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "ar_rayshader.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
