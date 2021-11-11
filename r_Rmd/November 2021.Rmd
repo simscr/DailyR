@@ -346,8 +346,55 @@ knitr::include_graphics(path = here("exports", "November", "day-5-map-1.png"))
 
 **Day 6**: Red
 
-Weekend
+```{r day-6-setup, include = FALSE, eval = FALSE}
+p_load(osmdata, ggmap, sf, maps, showtext, tigris)
 
+ar_bbox <- getbb("arkansas")
+
+ar_roads <- roads("AR", "Pulaski")
+
+ar_q_stations <- opq(ar_bbox) %>% 
+  add_osm_feature(key = "amenity", value = "fire_station")
+
+ar_stations_all <- osmdata_sf(ar_q_stations)
+
+nlr <- zctas(starts_with = c("72114", "72116", "72117", "72118"))
+
+nlr_map <- nlr %>% 
+  st_transform(crs = st_crs(ar_hydrants_all$osm_points))
+
+ggplot(nlr_roads) + geom_sf()
+
+
+nlr_stations <- ar_stations_all$osm_points %>% 
+  st_intersection(nlr_map)
+
+nlr_roads <- ar_roads %>% 
+  st_transform(crs = st_crs(ar_hydrants_all$osm_points)) %>% 
+  st_intersection(nlr_map)
+
+font_add_google("Alegreya SC")
+showtext_auto()
+```
+
+```{r day-6-mapping, include = FALSE, eval = FALSE}
+nlr_fs <- ggplot(nlr_map) + 
+  geom_sf(color = NA, fill = NA) + 
+  geom_sf(data = nlr_roads, color = "red", alpha = 0.5, lwd = 0.1) + 
+  geom_sf(data = nlr_stations, fill = "white", shape = 23, color = "red", size = 4) + 
+  theme_void() + 
+  annotate(geom = "text",
+           label = "Fire Stations in\n North Little Rock",
+           color = "red", size = 12, family = "Alegreya SC",
+           x = -92.375, y = 34.75)
+
+ggsave(nlr_fs, filename = here("exports", "November", "day-6-mapping-1.png"))
+```
+
+
+```{r day-6-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "day-6-mapping-1.png"))
+```
 # 20211107: Day 7 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 **Day 7**: Green
