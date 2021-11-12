@@ -89,6 +89,12 @@ Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 <img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/ar_rayshader.png" width="100%" />
 
+# 20211112: Day 12 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 12**: Population
+
+<img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/ar_pop_p.png" width="100%" />
+
 # Render
 
 # Ideas

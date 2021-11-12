@@ -638,6 +638,42 @@ render_snapshot(title_text = "Arkansas",
 knitr::include_graphics(path = here("exports", "November", "ar_rayshader.png"))
 ```
 
+# 20211112: Day 12 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 12**: Population
+
+```{r day-12-setup, eval = FALSE}
+p_load(rayshader, maps, sf, tidycensus, viridis)
+
+census_api_key("7591954ede877e54c891b1f96366577418152b0e")
+
+ar_pop <- get_acs(geography = "county",
+                  variables = "B01003_001",
+                  state = "AR",
+                  geometry = TRUE)
+
+
+```
+
+```{r day-12-mapping, include = FALSE, eval = FALSE}
+ar_pop_p <- ggplot(ar_pop) + 
+  geom_sf(aes(fill = estimate), color = "white") +
+  theme_void() + 
+  scale_fill_viridis(option = "C", 
+                     guide = guide_colorbar(title = "Population", title.position = "left",
+                                            barwidth = 20, barheight = 0.5, title.hjust = 0.5),
+                     labels = scales::comma, limits = c(0, 400000)) +
+  theme(legend.position = "bottom", legend.direction = "horizontal", 
+        legend.title = element_text(size = 25, color = "navy"))
+
+ggsave(ar_pop_p, filename = here("exports", "November", "ar_pop_p.png"))
+
+```
+
+```{r day-12-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "ar_pop_p.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
