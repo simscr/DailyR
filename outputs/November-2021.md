@@ -95,6 +95,12 @@ Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 <img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/ar_pop_p.png" width="100%" />
 
+# 20211113: Day 13 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 13**: Natural Earth Data
+
+<img src="C:/Users/simsc/OneDrive/Desktop/DailyR/exports/November/ne_world.png" width="100%" />
+
 # Render
 
 # Ideas

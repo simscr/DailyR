@@ -53,7 +53,7 @@ penguins_labs <- penguins %>%
   set_variable_labels(species = "Species", island = "Island")
 ```
 
-```{r ggeasy-plot, include = T, echo = T}
+```{r ggeasy-plot, include = FALSE, echo = T, eval = FALSE}
 penguins_labs %>% 
   ggplot(aes(bill_length_mm, bill_depth_mm, color = island)) + 
   geom_point() + 
@@ -672,6 +672,33 @@ ggsave(ar_pop_p, filename = here("exports", "November", "ar_pop_p.png"))
 
 ```{r day-12-map, include = TRUE}
 knitr::include_graphics(path = here("exports", "November", "ar_pop_p.png"))
+```
+
+# 20211113: Day 13 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 13**: Natural Earth Data
+
+```{r day-13-setup, eval = FALSE}
+p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos)
+
+world <- ne_countries(returnclass = 'sf')
+```
+
+```{r day-13-map, include = FALSE, eval = FALSE}
+day_13_p <- ggplot(world) + 
+  geom_sf(aes(fill = income_grp)) + 
+  coord_sf(crs = '+proj=robin') + 
+  scale_fill_paletteer_d("fishualize::Serranus_baldwini") + 
+  theme_void() + 
+  labs(fill = "Income Group") + 
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+
+ggsave(day_13_p, filename = here("exports", "November", "ne_world.png"))
+
+```
+
+```{r day-13-final, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "ne_world.png"))
 ```
 
 # Render 
