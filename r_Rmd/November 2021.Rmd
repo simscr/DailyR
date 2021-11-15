@@ -701,6 +701,35 @@ ggsave(day_13_p, filename = here("exports", "November", "ne_world.png"))
 knitr::include_graphics(path = here("exports", "November", "ne_world.png"))
 ```
 
+# 20211114: Day 14 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 14**: Map with a New Tool (Leaflet)
+
+```{r day-14-setup, include = FALSE}
+p_load(leaflet, osmdata)
+
+ds <- tibble(
+  lng = -92.27274569258611,
+  lat = 34.75546542886511
+)
+
+```
+
+```{r day-14-map, include = TRUE}
+leaflet(options = leafletOptions(minZoom = 16, maxZoom = 19)) %>% 
+  addTiles() %>% 
+  addMarkers(lng = -92.27274569258611, lat = 34.75546542886511,
+             label = "Dickey-Stephens Park")
+```
+
+# 20211115: Day 15 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 15**: Map Without a Computer
+
+I did Day 14 instead.
+
+
+
 # Render 
 
 ```{r, eval = F}
