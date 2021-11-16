@@ -728,7 +728,58 @@ leaflet(options = leafletOptions(minZoom = 16, maxZoom = 19)) %>%
 
 I did Day 14 instead.
 
+# 20211116: Day 16 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
+**Day 16**: Urban/Rural
+
+```{r day-16-setup, eval = FALSE}
+p_load(osmdata, sf, maps)
+
+
+ar_bbox <- getbb("arkansas")
+
+ar_map <- st_as_sf(map("state", plot = FALSE, fill = TRUE)) %>% 
+  filter(ID == "arkansas")
+
+arnp_q <- opq(ar_bbox) %>% 
+  add_osm_feature(key = "boundary", value = "national_park")
+
+arnp <- osmdata_sf(arnp_q)
+
+ar_q_cities <- opq(ar_bbox) %>% 
+  add_osm_feature(key = "place", value = "city")
+
+ar_cities <- osmdata_sf(ar_q_cities)
+
+ar_cities_df <- ar_cities$osm_multipolygons %>% 
+  st_make_valid() %>% 
+  st_intersection(ar_map) %>% 
+  mutate(city_center = st_centroid(x = .$geometry)) %>% 
+  mutate(long = st_coordinates(city_center))
+  separate(city_center, into = c("lat", "long"), sep = ,, remove = FALSE)
+  mutate(city_lat = city_center[1], 
+         city_long = city_center[2])
+
+
+arnp_df <- arnp$osm_multipolygons %>% 
+  st_make_valid() %>% 
+  st_intersection(ar_map)
+```
+
+```{r day-16-mapping, eval = FALSE}
+ggplot(ar_map) + 
+  geom_sf(fill = "#F8F8F8FF", color = "black") + 
+  geom_sf(data = arnp_df, aes(geometry = geometry), fill = "#0072CEFF", color = "#0072CEFF") + 
+  geom_sf(data = ar_cities_df, aes(geometry = city_center)) + 
+  theme_void()
+
+
+
+  theme(panel.background = element_rect(fill = "#F8F8F8FF")) 
+
++ 
+  labs(title = "Water in Arkansas")
+```
 
 # Render 
 
