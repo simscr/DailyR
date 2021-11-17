@@ -733,7 +733,7 @@ I did Day 14 instead.
 **Day 16**: Urban/Rural
 
 ```{r day-16-setup, eval = FALSE}
-p_load(osmdata, sf, maps)
+p_load(osmdata, sf, maps, showtext)
 
 
 ar_bbox <- getbb("arkansas")
@@ -754,31 +754,43 @@ ar_cities <- osmdata_sf(ar_q_cities)
 ar_cities_df <- ar_cities$osm_multipolygons %>% 
   st_make_valid() %>% 
   st_intersection(ar_map) %>% 
-  mutate(city_center = st_centroid(x = .$geometry)) %>% 
-  mutate(long = st_coordinates(city_center))
-  separate(city_center, into = c("lat", "long"), sep = ,, remove = FALSE)
-  mutate(city_lat = city_center[1], 
-         city_long = city_center[2])
+  mutate(city_center = st_centroid(x = .$geometry))
 
 
 arnp_df <- arnp$osm_multipolygons %>% 
   st_make_valid() %>% 
   st_intersection(ar_map)
+
+font_add_google("Nova Mono")
+showtext_auto()
+
 ```
 
 ```{r day-16-mapping, eval = FALSE}
-ggplot(ar_map) + 
+np_cities_p <- ggplot(ar_map) + 
   geom_sf(fill = "#F8F8F8FF", color = "black") + 
-  geom_sf(data = arnp_df, aes(geometry = geometry), fill = "#0072CEFF", color = "#0072CEFF") + 
-  geom_sf(data = ar_cities_df, aes(geometry = city_center)) + 
-  theme_void()
+  geom_sf(data = arnp_df, aes(geometry = geometry), fill = "#95CE8AFF", color = "#95CE8AFF") + 
+  geom_sf(data = ar_cities_df, aes(geometry = city_center), color = "#E7695DFF", shape = 6) + 
+  theme_void() + 
+  annotate(geom = "text", x = -92.5, y = 36.75, parse = T,
+           label = '"National Parks" * phantom(" and Cities in Arkansas")', 
+           color = "#95CE8AFF", hjust = 0.5, 
+           family = "Nova Mono", size = 15) +
+  annotate(geom = "text", x = -92.5, y = 36.75, parse = T,
+           label = 'phantom("National Parks") * "and " * phantom("Cities") * " in Arkansas"', 
+           color = "black", hjust = 0.5, 
+           family = "Nova Mono", size = 15) +
+  annotate(geom = "text", x = -92.5, y = 36.75, parse = T,
+           label = 'phantom("National Parks and ") * "Cities" * phantom(" in Arkansas")', 
+           color = "#E7695DFF", hjust = 0.5, 
+           family = "Nova Mono", size = 15)
 
+ggsave(np_cities_p, filename = here("exports", "November", "np_cities.png"))
 
+```
 
-  theme(panel.background = element_rect(fill = "#F8F8F8FF")) 
-
-+ 
-  labs(title = "Water in Arkansas")
+```{r day-16-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "np_cities.png"))
 ```
 
 # Render 
