@@ -793,6 +793,80 @@ ggsave(np_cities_p, filename = here("exports", "November", "np_cities.png"))
 knitr::include_graphics(path = here("exports", "November", "np_cities.png"))
 ```
 
+# 20211117: Day 17 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 17**: Land
+
+Thinking about Land-Grant Universities (UAF and UAPB). 
+
+```{r day-17-setup, eval = FALSE}
+p_load(lidR, raster, rayshader, sf)
+
+
+uaf1 <- lidR::readLAS(files = "C:/Users/2513851/Documents/R/random/USGS_LPC_AR_R6_WashingtonCO_2015_15suv945915_LAS_2016.laz",
+                      filter = "-keep_random_fraction 0.1")
+
+plot(uaf1)
+
+rgl::rgl.snapshot("exports/November/UAF_lidar.png", fmt = "png")
+```
+
+```{r day-17-map, include = TRUE, caption = "Part of UA Fayetteville Campus - LiDAR"}
+knitr::include_graphics(path = here("exports", "November", "UAF_lidar.png"))
+```
+
+# 20211118: Day 18 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 18**: Water
+
+Water Usage in Arkansas - Total Irrigation
+
+```{r day-18-setup, include = FALSE}
+p_load(maps, sf, gganimate)
+
+ar_h2o <- cs_import(here("data", "ar_water_use.xlsx"), which = "r") %>% 
+  select(county_nm, year, 
+         total_irrigation = irrigation_total_total_self_supplied_withdrawals_fresh_in_mgal_d)
+
+ar_counties <- st_as_sf(map("county", plot = FALSE, fill = TRUE)) %>% 
+  filter(str_detect(ID, "arkansas")) %>% 
+  mutate(area = as.numeric(st_area(.))) %>% 
+  separate(ID, into = c("state", "county_nm"), sep = ",") %>% 
+  mutate(county_nm = paste0(str_to_title(county_nm), " County"),
+         county_nm = case_when(county_nm == "St Francis County" ~ "St. Francis County",
+                            TRUE ~ county_nm))
+
+irrigation <- left_join(ar_h2o, ar_counties)
+```
+
+```{r day-18-mapping, include = FALSE}
+
+irrigation %>% 
+  ggplot(aes(geometry = geom, fill = total_irrigation)) +
+  geom_sf(color = "black") + 
+  scale_fill_paletteer_c("grDevices::Blues", direction = -1) +
+  facet_wrap(~year) + 
+  theme_void()
+
+ggplot(airquality, aes(Day, Temp)) +
+  geom_point(aes(colour = factor(Month))) +
+  transition_time(Day)
+
+```
+ 
+```{r day-18-anim, eval = TRUE}
+irrigation %>% 
+  ggplot(aes(geometry = geom, fill = total_irrigation)) +
+  geom_sf(color = "black") + 
+  transition_states(as.factor(year), transition_length = 3, state_length = 3) +
+  scale_fill_paletteer_c("grDevices::Blues", direction = -1) +
+  theme_void() + 
+  labs(fill = "Total Irrigation (Mgal/d)", title = "Year: {closest_state}")
+
+
+```
+
+
 # Render 
 
 ```{r, eval = F}
