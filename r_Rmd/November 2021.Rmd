@@ -848,13 +848,13 @@ irrigation %>%
   facet_wrap(~year) + 
   theme_void()
 
-ggplot(airquality, aes(Day, Temp)) +
-  geom_point(aes(colour = factor(Month))) +
-  transition_time(Day)
+# ggplot(airquality, aes(Day, Temp)) +
+#   geom_point(aes(colour = factor(Month))) +
+#   transition_time(Day)
 
 ```
  
-```{r day-18-anim, eval = TRUE}
+```{r day-18-anim, eval = FALSE}
 irrigation %>% 
   ggplot(aes(geometry = geom, fill = total_irrigation)) +
   geom_sf(color = "black") + 
@@ -863,9 +863,53 @@ irrigation %>%
   theme_void() + 
   labs(fill = "Total Irrigation (Mgal/d)", title = "Year: {closest_state}")
 
+anim_save(filename = here("exports", "November", "irrigation.gif"))
 
 ```
 
+```{r day-18-gif, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "irrigation.gif"))
+```
+
+# 20211119: Day 19 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 19**: Islands
+
+Sugar Loaf, Greer's Ferry Lake, Arkansas
+
+```{r day-19-setup, eval = FALSE}
+p_load(elevatr, rayshader, sf, osmdata)
+
+gfl_bb <- data.frame(x = runif(10, min = -92.3, max = -92.2), y = runif(10, min = 35.54,
+    max = 35.58))
+
+gfl_elev <- get_elev_raster(gfl_bb, z = 14, prj = "EPSG:4326")
+
+gfl_mat <- raster_to_matrix(gfl_elev)
+
+```
+
+```{r day-19-mapping, eval = FALSE}
+gfl_mat %>% 
+  sphere_shade(texture = "imhof2") %>% 
+  add_water(detect_water(gfl_mat), color = "desert") %>%
+#  add_shadow(ray_shade(gfl_mat), 0.5) %>%
+#  add_shadow(ambient_shade(gfl_mat), 0) %>%
+  save_png(filename = here("exports", "November", "sugarloaf.png"))
+
+# gfl_mat %>% 
+#   sphere_shade(texture = "imhof2") %>% 
+#   add_water(detect_water(gfl_mat), color = "desert") %>% 
+#   plot_3d(gfl_mat, fov = 0, theta = -45, phi = 45,
+#             windowsize = c(1000, 800), zoom = 0.75,
+#             water = TRUE, waterdepth = 0, wateralpha = 0.5, watercolor = "lightblue",
+#             waterlinecolor = "white", waterlinealpha = 0.5)
+
+```
+
+```{r day-19-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "sugarloaf.png"))
+```
 
 # Render 
 
