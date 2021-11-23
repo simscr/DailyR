@@ -911,6 +911,88 @@ gfl_mat %>%
 knitr::include_graphics(path = here("exports", "November", "sugarloaf.png"))
 ```
 
+# 20211120: Day 20 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 20**: Movement
+
+Nothing today.
+
+# 20211121: Day 21 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 21**: Elevation
+
+Nothing today.
+
+# 20211122: Day 22 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 22**: Boundaries
+
+Nothing today.
+
+# 20211123: Day 23 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 23**: [GHSL data challenge](https://ghsl.jrc.ec.europa.eu/download.php)
+
+```{r day-23-setup, eval = FALSE}
+p_load(maps, raster, sp, leaflet, sf, rayshader)
+
+# browseURL("https://rpubs.com/ricardo_ochoa/416712")
+
+ghsl_raw <- raster(here("data", "mapping", "ghsl_built.tif"))
+
+ghsl_crs <- crs(ghsl_raw)
+
+#user_crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+pc_map <- st_as_sf(map("county", "arkansas", plot = FALSE, fill = TRUE)) %>% 
+  filter(ID == "arkansas,pulaski") %>% 
+  st_transform(ghsl_crs)
+
+crs(pc_map)
+extent(pc_map)
+
+# # lower left:
+# lower_left <- SpatialPoints(coords = data.frame(x = 115.0792, 
+#                                                 y = -8.849696), 
+#                             proj4string=CRS(user_crs))
+# # top right: 
+# top_right <- SpatialPoints(coords = data.frame(x = 115.3775, 
+#                                                 y = -8.481177), 
+#                             proj4string=CRS(user_crs))
+
+
+
+ghsl <- ghsl_raw %>% 
+  crop(extent(pc_map)) %>% 
+  mask(pc_map)
+
+# ghsl_mat <- raster_to_matrix(ghsl)
+# 
+# ghsl_df <- rasterToPoints(ghsl) %>% 
+#   as.data.frame()
+# 
+# ghsl_df %>% 
+#   ggplot(aes(x, y, fill = ghsl_built)) + 
+#   geom_raster()
+#   stat_density_2d(n = 100, bins = 20, contour = TRUE)
+
+```
+
+```{r day-23-mapping, eval = FALSE}
+png(filename = here("exports", "November", "pc_ghsl.png"),
+    width = 8, height = 8, units = "in", type = "cairo-png", res = 300)
+
+plot(ghsl, col = terrain.colors(12, rev = TRUE),
+     axes = FALSE, box = FALSE,
+     horizontal = TRUE, legend.shrink = 0.2)
+
+dev.off()
+```
+
+```{r day-23-map, include = TRUE, fig.cap = "Built-Up Areas in Pulaski County, AR"}
+knitr::include_graphics(path = here("exports", "November", "pc_ghsl.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
