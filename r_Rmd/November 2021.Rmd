@@ -1023,10 +1023,14 @@ render(input = here::here("r_Rmd", "November 2021.Rmd"),
   })
 ```
 
+```{r exit-knit, include = TRUE}
+knitr::knit_exit()
+```
+
 # Ideas
 
 
-template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, 
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}
 
 https://github.com/richardvogg/30DayMapChallenge21
 
@@ -1050,6 +1054,6 @@ https://github.com/richardvogg/30DayMapChallenge21
 
 <https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
 
-
+https://www.tjmahr.com/lists-knitr-secret-weapon/
 
 
