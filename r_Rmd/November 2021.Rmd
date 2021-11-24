@@ -993,6 +993,61 @@ dev.off()
 knitr::include_graphics(path = here("exports", "November", "pc_ghsl.png"))
 ```
 
+# 20211124: Day 24 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 24**: Historical Map
+
+```{r day-24-setup, eval = FALSE}
+p_load(maps, sf, roughsf, showtext)
+
+ar_map <- st_as_sf(map("county", "arkansas", plot = FALSE, fill = TRUE)) %>% 
+  separate(ID, into = c("state", "county"), sep = ",") %>% 
+  mutate(county = str_to_title(county),
+         county = case_when(county == "St Francis" ~ "St. Francis",
+                            TRUE ~ county))
+
+nrhp <- cs_import(here("data", "mapping", "nrhp.xlsx")) %>% 
+  janitor::remove_empty(which = "cols") %>% 
+  filter(state == "ARKANSAS") %>% 
+  group_by(county) %>% 
+  summarize(n_sites = n()) %>% 
+  mutate(n_group = cut(n_sites, c(0, 10, 25, 50, 100, 200, 350))) %>% 
+  mutate(n_group2 = case_when(n_group == "(0,10]" ~ "Less than 10",
+                              n_group == "(10,25]" ~ "11-25",
+                              n_group == "(25,50]" ~ "26-50",
+                              n_group == "(50,100]" ~ "51-100",
+                              n_group == "(100,200]" ~ "101-200",
+                              n_group == "(200,350]" ~ "More than 200"),
+         n_group2 = factor(n_group2, levels = c("Less than 10", "11-25", "26-50",
+                                                "51-100", "101-200", "More than 200")))
+
+all <- left_join(ar_map, nrhp)
+
+font_add_google("Montserrat")
+showtext_auto()
+
+```
+
+```{r day-24-mapping, eval = FALSE}
+all %>% 
+  ggplot() + 
+  geom_sf(data = all, aes(geometry = geom, fill = n_group2), color = "#3B727C") + 
+  scale_fill_paletteer_d("rcartocolor::Temps", direction = -1) + 
+  theme_void() +
+  theme(plot.background = element_rect(fill = "#D1BE9D"), 
+        legend.direction = "horizontal", legend.position = "bottom",
+        text = element_text(family = "Montserrat", size = 15), 
+        title = element_text(size = 25)) + 
+  labs(fill = "# of Historic Places", title = "Historic Places in Each Arkansas County")
+
+ggsave(filename = here("exports", "November", "ar_nhrp.png"))
+
+```
+
+```{r day-24-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "ar_nhrp.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
@@ -1030,9 +1085,9 @@ knitr::knit_exit()
 # Ideas
 
 
-template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}
+template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}
 
-https://github.com/richardvogg/30DayMapChallenge21
+<https://github.com/richardvogg/30DayMapChallenge21>
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
 
@@ -1054,6 +1109,6 @@ https://github.com/richardvogg/30DayMapChallenge21
 
 <https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
 
-https://www.tjmahr.com/lists-knitr-secret-weapon/
+<https://www.tjmahr.com/lists-knitr-secret-weapon/>
 
 

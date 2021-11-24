@@ -157,34 +157,10 @@ challenge](https://ghsl.jrc.ec.europa.eu/download.php)
 Built-Up Areas in Pulaski County, AR
 </p>
 
+# 20211124: Day 24 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 24**: Historical Map
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/ar_nhrp.png" width="100%" />
+
 # Render
-
-# Ideas
-
-template, rprojroot, rgbif, geoviz, ggmap, rayvista, camcorder, {renv},
-{rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug
-= T for geom\_text, {lcmm}, {rolldown}, {muvr}, {pcalg},
-{packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale},
-{prettydoc}, {annotate},
-
-<https://github.com/richardvogg/30DayMapChallenge21>
-
-<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
-
-<https://www.swisstopo.admin.ch/>
-
-<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
-
-<http://shadedrelief.com/SampleElevationModels/>
-
-<https://www.neonscience.org/resources/learning-hub/tutorials>
-
-<https://docs.ropensci.org/rgbif/articles/rgbif.html>
-
-<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
-
-<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
-
-<https://github.com/thebioengineer/camcorder>
-
-<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
