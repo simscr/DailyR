@@ -1048,6 +1048,81 @@ ggsave(filename = here("exports", "November", "ar_nhrp.png"))
 knitr::include_graphics(path = here("exports", "November", "ar_nhrp.png"))
 ```
 
+# 20211125: Day 25 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 25**: Interactive Map
+
+Thanksgiving Break
+
+# 20211126: Day 26 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 26**: Chloropleth Map
+
+Thanksgiving Break
+
+# 20211127: Day 27 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 27**: Heatmap
+
+Thanksgiving Break
+
+# 20211128: Day 28 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 28**: The Earth is Not Flat
+
+Thanksgiving Break
+
+# 20211129: Day 29 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 29**: `NULL`
+
+```{r day-29-setup, eval = FALSE}
+p_load(maps, sf, geosphere, rgeos)
+
+locations <- tibble(
+  lon = c(0, -92.2896),
+  lat = c(0, 34.7465),
+  location = c("NULL Island", "Little Rock, AR")
+)
+
+# don't actually need this because I'm adjusting the plotting limits instead
+bbox <- bbox2SP(n = 39, s = -5,
+                e = -97, w = 5,
+                proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs")) %>% 
+  st_as_sf()
+
+world <- st_as_sf(map(fill = TRUE, plot = FALSE))
+
+distance_m <- distm(c(locations$lon[1], locations$lat[1]), c(locations$lon[2], locations$lat[2]), fun = distHaversine)
+
+distance_km <- round(distance_m / 1000 + 2, 0)
+
+```
+
+```{r day-29-mapping, eval = FALSE}
+null_map <- ggplot(world) +
+  geom_sf(aes(geometry = geom), fill = "#5C8447FF", color = "white") + 
+  geom_point(data = locations, aes(x = lon, y = lat), color = "white") + 
+  geom_label(data = locations, aes(x = lon, y = lat, label = location), 
+             nudge_y = ifelse(locations$location == "NULL Island", -1, 1) *2, 
+             size = 20) + 
+  geom_text(aes(x = -45, y = 25, label = paste0(distance_km, " km")), 
+            color = "white", fill = NULL, angle = -20, size = 20) + 
+  geom_curve(aes(x = 0, xend = locations$lon[2],
+                   y = 0, yend = locations$lat[2]),
+             curvature = 0.2, lty = 4, color = "white") + 
+  lims(x = c(-97, 5),
+       y = c(-5, 39)) + 
+  theme_void() + 
+  theme(plot.background = element_rect(fill = "#09283CFF"))
+
+ggsave(null_map, filename = here("exports", "November", "LR to NULL.png"), height = 14, width = 30)
+```
+
+```{r day-29-map, include = TRUE}
+knitr::include_graphics(path = here("exports", "November", "LR to NULL.png"))
+```
+
 # Render 
 
 ```{r, eval = F}
