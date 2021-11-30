@@ -4,6 +4,8 @@ output:
   html_document:
     keep_md: true
 knit: crsp::knit_to_outputs_folder
+params:
+  census_api_key: "7591954ede877e54c891b1f96366577418152b0e"
 ---
 
 ```{r setup, include = FALSE}
@@ -44,28 +46,7 @@ theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
 ```
 
-# 20211101: Part 1 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
-
-```{r ggeasy-setup, include = F}
-p_load(ggeasy, palmerpenguins, labelled)
-
-penguins_labs <- penguins %>% 
-  set_variable_labels(species = "Species", island = "Island")
-```
-
-```{r ggeasy-plot, include = FALSE, echo = T, eval = FALSE}
-penguins_labs %>% 
-  ggplot(aes(bill_length_mm, bill_depth_mm, color = island)) + 
-  geom_point() + 
-  easy_add_legend_title("Island", teach = T)
-
-penguins_labs %>% 
-  ggplot(aes(bill_length_mm, bill_depth_mm, color = species)) + 
-  geom_point() + 
-  easy_labs()  # gets label from labelled data frame
-```
-
-# 20211101: Part 2 - Day 1 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+# 20211101: Day 1 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 **Day 1**: Points
 
@@ -113,7 +94,7 @@ plot_usmap(fill = "#D1E5C6FF") +
 
 **Day 2**: Lines
 
-```{r day-2-setup, include = F}
+```{r day-2-setup, include = FALSE}
 p_load(usmap, tigris)
 
 ar_roads <- roads("AR", "Pulaski")
@@ -150,12 +131,14 @@ ar_counties <- st_as_sf(map("county", plot = FALSE, fill = TRUE)) %>%
 fertility <- cs_import(here("data", "ar_county_fertility.xlsx")) %>% 
   fill(county) %>% 
   mutate(county = str_remove(county, " County")) %>% 
+  mutate(county = case_when(county == "Saint Francis" ~ "St Francis",
+                            TRUE ~ county)) %>% 
   left_join(ar_counties) %>% 
   rename("fertility_rate" = "general_fertility_rate_per_1000_women_ages_15_44")
 
 ```
 
-```{r day-3-map-static, include = TRUE}
+```{r day-3-map-static, eval = FALSE}
 fertility %>% 
   ggplot(aes(geometry = geom, fill = fertility_rate)) +
   geom_sf(color = "black") + 
@@ -166,28 +149,30 @@ fertility %>%
   facet_wrap(~ birth_year)
 ```
 
-I tried to animate this using `gganimate`, but I couldn't get it to work. I think I will have more opportunites to try this.
-
-```{r day-3-map-animated, include = FALSE, eval = F}
-ar_fertility <- fertility %>% 
+```{r day-3-map-animated, include = FALSE, eval = FALSE}
+fertility %>% 
   ggplot(aes(geometry = geom, fill = fertility_rate)) +
   geom_sf(color = "black") + 
-  transition_manual(birth_year, cumulative = TRUE) +
+  transition_states(as.factor(birth_year), transition_length = 1, state_length = 10) +
   scale_fill_paletteer_c("harrypotter::harrypotter") +
-  labs(fill = "Fertility Rate per 1000 Women (Age: 15-44)", title = "{current_frame") + 
-  theme_void()
+  labs(fill = "Fertility Rate per 1000 Women (Age: 15-44)", title = "Year: {closest_state}") + 
+  theme_void() + 
+  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top")) +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
 
-anim <- animate(ar_fertility)
+anim_save(filename = here("exports", "November", "fertility.gif"))
 
-anim
 ```
 
+```{r day-3-gif, include = TRUE, fig.height = 6, fig.width = 6}
+knitr::include_graphics(path = here("exports", "November", "fertility.gif"))
+```
 
 # 20211104: Day 4 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
 
 **Day 4**: Hexagons
 
-```{r day-4-setup-a, include = FALSE}
+```{r day-4-setup-a, eval = FALSE}
 p_load(tigris, maps, sf, rnaturalearth, rnaturalearthdata, gganimate, transformr, fuzzyjoin)
 
 
@@ -218,7 +203,7 @@ africa2 <- stringdist_left_join(africa_internet, world,
 
 ```
 
-```{r day-4-plot-a, include = FALSE}
+```{r day-4-plot-a, eval = FALSE}
 africa2 %>% 
   ggplot(aes(geometry = geom, fill = penetration_percent_population)) +
   geom_sf(color = "black") + 
@@ -297,7 +282,7 @@ ggplot() +
 # ggsave(filename = here("exports", "November", "day-4-plotb-1.png"))
 ```
 
-```{r day-4-plot-png, include = T}
+```{r day-4-plot-png, include = TRUE}
 knitr::include_graphics(path = here("exports", "November", "day-4-plotb-1.png"))
 ```
 
@@ -307,7 +292,7 @@ knitr::include_graphics(path = here("exports", "November", "day-4-plotb-1.png"))
 
 Also uses ['ggmap'](https://www.nceas.ucsb.edu/sites/default/files/2020-04/ggmapCheatsheet.pdf)
 
-```{r day-5-setup, include = FALSE}
+```{r day-5-setup, eval = FALSE}
 p_load(osmdata, ggmap, sf)
 
 nlr_bbox <- getbb("north little rock arkansas")
@@ -323,7 +308,7 @@ nlr_parks <- osmdata_sf(nlr_q)
 
 ```
 
-```{r day-5-map, include = FALSE}
+```{r day-5-map, eval = FALSE}
 ggmap(nlr_map) +
   geom_sf(data = nlr_parks$osm_points,
           inherit.aes = FALSE,
@@ -645,7 +630,7 @@ knitr::include_graphics(path = here("exports", "November", "ar_rayshader.png"))
 ```{r day-12-setup, eval = FALSE}
 p_load(rayshader, maps, sf, tidycensus, viridis)
 
-census_api_key("7591954ede877e54c891b1f96366577418152b0e")
+census_api_key(params$census_api_key)
 
 ar_pop <- get_acs(geography = "county",
                   variables = "B01003_001",
@@ -821,7 +806,7 @@ knitr::include_graphics(path = here("exports", "November", "UAF_lidar.png"))
 
 Water Usage in Arkansas - Total Irrigation
 
-```{r day-18-setup, include = FALSE}
+```{r day-18-setup, eval = FALSE}
 p_load(maps, sf, gganimate)
 
 ar_h2o <- cs_import(here("data", "ar_water_use.xlsx"), which = "r") %>% 
@@ -839,7 +824,7 @@ ar_counties <- st_as_sf(map("county", plot = FALSE, fill = TRUE)) %>%
 irrigation <- left_join(ar_h2o, ar_counties)
 ```
 
-```{r day-18-mapping, include = FALSE}
+```{r day-18-mapping, eval = FALSE}
 
 irrigation %>% 
   ggplot(aes(geometry = geom, fill = total_irrigation)) +
@@ -1123,6 +1108,18 @@ ggsave(null_map, filename = here("exports", "November", "LR to NULL.png"), heigh
 knitr::include_graphics(path = here("exports", "November", "LR to NULL.png"))
 ```
 
+# 20211130: Day 30 of [30 Day Map Challenge](https://github.com/tjukanovt/30DayMapChallenge)
+
+**Day 30**: Metamapping
+
+I'm just cleaning up what I can and rendering.
+
+
+
+```{r exit-knit, include = TRUE}
+knitr::knit_exit()
+```
+
 # Render 
 
 ```{r, eval = F}
@@ -1153,9 +1150,29 @@ render(input = here::here("r_Rmd", "November 2021.Rmd"),
   })
 ```
 
-```{r exit-knit, include = TRUE}
-knitr::knit_exit()
+
+
+# 20211101: Part 1 - trying [{ggeasy}](https://jonocarroll.github.io/ggeasy/)
+
+```{r ggeasy-setup, include = FALSE}
+p_load(ggeasy, palmerpenguins, labelled)
+
+penguins_labs <- penguins %>% 
+  set_variable_labels(species = "Species", island = "Island")
 ```
+
+```{r ggeasy-plot, include = FALSE, echo = T, eval = FALSE}
+penguins_labs %>% 
+  ggplot(aes(bill_length_mm, bill_depth_mm, color = island)) + 
+  geom_point() + 
+  easy_add_legend_title("Island", teach = T)
+
+penguins_labs %>% 
+  ggplot(aes(bill_length_mm, bill_depth_mm, color = species)) + 
+  geom_point() + 
+  easy_labs()  # gets label from labelled data frame
+```
+
 
 # Ideas
 
