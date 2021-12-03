@@ -4,7 +4,9 @@ output:
   html_document:
     keep_md: true
 knit: crsp::knit_to_outputs_folder
-
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include = FALSE}
@@ -22,68 +24,102 @@ knitr::opts_knit$set(
   output.dir = here::here("html files")
 )
 
-pacman::p_load(
-# import/cleaning
-  janitor, pacman, job, rio, skimr, here,
-
-# stats/model summaries
-  easystats, rstatix, corrr, modelsummary,
-
-# plotting
-  paletteer, gghalves, ggcorrplot, ggstatsplot, ggpubr, ggbeeswarm, 
-
-# tables
-  flextable, gt,
-
-# tidy/everything
-  tidyverse, crsp
-)
+# pacman::p_load(
+# # import/cleaning
+#   janitor, pacman, job, rio, skimr, here,
+# 
+# # stats/model summaries
+#   easystats, rstatix, corrr, modelsummary,
+# 
+# # plotting
+#   paletteer, gghalves, ggcorrplot, ggstatsplot, ggpubr, ggbeeswarm, 
+# 
+# # tables
+#   flextable, gt,
+# 
+# # tidy/everything
+#   tidyverse, crsp
+# )
 
 clean_names <- janitor::clean_names  # this is because both {insight} and {janitor} have a clean_names()
+
+
+pacman::p_load(tidyverse, emo, pacman, flextable)
 
 theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
 ```
 
-The [Advent of Code](https://adventofcode.com/) is a daily challenge series that
-has two puzzles each day. You get a star for each puzzle solved. Try to get
-all 50!
+```{r aoc-data-pull, include = FALSE}
+#browseURL("https://colin-fraser.net/post/a-quick-tutorial-on-importing-data-from-advent-of-code-into-r/")
+
+p_load(glue, httr)
+
+
+aoc_build_url <- function(day, year = 2021) {
+  formatted_url <- glue("adventofcode.com/{year}/day/{day}/input")
+  return(formatted_url)
+}
+
+aoc_get_response <- function(day, 
+                             session_cookie = rstudioapi::askForSecret("AoC Session Cookie"), 
+                             year = 2020) {
+  aoc_url <- aoc_build_url(day, year)
+  cookie <- set_cookies(session = session_cookie)
+  response <- GET(aoc_url, cookie)
+  return(response)
+}
+
+# test <- aoc_get_response(1) %>% 
+#   content(encoding = 'UTF-8') %>% 
+#   read_lines() %>% 
+#   as.numeric()
+
+```
+
+The [Advent of Code](https://adventofcode.com/) is a daily challenge
+series that has two puzzles each day. You get a star for each puzzle
+solved. Try to get all 50!
 
 # Introduction
 
-You're minding your own business on a ship at sea when the overboard alarm goes
-off! You rush to see if you can help. Apparently, one of the Elves tripped and
-accidentally sent the sleigh keys flying into the ocean!
+You're minding your own business on a ship at sea when the overboard
+alarm goes off! You rush to see if you can help. Apparently, one of the
+Elves tripped and accidentally sent the sleigh keys flying into the
+ocean!
 
 Before you know it, you're inside a submarine the Elves keep ready for
-situations like this. It's covered in Christmas lights (because of course it
-is), and it even has an experimental antenna that should be able to track the
-keys if you can boost its signal strength high enough; there's a little meter
-that indicates the antenna's signal strength by displaying 0-50 stars.
+situations like this. It's covered in Christmas lights (because of
+course it is), and it even has an experimental antenna that should be
+able to track the keys if you can boost its signal strength high enough;
+there's a little meter that indicates the antenna's signal strength by
+displaying 0-50 stars.
 
-Your instincts tell you that in order to save Christmas, you'll need to get all
-fifty stars by December 25th.
+Your instincts tell you that in order to save Christmas, you'll need to
+get all fifty stars by December 25th.
 
-Collect stars by solving puzzles. Two puzzles will be made available on each day
-in the Advent calendar; the second puzzle is unlocked when you complete the
-first. Each puzzle grants one star. Good luck!
+Collect stars by solving puzzles. Two puzzles will be made available on
+each day in the Advent calendar; the second puzzle is unlocked when you
+complete the first. Each puzzle grants one star. Good luck!
 
-As the submarine drops below the surface of the ocean, it automatically performs
-a sonar sweep of the nearby sea floor. On a small screen, the sonar sweep report
-(your puzzle input) appears: each line is a measurement of the sea floor depth
-as the sweep looks further and further away from the submarine.
-
+As the submarine drops below the surface of the ocean, it automatically
+performs a sonar sweep of the nearby sea floor. On a small screen, the
+sonar sweep report (your puzzle input) appears: each line is a
+measurement of the sea floor depth as the sweep looks further and
+further away from the submarine.
 
 # Day 1: Sonar Sweep
 
-The first order of business is to figure out how quickly the depth increases,
-just so you know what you're dealing with - you never know if the keys will get
-carried into deeper water by an ocean current or a fish or something.
+The first order of business is to figure out how quickly the depth
+increases, just so you know what you're dealing with - you never know if
+the keys will get carried into deeper water by an ocean current or a
+fish or something.
 
 ## Puzzle 1
 
-To do this, count the number of times a depth measurement increases from the
-previous measurement. (There is no measurement before the first measurement.)
+To do this, count the number of times a depth measurement increases from
+the previous measurement. (There is no measurement before the first
+measurement.)
 
 ```{r day-1-data, include = FALSE}
 depth <- tibble::tribble(
@@ -2092,24 +2128,25 @@ depth <- tibble::tribble(
 
 ```
 
-```{r day-1-p1, include = FALSE}
+```{r day-1-p1, echo = TRUE}
 depth2 <- depth %>% 
   mutate(prev_val = lag(depth),
          change = ifelse(prev_val < depth, "Increased", "Decreased"))
 
 sum_table <- depth2 %>% count(change)
 
-sum_table$n[2]
+sum_table %>% flextable()
 ```
 
-The answer to the first puzzle is **`r sum_table$n[2]`**. `r emo::ji("star")`
+The answer to the first puzzle is **`r sum_table$n[2]`**.
+`r emo::ji("star")`
 
 ## Puzzle 2
 
-Consider sums of a three-measurement sliding window. How many sums are larger
-than the previous sum?
+Consider sums of a three-measurement sliding window. How many sums are
+larger than the previous sum?
 
-```{r day-2-p2, include = FALSE}
+```{r day-2-p2, echo = TRUE}
 depth3 <- depth2 %>% 
   mutate(sum_val_3 = depth + lead(depth, n = 1) + lead(depth, n = 2),
          prev_sum = lag(sum_val_3),
@@ -2117,9 +2154,1126 @@ depth3 <- depth2 %>%
 
 sum_table2 <- depth3 %>% count(change_sum)
 
-sum_table2$n[2]
+sum_table2 %>% flextable()
 ```
 
-The answer to the second puzzle is **`r sum_table2$n[2]`**. `r emo::ji("star")`
+The answer to the second puzzle is **`r sum_table2$n[2]`**.
+`r emo::ji("star")`
 
-# Day 2:
+## David Robinson's ([@drob](<https://twitter.com/drob>)) answers
+
+```{r drob-d1-ans, echo = T}
+x <- as.vector(depth$depth)  # he probably just imported as a vector
+
+sum(x > lag(x), na.rm = TRUE)
+
+sum(x > lag(x, n = 3), na.rm = TRUE)
+```
+
+# Day 2: Dive!
+
+Calculate the horizontal position and depth you would have after
+following the planned course. What do you get if you multiply your final
+horizontal position by your final depth?
+
+```{r day-2-data, include = FALSE}
+
+# Doesn't work right now.
+# d2 <- aoc_get_response(2) %>% 
+#   content(encoding = 'UTF-8') %>% 
+#   read_lines()
+
+d2 <- c("forward 2",
+        "forward 3",
+        "forward 5",
+        "forward 6",
+        "down 7",
+        "forward 8",
+        "forward 4",
+        "forward 7",
+        "forward 5",
+        "forward 5",
+        "down 4",
+        "down 9",
+        "forward 8",
+        "forward 5",
+        "up 5",
+        "down 5",
+        "forward 3",
+        "down 4",
+        "down 8",
+        "forward 9",
+        "down 1",
+        "up 9",
+        "down 7",
+        "up 7",
+        "up 1",
+        "forward 1",
+        "down 1",
+        "down 4",
+        "down 4",
+        "down 8",
+        "down 4",
+        "up 3",
+        "down 1",
+        "down 3",
+        "forward 7",
+        "down 6",
+        "forward 3",
+        "forward 5",
+        "forward 2",
+        "up 9",
+        "forward 7",
+        "up 5",
+        "down 3",
+        "forward 1",
+        "forward 2",
+        "down 3",
+        "down 8",
+        "down 3",
+        "forward 8",
+        "up 5",
+        "down 5",
+        "forward 3",
+        "down 5",
+        "forward 9",
+        "down 3",
+        "down 4",
+        "down 9",
+        "down 7",
+        "up 3",
+        "down 9",
+        "up 9",
+        "up 1",
+        "forward 3",
+        "up 4",
+        "down 3",
+        "forward 7",
+        "forward 7",
+        "up 7",
+        "forward 6",
+        "down 7",
+        "down 6",
+        "forward 2",
+        "forward 9",
+        "down 5",
+        "forward 4",
+        "up 6",
+        "down 1",
+        "down 9",
+        "down 9",
+        "forward 4",
+        "down 1",
+        "forward 6",
+        "down 1",
+        "down 5",
+        "down 4",
+        "down 4",
+        "forward 4",
+        "forward 9",
+        "up 1",
+        "down 2",
+        "down 8",
+        "down 5",
+        "down 8",
+        "down 8",
+        "up 2",
+        "forward 8",
+        "up 1",
+        "forward 4",
+        "down 5",
+        "down 1",
+        "up 2",
+        "forward 6",
+        "forward 9",
+        "forward 2",
+        "forward 6",
+        "forward 9",
+        "up 6",
+        "forward 9",
+        "up 4",
+        "down 7",
+        "up 6",
+        "forward 2",
+        "down 1",
+        "up 3",
+        "forward 1",
+        "forward 8",
+        "down 6",
+        "down 8",
+        "down 8",
+        "forward 8",
+        "forward 2",
+        "forward 2",
+        "down 2",
+        "up 1",
+        "down 9",
+        "up 9",
+        "down 9",
+        "up 3",
+        "forward 9",
+        "up 4",
+        "up 7",
+        "up 6",
+        "down 9",
+        "forward 1",
+        "down 3",
+        "down 4",
+        "forward 8",
+        "down 3",
+        "down 9",
+        "up 3",
+        "forward 2",
+        "up 5",
+        "down 3",
+        "forward 8",
+        "up 3",
+        "down 3",
+        "forward 2",
+        "forward 9",
+        "down 1",
+        "down 9",
+        "down 4",
+        "up 7",
+        "down 4",
+        "up 6",
+        "forward 5",
+        "down 6",
+        "forward 3",
+        "down 2",
+        "forward 1",
+        "forward 8",
+        "down 4",
+        "forward 1",
+        "up 7",
+        "forward 6",
+        "up 9",
+        "forward 6",
+        "down 3",
+        "forward 2",
+        "down 4",
+        "forward 6",
+        "down 3",
+        "down 6",
+        "down 1",
+        "down 1",
+        "down 5",
+        "forward 3",
+        "forward 9",
+        "forward 8",
+        "down 3",
+        "forward 7",
+        "up 9",
+        "forward 9",
+        "up 2",
+        "forward 4",
+        "up 3",
+        "forward 1",
+        "up 6",
+        "up 8",
+        "down 5",
+        "down 6",
+        "up 9",
+        "down 6",
+        "down 9",
+        "up 9",
+        "down 4",
+        "forward 5",
+        "up 2",
+        "down 3",
+        "up 3",
+        "down 1",
+        "forward 3",
+        "down 5",
+        "forward 7",
+        "down 6",
+        "down 7",
+        "down 5",
+        "forward 2",
+        "up 6",
+        "down 9",
+        "down 4",
+        "down 3",
+        "forward 9",
+        "up 8",
+        "forward 2",
+        "down 2",
+        "forward 4",
+        "up 6",
+        "down 4",
+        "up 8",
+        "down 7",
+        "down 2",
+        "up 6",
+        "up 4",
+        "down 2",
+        "forward 5",
+        "up 4",
+        "down 8",
+        "forward 3",
+        "forward 1",
+        "down 7",
+        "forward 8",
+        "forward 7",
+        "down 7",
+        "up 4",
+        "forward 8",
+        "down 5",
+        "up 9",
+        "forward 1",
+        "forward 4",
+        "forward 9",
+        "forward 7",
+        "down 9",
+        "up 9",
+        "down 1",
+        "down 7",
+        "forward 7",
+        "down 7",
+        "down 7",
+        "down 3",
+        "down 5",
+        "forward 3",
+        "down 2",
+        "forward 6",
+        "down 9",
+        "up 5",
+        "up 3",
+        "forward 5",
+        "down 6",
+        "down 1",
+        "forward 4",
+        "down 3",
+        "forward 8",
+        "down 7",
+        "forward 7",
+        "forward 7",
+        "up 7",
+        "up 2",
+        "up 3",
+        "forward 9",
+        "down 5",
+        "up 2",
+        "forward 5",
+        "up 5",
+        "forward 2",
+        "forward 2",
+        "down 8",
+        "forward 2",
+        "up 4",
+        "forward 1",
+        "forward 3",
+        "up 8",
+        "up 9",
+        "forward 5",
+        "down 1",
+        "up 8",
+        "down 4",
+        "down 8",
+        "up 4",
+        "forward 9",
+        "down 6",
+        "down 8",
+        "up 2",
+        "up 3",
+        "down 7",
+        "down 4",
+        "forward 5",
+        "down 6",
+        "forward 3",
+        "forward 3",
+        "forward 8",
+        "down 1",
+        "down 7",
+        "down 9",
+        "down 2",
+        "down 7",
+        "forward 7",
+        "down 7",
+        "down 6",
+        "up 6",
+        "forward 8",
+        "forward 5",
+        "up 5",
+        "down 2",
+        "up 8",
+        "up 4",
+        "down 9",
+        "up 2",
+        "forward 5",
+        "up 2",
+        "down 4",
+        "up 4",
+        "forward 2",
+        "forward 4",
+        "forward 9",
+        "forward 9",
+        "up 4",
+        "up 5",
+        "down 1",
+        "down 6",
+        "down 1",
+        "down 4",
+        "down 5",
+        "down 3",
+        "forward 3",
+        "down 9",
+        "forward 6",
+        "down 3",
+        "down 9",
+        "down 2",
+        "up 2",
+        "down 2",
+        "down 7",
+        "forward 9",
+        "down 3",
+        "down 3",
+        "down 2",
+        "down 3",
+        "forward 2",
+        "down 9",
+        "down 9",
+        "up 5",
+        "up 3",
+        "forward 4",
+        "up 7",
+        "forward 8",
+        "up 6",
+        "forward 7",
+        "down 7",
+        "down 1",
+        "forward 5",
+        "down 2",
+        "up 1",
+        "down 8",
+        "up 3",
+        "forward 2",
+        "up 9",
+        "down 1",
+        "down 3",
+        "down 6",
+        "down 2",
+        "down 7",
+        "up 2",
+        "forward 5",
+        "forward 7",
+        "down 2",
+        "forward 5",
+        "forward 4",
+        "forward 5",
+        "down 3",
+        "forward 7",
+        "down 7",
+        "forward 8",
+        "down 3",
+        "down 2",
+        "up 1",
+        "forward 6",
+        "down 4",
+        "down 2",
+        "forward 7",
+        "up 3",
+        "down 4",
+        "forward 2",
+        "up 6",
+        "down 3",
+        "up 6",
+        "up 8",
+        "down 9",
+        "up 6",
+        "forward 8",
+        "forward 9",
+        "forward 4",
+        "forward 7",
+        "down 2",
+        "forward 9",
+        "down 7",
+        "up 9",
+        "down 5",
+        "down 6",
+        "up 5",
+        "down 4",
+        "forward 8",
+        "forward 4",
+        "forward 4",
+        "down 6",
+        "forward 3",
+        "forward 6",
+        "down 9",
+        "down 9",
+        "up 2",
+        "forward 7",
+        "down 8",
+        "down 9",
+        "down 9",
+        "forward 7",
+        "forward 3",
+        "down 7",
+        "down 8",
+        "forward 8",
+        "down 6",
+        "down 5",
+        "down 9",
+        "down 3",
+        "forward 1",
+        "down 5",
+        "forward 2",
+        "forward 8",
+        "down 2",
+        "forward 6",
+        "forward 3",
+        "down 7",
+        "down 4",
+        "forward 8",
+        "forward 1",
+        "down 6",
+        "forward 9",
+        "forward 6",
+        "up 1",
+        "up 3",
+        "down 8",
+        "forward 1",
+        "up 5",
+        "down 4",
+        "forward 7",
+        "up 3",
+        "down 2",
+        "forward 1",
+        "forward 9",
+        "down 9",
+        "down 7",
+        "forward 8",
+        "down 4",
+        "up 3",
+        "down 4",
+        "forward 2",
+        "forward 6",
+        "down 7",
+        "forward 6",
+        "down 6",
+        "down 4",
+        "down 1",
+        "up 9",
+        "down 4",
+        "down 7",
+        "up 4",
+        "down 9",
+        "forward 6",
+        "down 3",
+        "forward 2",
+        "down 4",
+        "forward 3",
+        "down 5",
+        "up 9",
+        "forward 8",
+        "up 7",
+        "up 6",
+        "up 4",
+        "forward 1",
+        "down 1",
+        "forward 4",
+        "up 6",
+        "forward 5",
+        "forward 4",
+        "forward 5",
+        "up 6",
+        "down 1",
+        "forward 3",
+        "up 7",
+        "down 9",
+        "up 9",
+        "down 5",
+        "forward 6",
+        "forward 4",
+        "up 1",
+        "down 4",
+        "up 1",
+        "forward 3",
+        "forward 1",
+        "down 3",
+        "forward 7",
+        "down 2",
+        "forward 3",
+        "up 2",
+        "forward 8",
+        "down 3",
+        "up 9",
+        "down 5",
+        "forward 6",
+        "down 1",
+        "down 8",
+        "down 5",
+        "forward 1",
+        "down 6",
+        "up 2",
+        "forward 6",
+        "down 2",
+        "down 1",
+        "up 6",
+        "up 7",
+        "down 5",
+        "forward 7",
+        "forward 6",
+        "forward 6",
+        "down 7",
+        "forward 4",
+        "down 5",
+        "up 5",
+        "down 1",
+        "up 8",
+        "down 8",
+        "down 2",
+        "down 2",
+        "down 9",
+        "up 9",
+        "forward 2",
+        "forward 7",
+        "down 7",
+        "down 4",
+        "down 4",
+        "down 8",
+        "forward 5",
+        "forward 2",
+        "up 9",
+        "down 9",
+        "forward 7",
+        "up 9",
+        "down 2",
+        "down 7",
+        "up 2",
+        "up 8",
+        "forward 8",
+        "down 4",
+        "forward 3",
+        "forward 4",
+        "forward 6",
+        "forward 2",
+        "down 1",
+        "down 2",
+        "forward 2",
+        "up 1",
+        "down 1",
+        "forward 5",
+        "up 3",
+        "up 3",
+        "down 3",
+        "down 1",
+        "down 4",
+        "up 5",
+        "up 6",
+        "forward 5",
+        "up 7",
+        "forward 6",
+        "down 4",
+        "down 7",
+        "up 8",
+        "forward 1",
+        "down 5",
+        "up 4",
+        "up 3",
+        "up 5",
+        "down 1",
+        "up 5",
+        "forward 3",
+        "up 5",
+        "forward 2",
+        "forward 2",
+        "forward 5",
+        "forward 2",
+        "up 9",
+        "forward 4",
+        "down 1",
+        "down 3",
+        "down 5",
+        "up 2",
+        "down 8",
+        "forward 8",
+        "forward 9",
+        "down 1",
+        "down 3",
+        "forward 8",
+        "forward 2",
+        "down 2",
+        "down 1",
+        "up 7",
+        "forward 2",
+        "forward 8",
+        "down 9",
+        "forward 1",
+        "forward 4",
+        "down 7",
+        "down 4",
+        "up 7",
+        "down 3",
+        "down 1",
+        "down 4",
+        "up 7",
+        "down 6",
+        "forward 7",
+        "down 8",
+        "up 2",
+        "up 4",
+        "up 6",
+        "down 9",
+        "down 9",
+        "down 8",
+        "forward 6",
+        "up 3",
+        "up 1",
+        "forward 9",
+        "forward 6",
+        "up 4",
+        "up 2",
+        "up 7",
+        "forward 5",
+        "up 9",
+        "up 9",
+        "forward 9",
+        "up 6",
+        "down 1",
+        "down 3",
+        "forward 3",
+        "down 2",
+        "down 2",
+        "down 6",
+        "down 9",
+        "forward 3",
+        "forward 7",
+        "up 3",
+        "forward 3",
+        "down 5",
+        "forward 9",
+        "up 6",
+        "down 2",
+        "forward 8",
+        "down 3",
+        "up 5",
+        "down 6",
+        "forward 9",
+        "down 5",
+        "down 2",
+        "down 6",
+        "forward 8",
+        "forward 6",
+        "down 1",
+        "forward 6",
+        "up 1",
+        "up 7",
+        "down 4",
+        "down 7",
+        "forward 4",
+        "forward 7",
+        "down 4",
+        "forward 8",
+        "down 8",
+        "down 7",
+        "forward 9",
+        "down 1",
+        "down 3",
+        "down 6",
+        "forward 7",
+        "forward 6",
+        "forward 3",
+        "forward 8",
+        "down 5",
+        "down 3",
+        "up 1",
+        "down 9",
+        "down 8",
+        "forward 3",
+        "down 6",
+        "down 1",
+        "forward 5",
+        "forward 5",
+        "forward 9",
+        "up 5",
+        "down 6",
+        "up 9",
+        "down 7",
+        "down 6",
+        "up 1",
+        "forward 5",
+        "forward 7",
+        "forward 8",
+        "forward 7",
+        "forward 6",
+        "forward 3",
+        "forward 1",
+        "forward 2",
+        "up 4",
+        "forward 3",
+        "forward 4",
+        "forward 5",
+        "up 2",
+        "up 3",
+        "forward 4",
+        "down 9",
+        "up 4",
+        "forward 7",
+        "down 6",
+        "down 6",
+        "down 1",
+        "forward 2",
+        "down 2",
+        "forward 2",
+        "down 3",
+        "forward 7",
+        "forward 8",
+        "down 4",
+        "up 7",
+        "forward 7",
+        "down 7",
+        "forward 7",
+        "forward 9",
+        "down 7",
+        "up 2",
+        "down 3",
+        "forward 7",
+        "down 1",
+        "forward 8",
+        "forward 2",
+        "up 9",
+        "down 3",
+        "forward 2",
+        "up 4",
+        "forward 9",
+        "down 4",
+        "down 4",
+        "forward 4",
+        "down 2",
+        "down 9",
+        "forward 4",
+        "down 2",
+        "down 6",
+        "forward 9",
+        "forward 2",
+        "up 1",
+        "forward 2",
+        "forward 3",
+        "down 5",
+        "up 8",
+        "down 4",
+        "down 4",
+        "forward 7",
+        "down 2",
+        "up 6",
+        "down 9",
+        "forward 9",
+        "up 1",
+        "forward 3",
+        "down 5",
+        "forward 3",
+        "down 3",
+        "forward 4",
+        "up 3",
+        "down 6",
+        "down 7",
+        "down 4",
+        "down 8",
+        "down 4",
+        "down 5",
+        "up 9",
+        "up 1",
+        "down 7",
+        "up 3",
+        "up 3",
+        "down 3",
+        "up 4",
+        "up 6",
+        "forward 8",
+        "down 1",
+        "forward 7",
+        "forward 4",
+        "down 9",
+        "down 1",
+        "forward 7",
+        "forward 9",
+        "forward 1",
+        "down 3",
+        "down 2",
+        "forward 3",
+        "forward 2",
+        "down 7",
+        "forward 9",
+        "forward 6",
+        "up 9",
+        "down 2",
+        "forward 9",
+        "up 6",
+        "forward 8",
+        "up 1",
+        "down 5",
+        "down 8",
+        "forward 1",
+        "down 1",
+        "forward 9",
+        "up 1",
+        "forward 9",
+        "forward 1",
+        "forward 1",
+        "down 7",
+        "forward 3",
+        "forward 6",
+        "down 5",
+        "forward 7",
+        "forward 1",
+        "down 7",
+        "down 6",
+        "down 6",
+        "forward 5",
+        "up 6",
+        "down 6",
+        "forward 8",
+        "up 2",
+        "down 8",
+        "down 3",
+        "up 5",
+        "up 8",
+        "down 6",
+        "forward 4",
+        "forward 2",
+        "up 3",
+        "forward 5",
+        "forward 3",
+        "up 8",
+        "forward 6",
+        "up 8",
+        "forward 1",
+        "up 8",
+        "up 7",
+        "up 6",
+        "forward 2",
+        "down 9",
+        "down 9",
+        "forward 3",
+        "down 7",
+        "forward 3",
+        "down 6",
+        "forward 9",
+        "up 5",
+        "down 1",
+        "forward 7",
+        "down 1",
+        "down 5",
+        "down 9",
+        "forward 8",
+        "forward 9",
+        "forward 7",
+        "down 9",
+        "up 4",
+        "forward 5",
+        "down 5",
+        "forward 5",
+        "down 9",
+        "forward 9",
+        "forward 3",
+        "up 5",
+        "forward 8",
+        "up 5",
+        "down 1",
+        "forward 8",
+        "down 3",
+        "forward 6",
+        "up 9",
+        "forward 8",
+        "down 4",
+        "forward 3",
+        "down 5",
+        "forward 8",
+        "forward 9",
+        "forward 2",
+        "down 1",
+        "down 6",
+        "down 4",
+        "forward 9",
+        "up 2",
+        "down 3",
+        "down 6",
+        "down 3",
+        "down 9",
+        "down 1",
+        "up 6",
+        "down 2",
+        "down 7",
+        "up 5",
+        "forward 5",
+        "up 1",
+        "down 7",
+        "forward 6",
+        "up 6",
+        "down 2",
+        "down 3",
+        "forward 3",
+        "down 5",
+        "forward 8",
+        "down 9",
+        "down 7",
+        "down 8",
+        "up 7",
+        "down 1",
+        "forward 1",
+        "forward 1",
+        "down 2",
+        "up 4",
+        "forward 2",
+        "down 3",
+        "up 2",
+        "down 3",
+        "down 2",
+        "forward 7",
+        "down 1",
+        "up 7",
+        "down 2",
+        "down 1",
+        "forward 6",
+        "down 9",
+        "up 9",
+        "down 4",
+        "down 6",
+        "up 9",
+        "forward 7",
+        "forward 9",
+        "forward 7",
+        "down 4",
+        "down 1",
+        "forward 7",
+        "down 4",
+        "down 7",
+        "down 3",
+        "down 5",
+        "forward 3",
+        "down 8",
+        "forward 8",
+        "forward 7",
+        "forward 8",
+        "down 4",
+        "down 9",
+        "forward 2",
+        "forward 7",
+        "up 8",
+        "forward 4",
+        "down 6",
+        "up 8",
+        "down 2",
+        "forward 3",
+        "down 6",
+        "down 8",
+        "forward 8",
+        "forward 2",
+        "forward 9",
+        "up 6",
+        "forward 7",
+        "down 3",
+        "down 5",
+        "forward 8",
+        "forward 9",
+        "down 3",
+        "forward 3",
+        "forward 2",
+        "forward 3",
+        "down 8",
+        "up 9",
+        "up 5",
+        "up 2",
+        "up 6",
+        "up 1",
+        "up 1",
+        "up 5",
+        "forward 3",
+        "forward 2",
+        "down 3",
+        "forward 4")
+
+
+
+```
+
+## Puzzle 1
+
+It seems like the submarine can take a series of commands like forward 1,
+down 2, or up 3:
+
++ forward X increases the horizontal position by X units.
++ down X increases the depth by X units.
++ up X decreases the depth by X units.
+
+
+```{r day-2-work, echo = TRUE}
+d2_dt <- d2 %>% as_tibble() %>% 
+  separate(value, into = c("direction", "distance"), sep = " ") %>% 
+  mutate(distance = as.numeric(distance))
+
+
+
+location <- d2_dt %>% 
+  group_by(direction) %>% 
+  summarize(across(distance, sum))
+
+location %>% flextable()
+
+```
+
+Answer #1:
+**`r (location$distance[1] - location$distance[3]) * location$distance[2]`**
+`r emo::ji("star")`
+
+## Puzzle 2
+
+In addition to horizontal position and depth, you'll also need to track
+a third value, aim, which also starts at 0. The commands also mean
+something entirely different than you first thought:
+
+-   down X increases your aim by X units.
+
+-   up X decreases your aim by X units.
+
+-   forward X does two things:
+
+    -   It increases your horizontal position by X units.
+    -   It increases your depth by your aim multiplied by X.
+
+```{r d-2-p-2, echo = TRUE}
+
+sum_aim <- d2_dt %>% 
+  mutate(x = case_when(direction == "forward" ~ 1,
+                       TRUE ~ 0),
+         y = case_when(direction == "up" ~ -1,
+                       direction == "down" ~ 1,
+                       TRUE ~ 0)) %>% 
+  mutate(aim = cumsum(distance * y)) %>% 
+  summarize(horizontal = sum(distance * x),
+            depth = sum(distance * aim * x),
+            product = depth * horizontal)
+
+```
+
+Answer #2:
+**`r sum_aim$product`** `r emo::ji("star")`
+
+## DR answer
+
+```{r dr-2, echo = TRUE}
+directions <- tribble(
+  ~ direction, ~ x, ~ y,
+  "down", 0, 1,
+  "up", 0, -1,
+  "forward", 1, 0
+)
+
+joined <- d2_dt %>% 
+  inner_join(directions, by = "direction")
+
+
+# Puzzle 1
+joined %>% 
+  summarize(horizontal = sum(distance * x),
+            depth = sum(distance * y),
+            product = horizontal * depth)
+
+# Puzzle 2
+joined %>% 
+  mutate(aim = cumsum(y * distance)) %>% 
+  summarize(horizontal = sum(distance * x),
+            depth = sum(aim * distance * x),
+            product = horizontal * depth)
+```
