@@ -3300,7 +3300,7 @@ Use the binary numbers in your diagnostic report to calculate the gamma rate and
 
 options(scipen = 999)
 
-d3_mat <- read.table("data/aoc/d3.txt", header = FALSE) %>% 
+d3_df <- read.table("data/aoc/d3.txt", header = FALSE) %>% 
   mutate(V1 = str_pad(V1, 12, pad = "0")) 
 
 d3_mat <- str_split(d3_df$V1, "") %>% 
@@ -3318,5 +3318,109 @@ epsilon <- paste0(least_common, collapse = "") %>% strtoi(base = 2)
 gamma * epsilon
 ```
 
+
+```{r d3-test, eval = FALSE}
+test <- c("00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000", "11001", "00010", "01010") %>% 
+  as.matrix()
+
+
+mat <- str_split(test, "") %>% 
+  map(as.integer) %>% 
+  do.call(rbind, .)
+
+a <- round(colMeans(mat))
+b <- round(1 - colMeans(mat))
+
+
+mat %>% 
+  as.data.frame() %>% 
+  filter(V1 == a[1],
+         V2 == a[2],
+         V3 == a[3],
+         V4 == a[4],
+         V5 == 1)
+
+  
+```
+
 Answer #1:
 **`r gamma * epsilon`** `r emo::ji("star")`
+
+## Puzzle 2
+
+```{r d3-p2, echo = TRUE}
+ox_bi <- d3_mat %>% 
+  as.data.frame() %>% 
+  filter(V1 == most_common[1]) %>% 
+  filter(V2 == round(mean(.$V2) + 1e-6)) %>% 
+  filter(V3 == round(mean(.$V3) + 1e-6)) %>% 
+  filter(V4 == round(mean(.$V4) + 1e-6)) %>% 
+  filter(V5 == round(mean(.$V5) + 1e-6)) %>% 
+  filter(V6 == round(mean(.$V6) + 1e-6)) %>% 
+  filter(V7 == round(mean(.$V7) + 1e-6)) %>% 
+  filter(V8 == round(mean(.$V8) + 1e-6)) %>% 
+  filter(V9 == round(mean(.$V9) + 1e-6)) %>% 
+  filter(V10 == round(mean(.$V10) + 1e-6)) %>% 
+  filter(V11 == round(mean(.$V11) + 1e-6)) %>% 
+  filter(V12 == 1)
+
+co2_bi <- d3_mat %>% 
+  as.data.frame() %>% 
+  filter(V1 == least_common[1]) %>% 
+  filter(V2 != round(mean(.$V2) + 1e-6)) %>% 
+  filter(V3 != round(mean(.$V3) + 1e-6)) %>% 
+  filter(V4 != round(mean(.$V4) + 1e-6)) %>% 
+  filter(V5 != round(mean(.$V5) + 1e-6)) %>% 
+  filter(V6 != round(mean(.$V6) + 1e-6)) %>% 
+  filter(V7 != round(mean(.$V7) + 1e-6)) %>% 
+  filter(V8 != round(mean(.$V8) + 1e-6)) %>% 
+  filter(V9 != 1)
+
+oxygen <- strtoi(paste0(ox_bi, collapse = ""), base = 2)
+
+co2 <- paste0(co_bi, collapse = "") %>% strtoi(base = 2)
+
+oxygen * co2
+```
+
+Answer #2:
+**`r oxygen * co2`** `r emo::ji("star")`
+
+## DR answer
+
+```{r d3-dr, echo = TRUE}
+to_decimal <- function(x) {
+  strtoi(paste0(x, collapse = ""), base = 2)
+}
+
+mat <- str_split(d3_df$V1, "") %>% 
+  map(as.integer) %>% 
+  do.call(rbind, .)
+
+most_common <- round(colMeans(mat))
+
+to_decimal(most_common) * to_decimal(1 - most_common)
+
+filter_matrix <- function(m, index, most_common = TRUE) {
+  target <- round(mean(m[, index]) + 1e-6)  # to round up
+  
+  if (!most_common) {
+    target <- 1 - target
+  }
+  
+  ret <- m[m[, index] == target, ]
+  
+  # Extracting one row from a matrix makes it a vector
+  if (!is.matrix(ret)) {
+    done(ret)
+  } else {
+    ret
+  }
+}
+
+oxygen <- reduce(1:12, filter_matrix, .init = mat)
+
+co2 <- reduce(1:12, filter_matrix, .init = mat, most_common = FALSE)
+
+to_decimal(oxygen) * to_decimal(co2)
+```
