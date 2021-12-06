@@ -3433,10 +3433,64 @@ d4 <- import(here("data", "aoc", "d4.xlsx"), which = "cards") %>%
   janitor::remove_empty(which = "rows") %>% 
   mutate(card_id = rep(1:100, each = 5))
 
-d4_nos <- import(here("data", "aoc", "d4.xlsx"), which = "draws")
+d4_nos <- import(here("data", "aoc", "d4.xlsx"), which = "draws") %>% 
+  colnames()
 
-mat <- str_split(d4$cards, " ") %>% 
+d4_df <- str_split(d4$cards, " ") %>% 
   map(as.integer) %>% 
   map(stats::na.omit) %>% 
-  do.call(rbind, .)
+  do.call(rbind, .) %>% 
+  cbind(d4$card_id) %>% 
+  as.data.frame() %>% 
+  rename(card_id = V6)
+
+col_check <- function(df) {
+  df %>% 
+  group_by(card_id) %>% 
+  summarize(across(V1:V5, sum)) %>% 
+  filter(V1 == 0 | V2 == 0 | V3 == 0 | V4 == 0 | V5 == 0)
+}
+
+row_check <- function(df) {
+  df %>% 
+  rowwise() %>% 
+  mutate(sum_row = sum(V1, V2, V3, V4, V5)) %>% 
+  filter(sum_row == 0)
+}
+
+bingo <- function(df, nos) {
+  df[df %in% nos] <- 0
+  
+  col <- df %>% 
+    col_check()
+  
+  row <- df %>% 
+    row_check()
+  
+  return(list(col, row))
+}
+```
+
+
+```{r d4-work, echo = TRUE}
+
+browseURL("https://twitter.com/drob/status/1467157923512127488/photo/1")
+
+d4_nos
+
+boards <- d4 %>% 
+  group_by(card_id) %>% 
+  mutate(row = row_number()) %>% 
+  separate_rows(cards, sep = " +", convert = TRUE) %>% 
+  group_by(card_id, row) %>% 
+  mutate(col = row_number()) %>% 
+  ungroup() %>% 
+  mutate(turn = match(cards, d4_nos))
+  
+
+board_turn_win <- 0
+  
+boards %>% 
+  gather(coordinate, cards, row, col) %>% 
+  group_by(card_id, coordinate, cards)
 ```
