@@ -3424,3 +3424,19 @@ co2 <- reduce(1:12, filter_matrix, .init = mat, most_common = FALSE)
 
 to_decimal(oxygen) * to_decimal(co2)
 ```
+
+
+# Day 4: Giant Squid
+
+```{r d4-data, include = FALSE}
+d4 <- import(here("data", "aoc", "d4.xlsx"), which = "cards") %>% 
+  janitor::remove_empty(which = "rows") %>% 
+  mutate(card_id = rep(1:100, each = 5))
+
+d4_nos <- import(here("data", "aoc", "d4.xlsx"), which = "draws")
+
+mat <- str_split(d4$cards, " ") %>% 
+  map(as.integer) %>% 
+  map(stats::na.omit) %>% 
+  do.call(rbind, .)
+```
