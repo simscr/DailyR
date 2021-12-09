@@ -3542,6 +3542,8 @@ test %>%
 
 ```
 
+## Puzzle #1
+
 ```{r d5-data-p1, include = FALSE}
 d5 <- import(here("data", "aoc", "d5.xlsx"))
 
@@ -3558,6 +3560,8 @@ d5 %>%
 
 Answer #1:
 **4745** `r emo::ji("star")`
+
+## Puzzle #2
 
 ```{r d5-p2, include = FALSE}
 
@@ -3576,3 +3580,88 @@ Answer #1:
 **18442** `r emo::ji("star")`
 
 # Day 6: Lanternfish 
+
+## Puzzle #1
+
+```{r d6-p1, include = TRUE}
+
+# browseURL("https://selbydavid.com/2021/12/01/advent-2021/")
+
+d6 <- import(here("data", "aoc", "d6.xlsx"))
+
+fish_0 <- as.vector(d6$timer)
+
+fish_count <- function(x, days = 80) {
+  fish <- as.double(table(factor(x, levels = 0:8)))
+  
+  for (i in 1:days)
+    fish <-  c(fish[2:7], fish[8] + fish[1], fish[9], fish[1])
+  sum(fish)
+}
+
+fish_count(fish_0, days = 80)
+
+```
+
+Answer #1:
+**`r fish_count(fish_0)` `r emo::ji("star")`
+
+## Puzzle #2
+
+```{r d6-p2, include = TRUE}
+options(scipen = 999)
+
+fish_count(fish_0, days = 256)
+```
+
+Answer #2:
+**`r fish_count(fish_0, days = 256)` `r emo::ji("star")`
+
+# Day 7: The Treachery of Whales
+
+## Puzzle #1
+
+```{r d7-p1, options}
+d7 <- import(here("data", "aoc", "d7.xlsx"))
+
+mean_loc <- floor(mean(d7$position)) # tried floor() and ceiling()
+median_loc <- round(median(d7$position))
+
+crabs <- d7 %>% 
+  mutate(fuel_median = case_when(position < median_loc ~ median_loc - position,
+                          position >= median_loc ~ position - median_loc),
+         fuel_median_2 = abs(median_loc - position))  # shorter
+
+sum(crabs$fuel_median)
+```
+
+Answer #1:
+
+**`r sum(crabs$fuel_median)`** `r emo::ji("star")`
+
+## Puzzle #2
+
+```{r d7-p2, include = TRUE}
+
+crabs <- crabs %>% 
+  mutate(fuel_mean = abs(mean_loc - position),
+         fuel_cost = fuel_mean / 2 * (1 + fuel_mean))
+
+sum(crabs$fuel_cost)
+```
+
+Answer #2:
+
+**`r sum(crabs$fuel_cost)`** `r emo::ji("star")`
+
+# Day 8: Seven Segment Search
+
+## Puzzle #1
+
+```{r d8-p1, options}
+d8 <- import(here("data", "aoc", "d8.xlsx"))
+
+d8 %>% 
+  summarize(across(o1:o4, ))
+```
+
