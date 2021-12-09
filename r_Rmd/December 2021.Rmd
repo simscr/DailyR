@@ -3664,5 +3664,6 @@ d8 <- import(here("data", "aoc", "d8.xlsx"))
 d8 %>% 
   summarize(across(o1:o4, ~ nchar(.))) %>% 
   summarize(across(everything()))
+
 ```
 
