@@ -3428,6 +3428,8 @@ to_decimal(oxygen) * to_decimal(co2)
 
 # Day 4: Giant Squid
 
+I couldn't figure this one out on my own so I used \@drob's answer
+
 ```{r d4-data, include = FALSE}
 d4 <- import(here("data", "aoc", "d4.xlsx"), which = "cards") %>% 
   janitor::remove_empty(which = "rows") %>% 
@@ -3474,9 +3476,9 @@ bingo <- function(df, nos) {
 
 ```{r d4-work, echo = TRUE}
 
-browseURL("https://twitter.com/drob/status/1467157923512127488/photo/1")
+# browseURL("https://twitter.com/drob/status/1467157923512127488/photo/1")
 
-d4_nos
+d4_nos <- as.integer(d4_nos)
 
 boards <- d4 %>% 
   group_by(card_id) %>% 
@@ -3488,9 +3490,89 @@ boards <- d4 %>%
   mutate(turn = match(cards, d4_nos))
   
 
-board_turn_win <- 0
-  
-boards %>% 
+board_turn_win <- boards %>% 
   gather(coordinate, cards, row, col) %>% 
-  group_by(card_id, coordinate, cards)
+  group_by(card_id, coordinate, cards) %>% 
+  summarize(complete_on_turn = max(turn)) %>% 
+  group_by(card_id) %>% 
+  summarize(win_on_turn = min(complete_on_turn))
+
+board_scores <- board_turn_win %>% 
+  inner_join(boards, by = "card_id") %>% 
+  group_by(card_id, win_on_turn) %>% 
+  summarize(total_undrawn = sum(cards[turn > win_on_turn]), 
+            .groups = "drop") %>% 
+  mutate(answer = d4_nos[win_on_turn] * total_undrawn)
+
+board_scores %>% 
+  slice_min(win_on_turn)
 ```
+
+Answer #1:
+**14093** `r emo::ji("star")`
+
+## Puzzle #2
+
+```{r d4-p2, echo = TRUE}
+board_scores %>% 
+  slice_max(win_on_turn)
+```
+
+Answer #2:
+**17388** `r emo::ji("star")`
+
+# Day 5: Hydrothermal Venture
+
+```{r d5-test, eval = FALSE}
+test <- tibble(
+  x1 = c(0, 8, 9, 2, 7, 6, 0, 3, 0, 5),
+  y1 = c(9, 0, 4, 2, 0, 4, 9, 4, 0, 5),
+  x2 = c(5, 0, 3, 2, 7, 2, 2, 1, 8, 8),
+  y2 = c(9, 8, 4, 1, 4, 0, 9, 4, 8, 2)
+)
+
+
+test %>% 
+#  filter(x1 == x2 | y1 == y2) %>% 
+  mutate(x = map2(x1, x2, seq)) %>% 
+  mutate(y = map2(y1, y2, seq)) %>%
+  unnest(c(x,y)) %>% 
+  count(x, y) %>% 
+  summarize(sum(n>1))
+
+```
+
+```{r d5-data-p1, include = FALSE}
+d5 <- import(here("data", "aoc", "d5.xlsx"))
+
+d5 %>% 
+  filter(x1 == x2 | y1 == y2) %>% 
+  mutate(x = map2(x1, x2, seq)) %>% 
+  mutate(y = map2(y1, y2, seq)) %>%
+  unnest(c(x,y)) %>% 
+  count(x, y) %>% 
+  summarize(sum(n > 1))
+
+
+```
+
+Answer #1:
+**4745** `r emo::ji("star")`
+
+```{r d5-p2, include = FALSE}
+
+d5 %>% 
+#  filter(x1 == x2 | y1 == y2) %>% 
+  mutate(x = map2(x1, x2, seq)) %>% 
+  mutate(y = map2(y1, y2, seq)) %>%
+  unnest(c(x,y)) %>% 
+  count(x, y) %>% 
+  summarize(sum(n > 1))
+
+
+```
+
+Answer #1:
+**18442** `r emo::ji("star")`
+
+# Day 6: Lanternfish 
