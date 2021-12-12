@@ -3659,11 +3659,52 @@ Answer #2:
 ## Puzzle #1
 
 ```{r d8-p1, options}
-d8 <- import(here("data", "aoc", "d8.xlsx"))
+d8 <- import(here("data", "aoc", "d8.xlsx")) %>% 
+  mutate(entry = row_number(), .before = 1)
 
-d8 %>% 
+sum_table <- d8 %>% 
   summarize(across(o1:o4, ~ nchar(.))) %>% 
-  summarize(across(everything()))
+  pivot_longer(everything()) %>% view()
+  count(value)
+
+sum(sum_table$n[c(1, 2, 3, 6)])
+
 
 ```
 
+Answer #1:
+`r sum(sum_table$n[c(1, 2, 3, 6)])` `r emo::ji("star")`
+
+## Puzzle #2
+
+```{r d8-p2, include = TRUE}
+d8_b <- d8 %>% 
+  mutate(o1_b = case_when(nchar(o1) == 2 ~ 1,
+                          nchar(o1) == 3 ~ 7,
+                          nchar(o1) == 4 ~ 4,
+                          nchar(o1) == 7 ~ 8,
+                          TRUE ~ NA_real_),
+         o2_b = case_when(nchar(o2) == 2 ~ 1,
+                          nchar(o2) == 3 ~ 7,
+                          nchar(o2) == 4 ~ 4,
+                          nchar(o2) == 7 ~ 8,
+                          TRUE ~ NA_real_),
+         o3_b = case_when(nchar(o3) == 2 ~ 1,
+                          nchar(o3) == 3 ~ 7,
+                          nchar(o3) == 4 ~ 4,
+                          nchar(o3) == 7 ~ 8,
+                          TRUE ~ NA_real_),
+         o4_b = case_when(nchar(o4) == 2 ~ 1,
+                          nchar(o4) == 3 ~ 7,
+                          nchar(o4) == 4 ~ 4,
+                          nchar(o4) == 7 ~ 8,
+                          TRUE ~ NA_real_))
+
+
+f
+
+
+
+
+# browseURL("https://pbs.twimg.com/media/FGGf6qNWQAMNOOc?format=jpg&name=large")
+```
