@@ -3,6 +3,8 @@ title: "Advent of Code - December 2021"
 output: 
   html_document:
     keep_md: true
+    toc: true
+    toc_float: true
 knit: crsp::knit_to_outputs_folder
 editor_options: 
   markdown: 
@@ -44,7 +46,7 @@ knitr::opts_knit$set(
 clean_names <- janitor::clean_names  # this is because both {insight} and {janitor} have a clean_names()
 
 
-pacman::p_load(tidyverse, emo, pacman, flextable, rio, here)
+pacman::p_load(tidyverse, emo, pacman, flextable, rio, here, adventdrob)
 
 theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
@@ -63,7 +65,7 @@ aoc_build_url <- function(day, year = 2021) {
 
 aoc_get_response <- function(day, 
                              session_cookie = rstudioapi::askForSecret("AoC Session Cookie"), 
-                             year = 2020) {
+                             year = 2021) {
   aoc_url <- aoc_build_url(day, year)
   cookie <- set_cookies(session = session_cookie)
   response <- GET(aoc_url, cookie)
@@ -74,6 +76,8 @@ aoc_get_response <- function(day,
 #   content(encoding = 'UTF-8') %>% 
 #   read_lines() %>% 
 #   as.numeric()
+
+"53616c7465645f5f65a1b4bf36026da16a91bf924b09b0c001b1f2462bfe0bdd1d99867c86738f077ee3114f99b3beb3"
 
 ```
 
@@ -3300,7 +3304,7 @@ Use the binary numbers in your diagnostic report to calculate the gamma rate and
 
 options(scipen = 999)
 
-d3_df <- read.table("data/aoc/d3.txt", header = FALSE) %>% 
+d3_df <- read.table(here("data", "aoc", "d3.txt"), header = FALSE) %>% 
   mutate(V1 = str_pad(V1, 12, pad = "0")) 
 
 d3_mat <- str_split(d3_df$V1, "") %>% 
@@ -3378,7 +3382,7 @@ co2_bi <- d3_mat %>%
 
 oxygen <- strtoi(paste0(ox_bi, collapse = ""), base = 2)
 
-co2 <- paste0(co_bi, collapse = "") %>% strtoi(base = 2)
+co2 <- paste0(co2_bi, collapse = "") %>% strtoi(base = 2)
 
 oxygen * co2
 ```
@@ -3544,7 +3548,7 @@ test %>%
 
 ## Puzzle #1
 
-```{r d5-data-p1, include = FALSE}
+```{r d5-data-p1, echo = TRUE}
 d5 <- import(here("data", "aoc", "d5.xlsx"))
 
 d5 %>% 
@@ -3563,7 +3567,7 @@ Answer #1:
 
 ## Puzzle #2
 
-```{r d5-p2, include = FALSE}
+```{r d5-p2, echo = TRUE}
 
 d5 %>% 
 #  filter(x1 == x2 | y1 == y2) %>% 
@@ -3583,7 +3587,7 @@ Answer #1:
 
 ## Puzzle #1
 
-```{r d6-p1, include = TRUE}
+```{r d6-p1, echo = TRUE}
 
 # browseURL("https://selbydavid.com/2021/12/01/advent-2021/")
 
@@ -3604,24 +3608,24 @@ fish_count(fish_0, days = 80)
 ```
 
 Answer #1:
-**`r fish_count(fish_0)` `r emo::ji("star")`
+**`r fish_count(fish_0)`** `r emo::ji("star")`
 
 ## Puzzle #2
 
-```{r d6-p2, include = TRUE}
+```{r d6-p2, echo = TRUE}
 options(scipen = 999)
 
 fish_count(fish_0, days = 256)
 ```
 
 Answer #2:
-**`r fish_count(fish_0, days = 256)` `r emo::ji("star")`
+**`r fish_count(fish_0, days = 256)`** `r emo::ji("star")`
 
 # Day 7: The Treachery of Whales
 
 ## Puzzle #1
 
-```{r d7-p1, options}
+```{r d7-p1, include = TRUE, echo = TRUE}
 d7 <- import(here("data", "aoc", "d7.xlsx"))
 
 mean_loc <- floor(mean(d7$position)) # tried floor() and ceiling()
@@ -3641,7 +3645,7 @@ Answer #1:
 
 ## Puzzle #2
 
-```{r d7-p2, include = TRUE}
+```{r d7-p2, include = TRUE, echo = TRUE}
 
 crabs <- crabs %>% 
   mutate(fuel_mean = abs(mean_loc - position),
@@ -3658,13 +3662,13 @@ Answer #2:
 
 ## Puzzle #1
 
-```{r d8-p1, options}
+```{r d8-p1, include = TRUE, echo = TRUE}
 d8 <- import(here("data", "aoc", "d8.xlsx")) %>% 
   mutate(entry = row_number(), .before = 1)
 
 sum_table <- d8 %>% 
   summarize(across(o1:o4, ~ nchar(.))) %>% 
-  pivot_longer(everything()) %>% view()
+  pivot_longer(everything()) %>% 
   count(value)
 
 sum(sum_table$n[c(1, 2, 3, 6)])
@@ -3673,7 +3677,7 @@ sum(sum_table$n[c(1, 2, 3, 6)])
 ```
 
 Answer #1:
-`r sum(sum_table$n[c(1, 2, 3, 6)])` `r emo::ji("star")`
+**`r sum(sum_table$n[c(1, 2, 3, 6)])`** `r emo::ji("star")`
 
 ## Puzzle #2
 
@@ -3701,10 +3705,56 @@ d8_b <- d8 %>%
                           TRUE ~ NA_real_))
 
 
-f
-
-
 
 
 # browseURL("https://pbs.twimg.com/media/FGGf6qNWQAMNOOc?format=jpg&name=large")
+```
+
+# Day 9: Smoke Basin
+
+## Puzzle #1
+
+```{r d9, echo = TRUE}
+input <- advent_input(9)
+
+
+x <- input %>% 
+  mutate(row = row_number()) %>% 
+  mutate(value = str_split(x, "")) %>% 
+  unnest(value) %>% 
+  mutate(value = as.numeric(value)) %>% 
+  group_by(row) %>% 
+  mutate(col = row_number()) %>% 
+  ungroup()
+
+
+adj <- tibble(xd = c(-1, 1, 0, 0),
+              yd = c(0, 0, -1, 1))
+
+adjacent <- function(d, d2) {
+  d %>% 
+    crossing(adj) %>% 
+    mutate(row2 = row + xd,
+           col2 = col + yd) %>% view()
+    inner_join(d2, by = c(row2 = "row", col2 = "col"), suffix = c("", "2")) %>% 
+    filter(row != row2 | col != col2)
+}
+
+x %>% adjacent(x)
+```
+
+
+```{r d9-rayshade, include = FALSE, eval = FALSE}
+d9_mat <- d9 %>% 
+  map(as.integer) %>% 
+  do.call(rbind, .)
+
+
+# d9_mat %>%
+#   rayshader::ray_shade(d9_mat) %>%
+#   rayshader::plot_3d(d9_mat)
+```
+
+```{r d9-p1, echo = TRUE}
+
 ```

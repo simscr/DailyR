@@ -109,7 +109,7 @@ It seems like the submarine can take a series of commands like forward
 
     location %>% flextable()
 
-Answer #1: **1.692075^{6}** ⭐
+Answer #1: **1692075** ⭐
 
 ## Puzzle 2
 
@@ -139,7 +139,7 @@ something entirely different than you first thought:
                 depth = sum(distance * aim * x),
                 product = depth * horizontal)
 
-Answer #2: **1.7495247^{9}** ⭐
+Answer #2: **1749524700** ⭐
 
 ## DR answer
 
@@ -176,3 +176,289 @@ Answer #2: **1.7495247^{9}** ⭐
     ##   horizontal  depth    product
     ##        <dbl>  <dbl>      <dbl>
     ## 1       1925 908844 1749524700
+
+# Day 3: Binary Diagnostic
+
+The submarine has been making some odd creaking noises, so you ask it to
+produce a diagnostic report just in case.
+
+The diagnostic report (your puzzle input) consists of a list of binary
+numbers which, when decoded properly, can tell you many useful things
+about the conditions of the submarine. The first parameter to check is
+the power consumption.
+
+## Puzzle 1
+
+You need to use the binary numbers in the diagnostic report to generate
+two new binary numbers (called the gamma rate and the epsilon rate). The
+power consumption can then be found by multiplying the gamma rate by the
+epsilon rate.
+
+Use the binary numbers in your diagnostic report to calculate the gamma
+rate and epsilon rate, then multiply them together. What is the power
+consumption of the submarine? (Be sure to represent your answer in
+decimal, not binary.)
+
+Answer #1: **4147524** ⭐
+
+## Puzzle 2
+
+    ox_bi <- d3_mat %>% 
+      as.data.frame() %>% 
+      filter(V1 == most_common[1]) %>% 
+      filter(V2 == round(mean(.$V2) + 1e-6)) %>% 
+      filter(V3 == round(mean(.$V3) + 1e-6)) %>% 
+      filter(V4 == round(mean(.$V4) + 1e-6)) %>% 
+      filter(V5 == round(mean(.$V5) + 1e-6)) %>% 
+      filter(V6 == round(mean(.$V6) + 1e-6)) %>% 
+      filter(V7 == round(mean(.$V7) + 1e-6)) %>% 
+      filter(V8 == round(mean(.$V8) + 1e-6)) %>% 
+      filter(V9 == round(mean(.$V9) + 1e-6)) %>% 
+      filter(V10 == round(mean(.$V10) + 1e-6)) %>% 
+      filter(V11 == round(mean(.$V11) + 1e-6)) %>% 
+      filter(V12 == 1)
+
+    co2_bi <- d3_mat %>% 
+      as.data.frame() %>% 
+      filter(V1 == least_common[1]) %>% 
+      filter(V2 != round(mean(.$V2) + 1e-6)) %>% 
+      filter(V3 != round(mean(.$V3) + 1e-6)) %>% 
+      filter(V4 != round(mean(.$V4) + 1e-6)) %>% 
+      filter(V5 != round(mean(.$V5) + 1e-6)) %>% 
+      filter(V6 != round(mean(.$V6) + 1e-6)) %>% 
+      filter(V7 != round(mean(.$V7) + 1e-6)) %>% 
+      filter(V8 != round(mean(.$V8) + 1e-6)) %>% 
+      filter(V9 != 1)
+
+    oxygen <- strtoi(paste0(ox_bi, collapse = ""), base = 2)
+
+    co2 <- paste0(co2_bi, collapse = "") %>% strtoi(base = 2)
+
+    oxygen * co2
+
+    ## [1] 3570354
+
+Answer #2: **3570354** ⭐
+
+## DR answer
+
+    to_decimal <- function(x) {
+      strtoi(paste0(x, collapse = ""), base = 2)
+    }
+
+    mat <- str_split(d3_df$V1, "") %>% 
+      map(as.integer) %>% 
+      do.call(rbind, .)
+
+    most_common <- round(colMeans(mat))
+
+    to_decimal(most_common) * to_decimal(1 - most_common)
+
+    ## [1] 4147524
+
+    filter_matrix <- function(m, index, most_common = TRUE) {
+      target <- round(mean(m[, index]) + 1e-6)  # to round up
+      
+      if (!most_common) {
+        target <- 1 - target
+      }
+      
+      ret <- m[m[, index] == target, ]
+      
+      # Extracting one row from a matrix makes it a vector
+      if (!is.matrix(ret)) {
+        done(ret)
+      } else {
+        ret
+      }
+    }
+
+    oxygen <- reduce(1:12, filter_matrix, .init = mat)
+
+    co2 <- reduce(1:12, filter_matrix, .init = mat, most_common = FALSE)
+
+    to_decimal(oxygen) * to_decimal(co2)
+
+    ## [1] 3570354
+
+# Day 4: Giant Squid
+
+I couldn’t figure this one out on my own so I used @drob’s answer
+
+    # browseURL("https://twitter.com/drob/status/1467157923512127488/photo/1")
+
+    d4_nos <- as.integer(d4_nos)
+
+    boards <- d4 %>% 
+      group_by(card_id) %>% 
+      mutate(row = row_number()) %>% 
+      separate_rows(cards, sep = " +", convert = TRUE) %>% 
+      group_by(card_id, row) %>% 
+      mutate(col = row_number()) %>% 
+      ungroup() %>% 
+      mutate(turn = match(cards, d4_nos))
+      
+
+    board_turn_win <- boards %>% 
+      gather(coordinate, cards, row, col) %>% 
+      group_by(card_id, coordinate, cards) %>% 
+      summarize(complete_on_turn = max(turn)) %>% 
+      group_by(card_id) %>% 
+      summarize(win_on_turn = min(complete_on_turn))
+
+    board_scores <- board_turn_win %>% 
+      inner_join(boards, by = "card_id") %>% 
+      group_by(card_id, win_on_turn) %>% 
+      summarize(total_undrawn = sum(cards[turn > win_on_turn]), 
+                .groups = "drop") %>% 
+      mutate(answer = d4_nos[win_on_turn] * total_undrawn)
+
+    board_scores %>% 
+      slice_min(win_on_turn)
+
+    ## # A tibble: 1 x 4
+    ##   card_id win_on_turn total_undrawn answer
+    ##     <int>       <int>         <int>  <int>
+    ## 1      41          21           829  14093
+
+Answer #1: **14093** ⭐
+
+## Puzzle #2
+
+    board_scores %>% 
+      slice_max(win_on_turn)
+
+    ## # A tibble: 1 x 4
+    ##   card_id win_on_turn total_undrawn answer
+    ##     <int>       <int>         <int>  <int>
+    ## 1      63          84           483  17388
+
+Answer #2: **17388** ⭐
+
+# Day 5: Hydrothermal Venture
+
+## Puzzle #1
+
+    d5 <- import(here("data", "aoc", "d5.xlsx"))
+
+    d5 %>% 
+      filter(x1 == x2 | y1 == y2) %>% 
+      mutate(x = map2(x1, x2, seq)) %>% 
+      mutate(y = map2(y1, y2, seq)) %>%
+      unnest(c(x,y)) %>% 
+      count(x, y) %>% 
+      summarize(sum(n > 1))
+
+    ## # A tibble: 1 x 1
+    ##   `sum(n > 1)`
+    ##          <int>
+    ## 1         4745
+
+Answer #1: **4745** ⭐
+
+## Puzzle #2
+
+    d5 %>% 
+    #  filter(x1 == x2 | y1 == y2) %>% 
+      mutate(x = map2(x1, x2, seq)) %>% 
+      mutate(y = map2(y1, y2, seq)) %>%
+      unnest(c(x,y)) %>% 
+      count(x, y) %>% 
+      summarize(sum(n > 1))
+
+    ## # A tibble: 1 x 1
+    ##   `sum(n > 1)`
+    ##          <int>
+    ## 1        18442
+
+Answer #1: **18442** ⭐
+
+# Day 6: Lanternfish
+
+## Puzzle #1
+
+    # browseURL("https://selbydavid.com/2021/12/01/advent-2021/")
+
+    d6 <- import(here("data", "aoc", "d6.xlsx"))
+
+    fish_0 <- as.vector(d6$timer)
+
+    fish_count <- function(x, days = 80) {
+      fish <- as.double(table(factor(x, levels = 0:8)))
+      
+      for (i in 1:days)
+        fish <-  c(fish[2:7], fish[8] + fish[1], fish[9], fish[1])
+      sum(fish)
+    }
+
+    fish_count(fish_0, days = 80)
+
+    ## [1] 374994
+
+Answer #1: **374994** ⭐
+
+## Puzzle #2
+
+    options(scipen = 999)
+
+    fish_count(fish_0, days = 256)
+
+    ## [1] 1686252324092
+
+Answer #2: **1686252324092** ⭐
+
+# Day 7: The Treachery of Whales
+
+## Puzzle #1
+
+    d7 <- import(here("data", "aoc", "d7.xlsx"))
+
+    mean_loc <- floor(mean(d7$position)) # tried floor() and ceiling()
+    median_loc <- round(median(d7$position))
+
+    crabs <- d7 %>% 
+      mutate(fuel_median = case_when(position < median_loc ~ median_loc - position,
+                              position >= median_loc ~ position - median_loc),
+             fuel_median_2 = abs(median_loc - position))  # shorter
+
+    sum(crabs$fuel_median)
+
+    ## [1] 349769
+
+Answer #1:
+
+**349769** ⭐
+
+## Puzzle #2
+
+    crabs <- crabs %>% 
+      mutate(fuel_mean = abs(mean_loc - position),
+             fuel_cost = fuel_mean / 2 * (1 + fuel_mean))
+
+    sum(crabs$fuel_cost)
+
+    ## [1] 99540554
+
+Answer #2:
+
+**99540554** ⭐
+
+# Day 8: Seven Segment Search
+
+## Puzzle #1
+
+    d8 <- import(here("data", "aoc", "d8.xlsx")) %>% 
+      mutate(entry = row_number(), .before = 1)
+
+    sum_table <- d8 %>% 
+      summarize(across(o1:o4, ~ nchar(.))) %>% 
+      pivot_longer(everything()) %>% 
+      count(value)
+
+    sum(sum_table$n[c(1, 2, 3, 6)])
+
+    ## [1] 514
+
+Answer #1: **514** ⭐
+
+## Puzzle #2
