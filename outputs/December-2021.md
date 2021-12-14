@@ -462,3 +462,263 @@ Answer #2:
 Answer #1: **514** ⭐
 
 ## Puzzle #2
+
+# Day 9: Smoke Basin
+
+## Puzzle #1
+
+    input <- advent_input(9)
+
+
+    x <- input %>% 
+      mutate(row = row_number()) %>% 
+      mutate(value = str_split(x, "")) %>% 
+      unnest(value) %>% 
+      mutate(value = as.numeric(value)) %>% 
+      group_by(row) %>% 
+      mutate(col = row_number()) %>% 
+      ungroup()
+
+    adj <- tibble(xd = c(-1, 1, 0, 0),
+                  yd = c(0, 0, -1, 1))
+
+    adjacent <- function(d, d2) {
+      d %>% 
+        crossing(adj) %>% 
+        mutate(row2 = row + xd,
+               col2 = col + yd) %>% 
+        inner_join(d2, by = c(row2 = "row", col2 = "col"), suffix = c("", "2")) %>% 
+        filter(row != row2 | col != col2)
+    }
+
+    low_points <- x %>% 
+      adjacent(x) %>% 
+      group_by(row, col) %>% 
+      summarize(low = all(value < value2)) %>% 
+      filter(low) %>% 
+      inner_join(x, by = c("row", "col")) %>% 
+      ungroup()
+
+    low_points %>% 
+      summarize(sum(1 + value))
+
+    ## # A tibble: 1 x 1
+    ##   `sum(1 + value)`
+    ##              <dbl>
+    ## 1              494
+
+Answer #1: **494** ⭐
+
+## Puzzle #2
+
+    frontier <- low_points %>% 
+      mutate(basin = paste(row, col)) %>% 
+      select(basin, row, col, value)
+
+    basins <- frontier
+
+    while (nrow(frontier) > 0) {
+      frontier <- frontier %>% 
+        adjacent(x) %>% 
+        filter(value2 > value, value2 < 9) %>% 
+        select(basin, row = row2, col = col2, value = value2) %>% 
+        distinct(basin, row, col, .keep_all = TRUE) %>% 
+        anti_join(basins, by = c("row", "col"))
+      
+      basins <- bind_rows(basins, frontier)
+    }
+
+    basins %>% 
+      count(basin, sort = TRUE) %>% 
+      head(3) %>% 
+      summarize(prod(n))
+
+    ## # A tibble: 1 x 1
+    ##   `prod(n)`
+    ##       <dbl>
+    ## 1   1048128
+
+Answer #2: **1048128** ⭐
+
+# Day 10: Syntax Scoring
+
+## Puzzle #1
+
+    # browseURL("https://pbs.twimg.com/media/FGRdRyWXIAUx3vw?format=jpg&name=large")
+
+    input <- advent_input(10)
+
+    d10 <- read_lines(here("data", "aoc", "d10.txt"))
+
+    corruption_values <- c(")" = 3, "]" = 57, "}" = 1197, ">" = 25137)
+
+    opening <- c("(", "[", "{", "<")
+    closing <- c(")", "]", "}", ">")
+
+    opening_matches <- opening
+    names(opening_matches) <- closing
+
+    is_match <- function(x, current) {
+      if (length(x) == 0) return(FALSE)
+      current %in% closing && tail(x, 1) == opening_matches[current]
+    }
+
+    is_corrupt <- function(x, current) {
+      if (length(x) == 0) return(FALSE)
+      current %in% closing && opening_matches[current] != tail(x, 1)
+    }
+
+    test <- input %>% slice(54)
+
+    nchar(test)
+
+    ##  x 
+    ## 94
+
+    corruption_value <- function(line) {
+      chars <- line %>% str_split("") %>% .[[1]]
+      
+      x <- c()
+      next_char_idx <- 1
+      
+      while (next_char_idx <= length(chars) && !is_corrupt(x, chars[next_char_idx])) {
+        if (is_match(x, chars[next_char_idx])) {
+          x <- head(x, length(x) - 1)
+        } else {
+          x <- c(x, chars[next_char_idx])
+        }
+        
+        next_char_idx <- next_char_idx + 1
+      }
+      
+      if (!next_char_idx > length(chars)) {
+        value <- corruption_values[chars[next_char_idx]]
+      } else {
+        value <- 0
+      }
+      
+      return(value)
+    }
+
+Answer #1: **341823** ⭐
+
+## Puzzle #2
+
+    completion_values <- c("(" = 1, "[" = 2, "{" = 3, "<" = 4)
+
+    incomplete_lines <- keep(d10, .p = ~{corruption_value(.x) == 0})
+
+    completion_value <- function(line) {
+      chars <- line %>% str_split("") %>% .[[1]]
+      
+      x <- c()
+      next_char_idx <- 1
+      
+      while (next_char_idx <= length(chars)) {
+        if (is_match(x, chars[next_char_idx])) {
+          x <- head(x, length(x) - 1)
+        } else {
+          x <- c(x, chars[next_char_idx])
+        }
+        
+        next_char_idx <- next_char_idx + 1
+      }
+      
+      reduce(rev(x), function(prev, current) {
+        return(prev * 5 + completion_values[current])
+      }, .init = 0)
+    }
+
+Answer #2: **2801302861** ⭐
+
+# Day 11: Dumbo Octopus
+
+## Puzzle #1
+
+    input <- advent_input(11)
+
+    x <- input %>% grid_tidy(x)
+
+    # directions <- tribble(
+    #   ~direction, ~dx, ~dy,
+    #   "r", 1, 0,
+    #   "l", -1, 0,
+    #   "b", 0, 1,
+    #   "t", 0, -1,
+    #   "br", 1, 1,
+    #   "bl", -1, 1,
+    #   "tl", -1, -1,
+    #   "tr", 1, -1,
+    # )
+    # 
+    # ggplot(x, aes(col, y = 10 - row, fill = value == 0)) +
+    #   geom_tile() +
+    #   geom_label(aes(label = value))
+
+    part1 <- 0
+
+    adjacent_join <- function(x, y = x, diagonal = FALSE, suffix = c("", "2")) {
+      adj <- tibble(row_delta = c(-1, 1, 0, 0),
+                    col_delta = c(0, 0, -1, 1))
+
+      if (diagonal) {
+        adj <- bind_rows(adj,
+                         tibble(row_delta = c(-1, -1, 1, 1),
+                                col_delta = c(-1, 1, -1, 1)))
+      }
+
+      x %>%
+        tidyr::crossing(adj) %>%
+        mutate(row2 = row + row_delta,
+               col2 = col + col_delta) %>%
+        inner_join(y, by = c(row2 = "row", col2 = "col"), suffix = suffix) %>%
+        filter(row != row2 | col != col2) %>%
+        select(-row_delta, -col_delta)
+    }
+
+    # x <- tibble::tribble(
+    #                  ~x,
+    #           5483143223,
+    #           2745854711,
+    #           5264556173,
+    #           6141336146,
+    #           6357385478,
+    #           4167524645,
+    #           2176841721,
+    #           6882881134,
+    #           4846848554,
+    #           5283751526
+    #           ) %>% grid_tidy(x)
+
+
+
+    for (i in 1:100) {
+      x <- x %>% 
+        mutate(value = value + 1,
+               flash = value > 9,
+               has_flashed = flash)
+      
+      while (any(x$flash)) {
+        part1 <- part1 + sum(x$flash)
+        x <- x %>% 
+          adjacent_join(diagonal = TRUE) %>% 
+          group_by(row, col, value, flash, has_flashed) %>% 
+          summarize(value = first(value) + sum(flash2),
+                    .groups = "drop") %>% 
+          mutate(flash = value > 9 & !has_flashed) %>% 
+          mutate(has_flashed = flash | has_flashed)
+        
+        #Part 2
+        if (all(x$has_flashed | x$flash)) {
+          stop(paste0("All have flashed as of step ", i))
+        }
+      }
+      x <- x %>% 
+        mutate(value = ifelse(has_flashed, 0, value))
+    }
+
+Answer #1: **1652** ⭐
+
+## Puzzle #2
+
+Answer #2: **220** ⭐
