@@ -639,22 +639,6 @@ Answer #2: **2801302861** ⭐
 
     x <- input %>% grid_tidy(x)
 
-    # directions <- tribble(
-    #   ~direction, ~dx, ~dy,
-    #   "r", 1, 0,
-    #   "l", -1, 0,
-    #   "b", 0, 1,
-    #   "t", 0, -1,
-    #   "br", 1, 1,
-    #   "bl", -1, 1,
-    #   "tl", -1, -1,
-    #   "tr", 1, -1,
-    # )
-    # 
-    # ggplot(x, aes(col, y = 10 - row, fill = value == 0)) +
-    #   geom_tile() +
-    #   geom_label(aes(label = value))
-
     part1 <- 0
 
     adjacent_join <- function(x, y = x, diagonal = FALSE, suffix = c("", "2")) {
@@ -692,7 +676,7 @@ Answer #2: **2801302861** ⭐
 
 
 
-    for (i in 1:100) {
+    for (i in 1:100) {  # change 10 i in 1:1000 get answer for Puzzle #2
       x <- x %>% 
         mutate(value = value + 1,
                flash = value > 9,
@@ -722,3 +706,148 @@ Answer #1: **1652** ⭐
 ## Puzzle #2
 
 Answer #2: **220** ⭐
+
+# Day 12: Passage Pathing
+
+    p_load(tidygraph, ggraph)
+
+    input <- advent_input(12)
+
+    once <- c("start", "end", "ko", "kw", "lj", "qm", "vn", "xy", "kh")
+    multi <- c("DD", "KG", "MV", "VH")
+
+    x <- input %>% 
+      separate(x, into = c("from", "to"), sep = "-") %>% 
+      mutate(dist = 1)
+
+
+    graph_routes <- as_tbl_graph(x)
+
+    graph_routes %>% 
+      ggraph(layout = "kk") + 
+      geom_edge_link() +
+      geom_node_label(aes(label = name, 
+                          fill = ifelse(name %in% once, "blue", "orange")), 
+                      size = 4, show.legend = FALSE) + 
+      scale_fill_manual(values = c("#DEC000FF", "#677E8EFF"))
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/d12-p1-1.png" width="100%" />
+
+## Puzzle #1
+
+    connections <- x %>% 
+      select(from = to, to = from) %>% 
+      bind_rows(x %>% select(-dist)) %>% 
+      group_by(from) %>% 
+      summarize(connections = list(to)) %>% 
+      deframe()
+
+    bfs <- function(node, visited_small = NULL, part1 = FALSE) {
+      # Base case
+      if (node == "end") {
+        return(list(node))
+      }
+      # start can't be revisited
+      if (node == "start" && "start" %in% visited_small) {
+        return(NULL)
+      }
+      
+      if (str_to_upper(node) != node) {
+        visited_small <- c(visited_small, node)
+      }
+      
+      possible_next <- connections[[node]]
+      
+      # part 1 = no revisiting, part 2 = 1 revisit
+      if (part1 || any(duplicated(visited_small))) {
+        possible_next <- setdiff(possible_next, visited_small)
+      }
+      
+      map(possible_next, bfs, visited_small = visited_small, part = part1) %>% 
+        do.call(c, .) %>% 
+        map(~ c(node, .))
+    }
+
+Answer #1: **3292** ⭐
+
+## Puzzle #2
+
+Answer #1: **89592** ⭐
+
+# Day 13: Transparent Origami
+
+## Puzzle #1
+
+    input <- advent_input(13)
+
+    folds <- input %>% 
+      slice(985:996) %>% 
+      mutate(x = str_extract(x, '(x|y)=[0-9]*$')) %>% 
+      separate(x, c("direction", "fold"), "=") %>% 
+      mutate(fold = parse_number(fold))
+
+    points <- input %>% 
+      slice(1:983) %>% 
+      separate(x, c("x", "y"), convert = TRUE) %>% 
+      mutate(y = y * -1)
+
+    points %>% 
+      ggplot(aes(x, y)) + 
+      geom_point() + 
+      geom_vline(xintercept = folds$fold[1], color = "red") + 
+      coord_fixed()
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/d13-p1-1.png" width="100%" />
+
+    points2 <- points %>% 
+      mutate(f1_x = case_when(x > folds$fold[1] ~ folds$fold[1] - (x - folds$fold[1]),
+                            x < folds$fold[1] ~ as.numeric(x)))
+
+    points2 %>% 
+      ggplot(aes(f1_x, y)) + 
+      geom_point()
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/d13-p1-2.png" width="100%" />
+
+    part1 <- points2 %>% 
+      distinct(f1_x, y) %>% 
+      count()
+
+Answer #1: **810** ⭐
+
+## Puzzle #2
+
+    points2 <- points %>% 
+      mutate(x = case_when(x > folds$fold[1] ~ folds$fold[1] - (x - folds$fold[1]),
+                            x < folds$fold[1] ~ as.numeric(x)),
+             y = case_when(y < -folds$fold[2] ~ -folds$fold[2] + (-folds$fold[2] - y),
+                            y > -folds$fold[2] ~ y),
+             x = case_when(x > folds$fold[3] ~ folds$fold[3] - (x - folds$fold[3]),
+                            x < folds$fold[3] ~ x),
+             y = case_when(y < -folds$fold[4] ~ -folds$fold[4] + (-folds$fold[4] - y),
+                            y > -folds$fold[4] ~ y),
+             x = case_when(x > folds$fold[5] ~ folds$fold[5] - (x - folds$fold[5]),
+                            x < folds$fold[5] ~ x),
+             y = case_when(y < -folds$fold[6] ~ -folds$fold[6] + (-folds$fold[6] - y),
+                            y > -folds$fold[6] ~ y),
+             x = case_when(x > folds$fold[7] ~ folds$fold[7] - (x - folds$fold[7]),
+                            x < folds$fold[7] ~ x),
+             y = case_when(y < -folds$fold[8] ~ -folds$fold[8] + (-folds$fold[8] - y),
+                            y > -folds$fold[8] ~ y),
+             x = case_when(x > folds$fold[9] ~ folds$fold[9] - (x - folds$fold[9]),
+                            x < folds$fold[9] ~ x),
+             y = case_when(y < -folds$fold[10] ~ -folds$fold[10] + (-folds$fold[10] - y),
+                            y > -folds$fold[10] ~ y),
+             y = case_when(y < -folds$fold[11] ~ -folds$fold[11] + (-folds$fold[11] - y),
+                            y > -folds$fold[11] ~ y),
+             y = case_when(y < -folds$fold[12] ~ -folds$fold[12] + (-folds$fold[12] - y),
+                            y > -folds$fold[12] ~ y))
+
+
+    points2 %>% 
+      ggplot(aes(x, y)) + 
+      geom_tile()
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/d13-p2-1.png" width="100%" />
+
+Answer #2: **HLBUBGFR** ⭐

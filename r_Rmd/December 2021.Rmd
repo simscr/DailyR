@@ -4020,3 +4020,188 @@ for (i in 1:1000) {
 
 Answer #2:
 **220** `r emo::ji("star")`
+
+# Day 12: Passage Pathing
+
+```{r d12-p1, echo = TRUE}
+p_load(tidygraph, ggraph)
+
+input <- advent_input(12)
+
+once <- c("start", "end", "ko", "kw", "lj", "qm", "vn", "xy", "kh")
+multi <- c("DD", "KG", "MV", "VH")
+
+x <- input %>% 
+  separate(x, into = c("from", "to"), sep = "-") %>% 
+  mutate(dist = 1)
+
+
+graph_routes <- as_tbl_graph(x)
+
+graph_routes %>% 
+  ggraph(layout = "kk") + 
+  geom_edge_link() +
+  geom_node_label(aes(label = name, 
+                      fill = ifelse(name %in% once, "blue", "orange")), 
+                  size = 4, show.legend = FALSE) + 
+  scale_fill_manual(values = c("#DEC000FF", "#677E8EFF"))
+
+```
+
+## Puzzle #1
+
+```{r d12-p1-2, echo = TRUE}
+connections <- x %>% 
+  select(from = to, to = from) %>% 
+  bind_rows(x %>% select(-dist)) %>% 
+  group_by(from) %>% 
+  summarize(connections = list(to)) %>% 
+  deframe()
+
+bfs <- function(node, visited_small = NULL, part1 = FALSE) {
+  # Base case
+  if (node == "end") {
+    return(list(node))
+  }
+  # start can't be revisited
+  if (node == "start" && "start" %in% visited_small) {
+    return(NULL)
+  }
+  
+  if (str_to_upper(node) != node) {
+    visited_small <- c(visited_small, node)
+  }
+  
+  possible_next <- connections[[node]]
+  
+  # part 1 = no revisiting, part 2 = 1 revisit
+  if (part1 || any(duplicated(visited_small))) {
+    possible_next <- setdiff(possible_next, visited_small)
+  }
+  
+  map(possible_next, bfs, visited_small = visited_small, part = part1) %>% 
+    do.call(c, .) %>% 
+    map(~ c(node, .))
+}
+
+
+
+
+```
+
+Answer #1:
+**`r length(bfs("start", part1 = TRUE))`** `r emo::ji("star")`
+
+## Puzzle #2
+
+Answer #1:
+**`r length(bfs("start"))`** `r emo::ji("star")`
+
+# Day 13: Transparent Origami
+
+## Puzzle #1
+
+```{r d13-p1, echo = TRUE}
+input <- advent_input(13)
+
+folds <- input %>% 
+  slice(985:996) %>% 
+  mutate(x = str_extract(x, '(x|y)=[0-9]*$')) %>% 
+  separate(x, c("direction", "fold"), "=") %>% 
+  mutate(fold = parse_number(fold))
+
+points <- input %>% 
+  slice(1:983) %>% 
+  separate(x, c("x", "y"), convert = TRUE) %>% 
+  mutate(y = y * -1)
+
+points %>% 
+  ggplot(aes(x, y)) + 
+  geom_point() + 
+  geom_vline(xintercept = folds$fold[1], color = "red") + 
+  coord_fixed()
+
+points2 <- points %>% 
+  mutate(f1_x = case_when(x > folds$fold[1] ~ folds$fold[1] - (x - folds$fold[1]),
+                        x < folds$fold[1] ~ as.numeric(x)))
+
+points2 %>% 
+  ggplot(aes(f1_x, y)) + 
+  geom_point()
+
+part1 <- points2 %>% 
+  distinct(f1_x, y) %>% 
+  count()
+
+```
+
+```{r d13-test, include = FALSE}
+test <- data.frame(
+                  x = c(6L,0L,9L,0L,10L,4L,6L,
+                         6L,4L,0L,10L,3L,3L,8L,1L,2L,8L,9L),
+                  y = c(10L,14L,10L,3L,4L,11L,
+                         0L,12L,1L,13L,12L,4L,0L,4L,10L,14L,10L,0L)
+        ) %>% 
+  mutate(x = as.numeric(x), 
+         y = as.numeric(y) * -1) %>% 
+  mutate(f1_y = case_when(y < -7 ~ -7 + (-7 - y),
+                          y > -7 ~ y))
+
+test %>% 
+  ggplot(aes(x, y)) + 
+  geom_point() + 
+  geom_hline(yintercept = -7)
+
+
+test %>% distinct(x,y) %>% count()
+
+test %>% 
+  ggplot(aes(x, f1_y)) + 
+  geom_point()
+
+test %>% distinct(x, f1_y) %>% count()
+```
+
+Answer #1:
+**`r part1`** `r emo::ji("star")`
+
+## Puzzle #2
+
+```{r d13-p2, echo = TRUE}
+
+points2 <- points %>% 
+  mutate(x = case_when(x > folds$fold[1] ~ folds$fold[1] - (x - folds$fold[1]),
+                        x < folds$fold[1] ~ as.numeric(x)),
+         y = case_when(y < -folds$fold[2] ~ -folds$fold[2] + (-folds$fold[2] - y),
+                        y > -folds$fold[2] ~ y),
+         x = case_when(x > folds$fold[3] ~ folds$fold[3] - (x - folds$fold[3]),
+                        x < folds$fold[3] ~ x),
+         y = case_when(y < -folds$fold[4] ~ -folds$fold[4] + (-folds$fold[4] - y),
+                        y > -folds$fold[4] ~ y),
+         x = case_when(x > folds$fold[5] ~ folds$fold[5] - (x - folds$fold[5]),
+                        x < folds$fold[5] ~ x),
+         y = case_when(y < -folds$fold[6] ~ -folds$fold[6] + (-folds$fold[6] - y),
+                        y > -folds$fold[6] ~ y),
+         x = case_when(x > folds$fold[7] ~ folds$fold[7] - (x - folds$fold[7]),
+                        x < folds$fold[7] ~ x),
+         y = case_when(y < -folds$fold[8] ~ -folds$fold[8] + (-folds$fold[8] - y),
+                        y > -folds$fold[8] ~ y),
+         x = case_when(x > folds$fold[9] ~ folds$fold[9] - (x - folds$fold[9]),
+                        x < folds$fold[9] ~ x),
+         y = case_when(y < -folds$fold[10] ~ -folds$fold[10] + (-folds$fold[10] - y),
+                        y > -folds$fold[10] ~ y),
+         y = case_when(y < -folds$fold[11] ~ -folds$fold[11] + (-folds$fold[11] - y),
+                        y > -folds$fold[11] ~ y),
+         y = case_when(y < -folds$fold[12] ~ -folds$fold[12] + (-folds$fold[12] - y),
+                        y > -folds$fold[12] ~ y))
+
+
+points2 %>% 
+  ggplot(aes(x, y)) + 
+  geom_tile()
+
+
+```
+
+Answer #2:
+**HLBUBGFR** `r emo::ji("star")`
