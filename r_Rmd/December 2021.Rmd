@@ -4205,3 +4205,73 @@ points2 %>%
 
 Answer #2:
 **HLBUBGFR** `r emo::ji("star")`
+
+# Day 14: Extended Polymerization
+
+## Puzzle #1
+
+```{r d14-p1, echo = TRUE}
+input <- advent_input(14)
+
+start <- input$x[1]
+
+rules <- input %>% 
+  slice(-c(1:2)) %>% 
+  separate(x, c("pair", "insert"), sep = " -> ") %>% 
+  mutate(pair1 = paste0(str_sub(pair, 1, 1), insert),
+         pair2 = paste0(insert, str_sub(pair, 2, 2)),
+         all = paste0(str_sub(pair, 1, 1), insert, str_sub(pair, 2, 2)))
+
+part1_all <- tibble(
+  pair = paste0(start, c(lead(start)))[-length(start)]
+) %>% 
+  left_join(rules) %>% 
+  pluck("pair1") %>% 
+  paste0(collapse = "")
+
+part1 <- paste0(part1_all$pair1, collapse = "")
+
+polymer <- start
+round <- 0
+
+
+poly_fun <- function(polymer) {
+  polymer <- start %>% 
+    strsplit("") %>% 
+    .[[1]]
+  
+  polymer <-  tibble(
+    pair = paste0(polymer, c(lead(polymer)))[-length(polymer)]
+  ) %>% 
+    left_join(rules) %>% 
+    pluck("pair1") %>% 
+    paste0(c(., collapse = "")
+  
+  polymer
+}
+
+r1 <- poly_fun(start)
+r2 <- poly_fun(r1)
+r3 <- poly_fun(r2)
+r4 <- poly_fun(r3)
+r5 <- poly_fun(r4)
+r6 <- poly_fun(r5)
+r7 <- poly_fun(r6)
+r8 <- poly_fun(r7)
+r9 <- poly_fun(r8)
+r10 <- poly_fun(r9)
+
+
+# repeat {
+#   round = round + 1
+#   print(round)
+#   if (round == 10) {
+#     print("done")
+#   }
+# }
+
+
+# nchar(paste0(starting, c(lead(starting))))
+
+# browseURL("https://twitter.com/drob/status/1470837319544487947/photo/1")
+```
