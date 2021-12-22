@@ -4210,7 +4210,7 @@ Answer #2:
 
 ## Puzzle #1
 
-```{r d14-p1, echo = TRUE}
+```{r d14-p1, eval = FALSE}
 input <- advent_input(14)
 
 start <- input$x[1]
@@ -4236,7 +4236,7 @@ round <- 0
 
 
 poly_fun <- function(polymer) {
-  polymer <- start %>% 
+  polymer <- polymer %>% 
     strsplit("") %>% 
     .[[1]]
   
@@ -4245,7 +4245,7 @@ poly_fun <- function(polymer) {
   ) %>% 
     left_join(rules) %>% 
     pluck("pair1") %>% 
-    paste0(c(., collapse = "")
+    paste0(collapse = "")
   
   polymer
 }
@@ -4260,6 +4260,10 @@ r7 <- poly_fun(r6)
 r8 <- poly_fun(r7)
 r9 <- poly_fun(r8)
 r10 <- poly_fun(r9)
+r11 <- poly_fun(r10)
+
+
+r11 %>% strsplit("") %>% .[[1]] %>% as_tibble() %>% count(value) %>% arrange(n)
 
 
 # repeat {
@@ -4275,3 +4279,14 @@ r10 <- poly_fun(r9)
 
 # browseURL("https://twitter.com/drob/status/1470837319544487947/photo/1")
 ```
+
+Answer #1:
+**IDK** `r emo::ji("star")`
+
+
+# **Reflections on Advent of Code**
+
+These challenges were difficult. I learned some new things like `lead`, `lag`,
+`cumsum`, `scipen`, the utilty of user functions, and that trial-and-error only
+goes so far. I hope to be better at this next year. Overall, it was a good
+experience and it was interesting to see other people's solutions.

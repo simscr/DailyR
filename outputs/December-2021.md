@@ -851,3 +851,17 @@ Answer #1: **810** ⭐
 <img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/November/d13-p2-1.png" width="100%" />
 
 Answer #2: **HLBUBGFR** ⭐
+
+# Day 14: Extended Polymerization
+
+## Puzzle #1
+
+Answer #1: **IDK** ⭐
+
+# **Reflections on Advent of Code**
+
+These challenges were difficult. I learned some new things like `lead`,
+`lag`, `cumsum`, `scipen`, the utilty of user functions, and that
+trial-and-error only goes so far. I hope to be better at this next year.
+Overall, it was a good experience and it was interesting to see other
+people’s solutions.
