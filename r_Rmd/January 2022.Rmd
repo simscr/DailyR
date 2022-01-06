@@ -2,7 +2,6 @@
 title: "January 2022"
 subtitle: "learning xaringan"
 author: "CS"
-date: "2022-01-04 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -69,6 +68,18 @@ mtcars %>%
 
 ---
 
+# Day 3
+
+Plot Something Different and Highlight Added Code
+
+```{r include = TRUE, tidy = TRUE, out.width = '300px', fig.align = 'center'}
+mtcars %>% 
+  ggplot(aes(mpg, hp, fill = as.factor(cyl))) + 
+  geom_point(size = 6, shape = 21) + 
+  geom_smooth(method = "lm", se = FALSE, color = "black") #<<
+```
+
+---
 You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
 
 - Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
