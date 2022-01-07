@@ -16,7 +16,7 @@ background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 
-pacman::p_load(janitor, rio, here, tidyverse, pacman)
+pacman::p_load(janitor, rio, here, tidyverse, pacman, broom)
 
 theme_set(theme_bw(base_size = 15)
           + theme(legend.position = "bottom", legend.direction = "horizontal"))
@@ -80,6 +80,21 @@ mtcars %>%
 ```
 
 ---
+
+# Day 4
+
+Model Summary
+
+```{r model-summary, include = TRUE, comment = '#'}
+fit <- lm(dist ~ speed, data = cars)
+tidy(fit)
+
+```
+
+---
+
+
+
 You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
 
 - Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
