@@ -56,9 +56,9 @@ class: inverse, left, top
 
 ---
 
-# Day 2
+# Day 2 Plot Something!!
 
-Plot Something!!
+
 
 ```{r include = TRUE, tidy = TRUE, out.width = '400px', fig.align = 'center'}
 mtcars %>% 
@@ -68,9 +68,8 @@ mtcars %>%
 
 ---
 
-# Day 3
+# Day 3 Plot Something Different and Highlight Added Code
 
-Plot Something Different and Highlight Added Code
 
 ```{r include = TRUE, tidy = TRUE, out.width = '300px', fig.align = 'center'}
 mtcars %>% 
@@ -81,9 +80,8 @@ mtcars %>%
 
 ---
 
-# Day 4
+# Day 4 Model Summary
 
-Model Summary
 
 ```{r model-summary, include = TRUE, comment = '#'}
 fit <- lm(dist ~ speed, data = cars)
@@ -93,7 +91,20 @@ tidy(fit)
 
 ---
 
+# Day 5 Cleaner Model Summaries
 
+```{r model-summary-2, include = TRUE, comment = '#'}
+p_load(knitr, gt, flextable)
+
+kable(tidy(fit))
+
+gt(tidy(fit))
+
+flextable(tidy(fit))
+
+```
+
+---
 
 You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
 
