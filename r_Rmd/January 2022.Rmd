@@ -22,6 +22,8 @@ theme_set(theme_bw(base_size = 15)
           + theme(legend.position = "bottom", legend.direction = "horizontal"))
 ```
 
+
+
 ???
 
 Image credit: [Wikimedia Commons](https://en.wikipedia.org/wiki/User:Schyler)
@@ -109,7 +111,7 @@ flextable(tidy(fit))
 # Day 6: Tidy Tuesday
 
 ```{r tt-2-setup, include = FALSE}
-p_load(tidytuesdayR)
+p_load(tidytuesdayR, ggtext)
 
 tt_raw <- tt_load("2022-01-11")
 
@@ -119,27 +121,38 @@ bees <- tt_raw$colony
 
 ```
 
-.pull-left[
+.left-column[
 ```{r tt-data, include = TRUE, warning = FALSE, message = FALSE}
 
 ar_bees <- bees %>% 
   mutate(year = as.numeric(year)) %>% 
   group_by(year, state) %>% 
-  summarize(lost_pct_mean = mean(colony_lost_pct, na.rm = TRUE), 
-            reno_pct_mean = mean(colony_reno_pct, na.rm = TRUE)) %>% 
+  summarize(lost_pct_mean = mean(colony_lost_pct, na.rm = TRUE)/100, 
+            reno_pct_mean = mean(colony_reno_pct, na.rm = TRUE)/100) %>% 
   filter(state == "Arkansas", !is.na(year))
 
 ```
 ]
 
-.pull-right[
+.right-column[
 ```{r tt-plot, include = TRUE, echo = FALSE, warning = FALSE}
 ar_bees %>% 
   ggplot() + 
-  geom_point(aes(year, lost_pct_mean)) + 
-  geom_point(aes(year, reno_pct_mean)) + 
   geom_segment(aes(x = year, xend = year, yend = reno_pct_mean, y = lost_pct_mean)) + 
-  coord_flip()
+  geom_point(aes(year, lost_pct_mean), fill = "#D50032FF", color = "black", shape = 21, size = 3) + 
+  geom_point(aes(year, reno_pct_mean), fill = "#418FDEFF", color = "black", shape = 21, size = 3) + 
+  coord_flip() + 
+  scale_x_continuous(labels = c(2015:2021), breaks = c(2015:2021), name = NULL) + 
+  scale_y_continuous(labels = scales::percent_format()) + 
+  labs(title = "Percentage of Arkansas Bee Colonies 
+       <span style='color:#D50032FF;'>Lost</span> and
+       <span style='color:#418FDEFF;'>Renovated</span> Each Year.") +
+  theme(
+    plot.title = element_markdown(lineheight = 1.1),
+    legend.text = element_markdown(size = 11),
+    plot.title.position = "plot"
+  )
+  
 ```
 ]
 ---
