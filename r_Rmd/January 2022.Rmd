@@ -36,7 +36,7 @@ My primary goal is to learn how to produce presentations using [**xaringan**](ht
 ---
 class: inverse, left, top
 
-# Day 0 and Day 1
+# Day 0 and Day 1: Setup
 
 --
 
@@ -56,7 +56,7 @@ class: inverse, left, top
 
 ---
 
-# Day 2 Plot Something!!
+# Day 2: Plot Something!!
 
 
 
@@ -68,7 +68,7 @@ mtcars %>%
 
 ---
 
-# Day 3 Plot Something Different and Highlight Added Code
+# Day 3: Plot Something Different and Highlight Added Code
 
 
 ```{r include = TRUE, tidy = TRUE, out.width = '300px', fig.align = 'center'}
@@ -80,7 +80,7 @@ mtcars %>%
 
 ---
 
-# Day 4 Model Summary
+# Day 4: Model Summary
 
 
 ```{r model-summary, include = TRUE, comment = '#'}
@@ -91,7 +91,7 @@ tidy(fit)
 
 ---
 
-# Day 5 Cleaner Model Summaries
+# Day 5: Cleaner Model Summaries
 
 ```{r model-summary-2, include = TRUE, comment = '#'}
 p_load(knitr, gt, flextable)
@@ -106,69 +106,44 @@ flextable(tidy(fit))
 
 ---
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
+# Day 6: Tidy Tuesday
 
-- Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
+```{r tt-2-setup, include = FALSE}
+p_load(tidytuesdayR)
 
---
+tt_raw <- tt_load("2022-01-11")
 
-- Click the `Knit` button to compile it;
+readme(tt_raw)
 
---
+bees <- tt_raw$colony
 
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)<sup>2</sup> "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
+```
 
-.footnote[
-[1] 中文用户请看[这份教程](https://slides.yihui.org/xaringan/zh-CN.html)
+.pull-left[
+```{r tt-data, include = TRUE, warning = FALSE, message = FALSE}
 
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
+ar_bees <- bees %>% 
+  mutate(year = as.numeric(year)) %>% 
+  group_by(year, state) %>% 
+  summarize(lost_pct_mean = mean(colony_lost_pct, na.rm = TRUE), 
+            reno_pct_mean = mean(colony_reno_pct, na.rm = TRUE)) %>% 
+  filter(state == "Arkansas", !is.na(year))
+
+```
 ]
 
----
-background-image: url(`r xaringan:::karl`)
-background-position: 50% 50%
-class: center, bottom, inverse
-
-# You only live once!
-
----
-
-# Hello Ninja
-
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
-
-1. The [remark.js](https://remarkjs.com) library;
-
-1. The **xaringan** package;
-
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
-
+.pull-right[
+```{r tt-plot, include = TRUE, echo = FALSE, warning = FALSE}
+ar_bees %>% 
+  ggplot() + 
+  geom_point(aes(year, lost_pct_mean)) + 
+  geom_point(aes(year, reno_pct_mean)) + 
+  geom_segment(aes(x = year, xend = year, yend = reno_pct_mean, y = lost_pct_mean)) + 
+  coord_flip()
+```
+]
 ---
 
-# remark.js
-
-You can see an introduction of remark.js from [its homepage](https://remarkjs.com). You should read the [remark.js Wiki](https://github.com/gnab/remark/wiki) at least once to know how to
-
-- create a new slide (Markdown syntax<sup>*</sup> and slide properties);
-
-- format a slide (e.g. text alignment);
-
-- configure the slideshow;
-
-- and use the presentation (keyboard shortcuts).
-
-It is important to be familiar with remark.js before you can understand the options in **xaringan**.
-
-.footnote[[*] It is different with Pandoc's Markdown! It is limited but should be enough for presentation purposes. Come on... You do not need a slide for the Table of Contents! Well, the Markdown support in remark.js [may be improved](https://github.com/gnab/remark/issues/142) in the future.]
-
----
-background-image: url(`r xaringan:::karl`)
-background-size: cover
-class: center, bottom, inverse
-
-# I was so happy to have discovered remark.js!
-
----
 class: inverse, middle, center
 
 # Using xaringan
