@@ -184,7 +184,51 @@ DT::datatable(
 
 ```
 
+---
 
+# Day 8: Adding **xaringanExtra** and **xaringanthemer**
+
+.pull-left[
+[**xaringanExtra**](https://pkg.garrickadenbuie.com/xaringanExtra/#/) adds more capabilities such as:
+
+-- Tile View (Press `o`)
+
+-- Scribbling (Press `s`)
+
+-- Panelset
+
+-- Progress Bars
+
+-- And More!
+]
+
+.pull-right[
+[**xaringanthemer**](https://pkg.garrickadenbuie.com/xaringanthemer/) adds more theme options such as:
+
+-- Custom Theme Colors
+
+-- An R Markdown Template
+
+-- New Themes
+
+-- Custom Fonts
+
+-- And More!
+]
+
+```{r xE-setup, include = FALSE}
+xaringanExtra::use_tile_view()
+xaringanExtra::use_scribble()
+xaringanExtra::use_progress_bar(color = "#0051BA", location = "top")
+```
+
+---
+
+# Day 9: Trying Panelset from **xaringanExtra**
+
+---
+
+# Day 10: Trying a custom theme from **xaringanthemer**
 
 ---
 
