@@ -248,7 +248,42 @@ sw_1
 
 ---
 
-# Day 10: Trying a custom theme from **xaringanthemer**
+# Day 10: Tidy Tuesday - Chocolate Ratings
+
+```{r tt-coc, include = FALSE}
+p_load(tidytuesdayR, gt)
+
+tt_raw <- tt_load("2022-01-18")
+
+choc <- tt_raw$chocolate %>% 
+  mutate(cocoa_percent = parse_number(cocoa_percent))
+
+str(choc)
+range(choc$cocoa_percent)
+
+t10 <- choc %>% 
+  group_by(country_of_bean_origin) %>% 
+  summarize(score = mean(rating, na.rm = TRUE)) %>% 
+  arrange(-score) %>% 
+  head(10) %>% 
+  pluck("country_of_bean_origin")
+
+```
+
+```{r choc-gt, include = TRUE}
+
+choc %>% 
+  filter(country_of_bean_origin %in% t10) %>% 
+  group_by(country_of_bean_origin) %>% 
+  summarize(number = n(), across(c(review_date, cocoa_percent, rating), c(mean = mean, min = min, max = max))) %>% 
+  select(-review_date_mean) %>% 
+  arrange(-number) %>% 
+  gt()
+```
+
+---
+
+# Day 11: Trying a custom theme from **xaringanthemer**
 
 ---
 
