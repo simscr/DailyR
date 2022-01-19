@@ -275,10 +275,14 @@ t10 <- choc %>%
 choc %>% 
   filter(country_of_bean_origin %in% t10) %>% 
   group_by(country_of_bean_origin) %>% 
-  summarize(number = n(), across(c(review_date, cocoa_percent, rating), c(mean = mean, min = min, max = max))) %>% 
-  select(-review_date_mean) %>% 
-  arrange(-number) %>% 
-  gt()
+  summarize(number = n(),
+            cp_mean = mean(cocoa_percent, na.rm = TRUE), cp_data = list(cocoa_percent), 
+            rating_mean = mean(rating, na.rm = TRUE), rating_data = list(rating),
+            # date_data = list(review_date),
+            .groups = "drop") %>% 
+  gt() %>% 
+  gtExtras::gt_sparkline(cp_data, "density") %>% 
+  gtExtras::gt_sparkline(rating_data, label = F)
 ```
 
 ---
