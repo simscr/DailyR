@@ -9,6 +9,7 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+    css: xaringan-themer.css
 ---
 
 background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/A_worn-out_baseball.JPG/1280px-A_worn-out_baseball.JPG)
@@ -33,7 +34,12 @@ theme_set(theme_bw(base_size = 15)
           + theme(legend.position = "bottom", legend.direction = "horizontal"))
 ```
 
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
 
+style_mono_light(base_color = "#003DA5")
+
+```
 
 ???
 
@@ -288,6 +294,16 @@ choc %>%
 ---
 
 # Day 11: Trying a custom theme from **xaringanthemer**
+
+I added a chunk after the setup chunk to add custom theme. You also have to add
+a bit to the YAML:
+
+```{r yaml-test, eval = FALSE, echo = TRUE}
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+```
+
 
 ---
 
