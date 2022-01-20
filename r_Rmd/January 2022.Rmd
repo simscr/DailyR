@@ -225,7 +225,7 @@ DT::datatable(
 ```{r xE-setup, include = TRUE, echo = FALSE}
 xaringanExtra::use_tile_view()
 xaringanExtra::use_scribble()
-xaringanExtra::use_progress_bar(color = "#0051BA", location = "top")
+xaringanExtra::use_progress_bar(color = "#F8F8F8", location = "top")
 xaringanExtra::use_panelset()
 ```
 
@@ -298,7 +298,7 @@ choc %>%
 I added a chunk after the setup chunk to add custom theme. You also have to add
 a bit to the YAML:
 
-```{r yaml-test, eval = FALSE, echo = TRUE}
+```{r yaml-xaringanthemer, eval = FALSE, echo = TRUE}
 output:
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -307,6 +307,15 @@ output:
 
 ---
 
+# Day 12: Highlighting Chunk Output Lines
+
+```{r highlight-example, include = TRUE, highlight.output = c(2, 4), echo = TRUE}
+mtcars %>% 
+  group_by(cyl) %>% 
+  summarize(across(mpg, mean))
+```
+
+---
 # This is a test
 
 ```{r r-test, include = TRUE, echo = TRUE}
@@ -359,117 +368,6 @@ penguins %>%
 
     Then you will see a timer counting down from `01:00`, to `00:59`, `00:58`, ... When the time is out, the timer will continue but the time turns red.
     
----
-
-# Some Tips
-
-- The title slide is created automatically by **xaringan**, but it is just another remark.js slide added before your other slides.
-
-    The title slide is set to `class: center, middle, inverse, title-slide` by default. You can change the classes applied to the title slide with the `titleSlideClass` option of `nature` (`title-slide` is always applied).
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          titleSlideClass: [top, left, inverse]
-    ```
-    
---
-
-- If you'd like to create your own title slide, disable **xaringan**'s title slide with the `seal = FALSE` option of `moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        seal: false
-    ```
-
----
-
-# Some Tips
-
-- There are several ways to build incremental slides. See [this presentation](https://slides.yihui.org/xaringan/incremental.html) for examples.
-
-- The option `highlightLines: true` of `nature` will highlight code lines that start with `*`, or are wrapped in `{{ }}`, or have trailing comments `#<<`;
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          highlightLines: true
-    ```
-
-    See examples on the next page.
-
----
-
-# Some Tips
-
-
-.pull-left[
-An example using a leading `*`:
-
-    ```r
-    if (TRUE) {
-    ** message("Very important!")
-    }
-    ```
-Output:
-```r
-if (TRUE) {
-* message("Very important!")
-}
-```
-
-This is invalid R code, so it is a plain fenced code block that is not executed.
-]
-
-.pull-right[
-An example using `{{}}`:
-
-````
-`r ''````{r tidy=FALSE}
-if (TRUE) {
-*{{ message("Very important!") }}
-}
-```
-````
-Output:
-```{r tidy=FALSE}
-if (TRUE) {
-{{ message("Very important!") }}
-}
-```
-
-It is valid R code so you can run it. Note that `{{}}` can wrap an R expression of multiple lines.
-]
-
----
-
-# Some Tips
-
-An example of using the trailing comment `#<<` to highlight lines:
-
-````markdown
-`r ''````{r tidy=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #<<
-  geom_smooth()    #<<
-```
-````
-
-Output:
-
-```{r tidy=FALSE, eval=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #<<
-  geom_smooth()    #<<
-```
-
 ---
 
 # Some Tips
