@@ -315,7 +315,34 @@ mtcars %>%
   summarize(across(mpg, mean))
 ```
 
+
 ---
+
+# Day 13: Adjusting Plot Size
+
+```{r resize-sw1-6, include = TRUE, fig.height = 6, out.width = NULL}
+sw_1
+```
+
+---
+
+# Day 13: Adjusting Plot Size
+
+```{r resize-sw1-5, include = TRUE, fig.height = 5, out.width = NULL}
+sw_1
+```
+
+---
+
+# Day 13: Adjusting Plot Size
+
+```{r resize-sw1-4, include = TRUE, fig.height = 4, out.width = NULL}
+sw_1
+```
+
+---
+
+
 # This is a test
 
 ```{r r-test, include = TRUE, echo = TRUE}
