@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 )
 
 
-pacman::p_load(janitor, rio, here, tidyverse, pacman, broom)
+pacman::p_load(janitor, rio, here, tidyverse, pacman, broom, gt)
 
 theme_set(theme_bw(base_size = 15)
           + theme(legend.position = "bottom", legend.direction = "horizontal"))
@@ -351,3 +351,43 @@ sw_1
 ???
 
 These are some notes describing the plot from Star Wars.
+
+---
+
+# Day 15: Tidy Tuesday Week 4
+
+```{r tt-week-4, eval = FALSE}
+pacman::p_load(tidytuesdayR)
+
+tt_raw <- tt_load("2022-01-25")
+readme(tt_raw)
+
+str(tt_raw$ratings)
+
+str(tt_raw$details)
+
+export(tt_raw$ratings, file = here("data", "tt-20220125-bg-ratings.xlsx"))
+export(tt_raw$details, file = here("data", "tt-20220125-bg-details.xlsx"))
+
+```
+
+```{r tt-data-import, include = FALSE}
+p_load(gtExtras)
+
+ratings <- import(here("data", "tt-20220125-bg-ratings.xlsx"))
+details <- import(here("data", "tt-20220125-bg-details.xlsx"))
+```
+
+```{r top-games, include = TRUE}
+ratings %>% 
+  arrange(rank) %>% 
+  head(10) %>% 
+  # mutate(name = glue::glue("[{name}]({url})"),
+  #        name = map(name, gt::md)) %>% 
+  select(thumbnail, name, year, rank, average) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  gt() %>% 
+  gt_img_rows(columns = Thumbnail) %>% 
+  cols_label(Thumbnail = " ") %>% 
+  gt_theme_538()
+```
