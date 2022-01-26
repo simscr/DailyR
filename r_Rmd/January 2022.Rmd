@@ -391,3 +391,30 @@ ratings %>%
   cols_label(Thumbnail = " ") %>% 
   gt_theme_538()
 ```
+
+---
+
+# Day 16: More Tidy Tuesday
+
+```{r d16-data, include = FALSE}
+ratings <- import(here("data", "tt-20220125-bg-ratings.xlsx"))
+details <- import(here("data", "tt-20220125-bg-details.xlsx"))
+
+owned <- c("Pandemic", "Carcassonne", "Catan", "Ticket to Ride: Europe", 
+           "Harry Potter: Hogwarts Battle", "Azul", "Splendor")
+```
+
+```{r games-we-own, include = TRUE}
+ratings %>% 
+  arrange(rank) %>% 
+  filter(name %in% owned) %>% 
+  # mutate(name = glue::glue("[{name}]({url})"),
+  #        name = map(name, gt::md)) %>% 
+  select(thumbnail, name, year, rank, average) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  gt() %>% 
+  gt_img_rows(columns = Thumbnail) %>% 
+  cols_label(Thumbnail = " ") %>% 
+  tab_header("Some Games We Own") %>% 
+  gt_theme_espn()
+```
