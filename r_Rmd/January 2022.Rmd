@@ -418,3 +418,70 @@ ratings %>%
   tab_header("Some Games We Own") %>% 
   gt_theme_espn()
 ```
+
+---
+
+# Day 17: More Tidy Tuesday
+
+```{r d17-data, include = FALSE}
+ratings <- import(here("data", "tt-20220125-bg-ratings.xlsx")) %>% 
+  select(-num)
+details <- import(here("data", "tt-20220125-bg-details.xlsx")) %>% 
+  select(-num) %>% 
+  rename(name = primary)
+
+combined <- left_join(ratings, details, by = c("id", "name"))
+
+skimr::skim(combined)
+```
+
+```{r 2p-coop-1, include = TRUE}
+combined %>% 
+  filter(minplayers < 3,
+         str_detect(boardgamemechanic, "oop|o-op")) %>% 
+  arrange(rank) %>% 
+  head(10) %>% 
+  select(thumbnail, name, year, rank, average) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  gt() %>% 
+  gtExtras::gt_img_rows(columns = Thumbnail) %>% 
+  cols_label(Thumbnail = " ") %>% 
+  tab_header("Some 2 Player Co-op Games") %>% 
+  gtExtras::gt_theme_nytimes()
+
+
+```
+
+---
+
+```{r 2p-coop-2, include = TRUE}
+combined %>% 
+  filter(minplayers < 3,
+         str_detect(boardgamemechanic, "oop|o-op")) %>% 
+  arrange(rank) %>% 
+  slice(c(11:20)) %>% 
+  select(thumbnail, name, year, rank, average) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  gt() %>% 
+  gtExtras::gt_img_rows(columns = Thumbnail) %>% 
+  cols_label(Thumbnail = " ") %>% 
+  tab_header("Some 2 Player Co-op Games") %>% 
+  gtExtras::gt_theme_nytimes()
+```
+
+---
+
+```{r 2p-coop-3, include = TRUE}
+combined %>% 
+  filter(minplayers < 3,
+         str_detect(boardgamemechanic, "oop|o-op")) %>% 
+  arrange(rank) %>% 
+  slice(c(21:30)) %>% 
+  select(thumbnail, name, year, rank, average) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  gt() %>% 
+  gtExtras::gt_img_rows(columns = Thumbnail) %>% 
+  cols_label(Thumbnail = " ") %>% 
+  tab_header("Some 2 Player Co-op Games") %>% 
+  gtExtras::gt_theme_nytimes()
+```
