@@ -485,3 +485,32 @@ combined %>%
   tab_header("Some 2 Player Co-op Games") %>% 
   gtExtras::gt_theme_nytimes()
 ```
+
+---
+
+# Day 18: Playing with [`gt`](https://gt.rstudio.com/index.html)
+
+```{r gt-test, include = TRUE}
+p_load(gt, gtExtras)
+
+pizzaplace %>% 
+  group_by(type, size) %>% 
+  summarize(across(price, mean)) %>% 
+  pivot_wider(names_from = size, values_from = price) %>% 
+  ungroup() %>% 
+  mutate(type = str_to_title(type)) %>% 
+  gt(rowname_col = "type") %>% 
+  fmt_currency(columns = everything()) %>% 
+  fmt_missing(columns = everything(), missing_text = "-") %>% 
+  tab_header(md("**Pizza Place** Sales in 2015"), 
+             subtitle = md("Pizzas are categorized by *type*")) %>% 
+  opt_align_table_header(align = "left") %>% 
+  cols_align(columns = everything(), align = "center") %>% 
+  cols_width(columns = everything() ~ px(80)) %>% 
+  cols_width(columns = "type" ~ px(100)) %>% 
+  tab_source_note(md("Data included in `gt` **R** package.")) %>% 
+  gt_theme_guardian()
+
+
+
+```
