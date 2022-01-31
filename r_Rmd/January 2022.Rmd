@@ -514,3 +514,14 @@ pizzaplace %>%
 
 
 ```
+
+---
+
+# Day 19: Finishing Touches and Useful Links
+
+- [xaringan](https://github.com/yihui/xaringan)
+- [xaringanExtra](https://pkg.garrickadenbuie.com/xaringanExtra/#/)
+- [xaringanthemer](https://pkg.garrickadenbuie.com/xaringanthemer/articles/xaringanthemer.html)
+- [DT](https://rstudio.github.io/DT/)
+- [gt](https://gt.rstudio.com/index.html)
+- [gtExtras](https://jthomasmock.github.io/gtExtras/)
