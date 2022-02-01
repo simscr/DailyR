@@ -1,0 +1,88 @@
+---
+title: "February 2022"
+description: |
+  DailyR practice file created using the Distill format.
+author:
+  - name: Clark Sims 
+date: "`r Sys.Date()`"
+output: distill::distill_article
+knit: crsp::knit_to_outputs_folder
+
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "February_2022", "/")
+)
+
+# knitr::opts_knit$set(
+# #  root.dir = here::here(),
+#   output.dir = here::here("html files")
+# )
+
+pacman::p_load(janitor, pacman, rio, skimr, here, conflicted,
+               tidyverse, crsp)
+
+conflict_prefer("clean_names", "janitor")
+conflict_prefer("filter", "dplyr")
+
+theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
+
+```
+
+# 20220201: Custom `ggplot` Theme
+
+Just for fun, I'm going to setup a custom plotting theme for ggplot. I may
+incorporate this into `crsp` if it seems useful.
+
+```{r crsp-theme, include = FALSE}
+
+hexes <- c("#E1CE7A", "#006E90", "#C7CEDB", "#D36135", "#020202", "#FFFFFF")
+
+theme_crsp <- function(..., base_size = 14) {
+  theme(
+    panel.grid.minor = element_blank()
+  )
+}
+
+mtcars %>% 
+  ggplot(aes(hp, mpg)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  theme_crsp()
+
+```
+
+
+# Ideas
+
+
+{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}
+
+<https://github.com/richardvogg/30DayMapChallenge21>
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
+
+<https://www.tjmahr.com/lists-knitr-secret-weapon/>
