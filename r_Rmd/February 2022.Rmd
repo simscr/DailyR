@@ -34,7 +34,55 @@ theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 
 ```
 
-# 20220201: Custom `ggplot` Theme
+# 20220201: #TidyTuesday and Dog Breeds
+
+```{r tt-import-feb-1, include = FALSE}
+p_load(tidytuesdayR)
+# 
+# tt_raw <- tt_load("2022-02-01")
+# 
+# breed_rank_all <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-01/breed_rank.csv')
+
+
+breeds <- import(here("data", "tt", "breed_rank.csv")) %>% 
+  pivot_longer(cols = 2:9, values_to = "rank") %>% 
+  separate(name, into = c("year", "trash"), sep = " ") %>% 
+  select(-trash) %>% 
+  clean_names()
+
+t10_breeds <- breeds %>% 
+  group_by(breed) %>% 
+  summarize(mean_ranking = mean(rank)) %>% 
+  arrange(mean_ranking) %>% 
+  head(10) %>% 
+  pluck("breed")
+```
+
+
+```{r tt-plot-feb-1, include = FALSE}
+breeds %>% 
+  filter(breed %in% t10_breeds) %>% 
+  ggplot(aes(year, rank, color = breed)) + 
+  geom_point(size = 4, shape = 18) +
+  geom_line(aes(group = breed), size = 2) + 
+  geom_label(aes(label = breed), 
+             data = breeds %>% filter(year == 2020, breed %in% t10_breeds), 
+             nudge_x = 0.1, hjust = 0) +
+  scale_y_reverse(breaks = c(2, 4, 6, 8, 10)) +
+  labs(x = NULL, y = "Ranking") + 
+  expand_limits(x = c(1, 11)) +
+  paletteer::scale_color_paletteer_d("RColorBrewer::Set3") + 
+  theme(legend.position = "none", 
+        panel.border = element_blank(),
+        panel.background = element_rect("white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = "black"),
+        panel.grid.minor.y = element_line(color = "black"))
+
+```
+
+
+# 20220202: Custom `ggplot` Theme
 
 Just for fun, I'm going to setup a custom plotting theme for ggplot. I may
 incorporate this into `crsp` if it seems useful.
@@ -42,6 +90,8 @@ incorporate this into `crsp` if it seems useful.
 ```{r crsp-theme, include = FALSE}
 
 hexes <- c("#E1CE7A", "#006E90", "#C7CEDB", "#D36135", "#020202", "#FFFFFF")
+
+scales::show_col(hexes)
 
 theme_crsp <- function(..., base_size = 14) {
   theme(
