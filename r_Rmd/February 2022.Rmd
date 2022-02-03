@@ -71,10 +71,10 @@ breeds %>%
   scale_y_reverse(breaks = c(2, 4, 6, 8, 10)) +
   labs(x = NULL, y = "Ranking") + 
   expand_limits(x = c(1, 11)) +
-  paletteer::scale_color_paletteer_d("RColorBrewer::Set3") + 
+  paletteer::scale_color_paletteer_d("RColorBrewer::Set3", direction = -1) + 
   theme(legend.position = "none", 
         panel.border = element_blank(),
-        panel.background = element_rect("white"),
+        panel.background = element_rect("#CCFFFF"),
         panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_line(color = "black"),
         panel.grid.minor.y = element_line(color = "black"))
@@ -82,7 +82,7 @@ breeds %>%
 ```
 
 
-# 20220202: Custom `ggplot` Theme
+# 20220202 - 20220203: Custom `ggplot` Theme
 
 Just for fun, I'm going to setup a custom plotting theme for ggplot. I may
 incorporate this into `crsp` if it seems useful.
@@ -95,14 +95,49 @@ scales::show_col(hexes)
 
 theme_crsp <- function(..., base_size = 14) {
   theme(
-    panel.grid.minor = element_blank()
-  )
+      # plotting components
+      
+      ## drop minor gridlines
+      panel.grid.minor = element_blank(),
+      # change grid lines to gray
+      panel.grid.major =  element_line(color = "#d0d0d0"),
+      # fill the plot and panel spaces with grey and remove border
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.border = element_rect(color = "#d0d0d0"),
+      # remove strip background
+      strip.background = element_blank(),
+      # adjust the margins of plots and remove axis ticks
+#      plot.margin = margin(0.5, 1, 0.5, 1, unit = "cm"),
+      axis.ticks = element_blank(),
+      # change text family, size, and adjust position of titles
+      text = element_text(family = "Chivo", size = base_size),
+      axis.text = element_text(face = "bold", color = "black", size = base_size),
+      axis.title = element_text(face = "bold", size = rel(1.33)),
+      # axis.title.x = element_text(margin = margin(0.5, 0, 0, 0, unit = "cm")),
+      # axis.title.y = element_text(margin = margin(0, 0.5, 0, 0, unit = "cm"), angle =90),
+      plot.title = element_text(face = "bold", size = rel(1.67), hjust = 0),
+      plot.title.position = "plot",
+      # plot.subtitle = element_text(size = 16, margin = margin(0.2, 0, 1, 0, unit = "cm"), hjust = 0),
+      # plot.caption = element_text(size = 10, margin = margin(1, 0, 0, 0, unit = "cm"), hjust = 1),
+      strip.text = element_text(size = rel(1.33), face = "bold"),
+      ...
+    )
 }
 
 mtcars %>% 
-  ggplot(aes(hp, mpg)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
+  ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
+  geom_smooth(method = "lm", se = FALSE, color = "black") + 
+  geom_point(shape = 21, size = 4) + 
+  scale_fill_manual(values = hexes) +
+  labs(title = "test", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders")
+
+mtcars %>% 
+  ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
+  geom_smooth(method = "lm", se = FALSE, color = "black") + 
+  geom_point(shape = 21, size = 4) + 
+  scale_fill_manual(values = hexes) +
+  labs(title = "test", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders") +
   theme_crsp()
 
 ```
