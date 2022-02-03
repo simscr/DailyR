@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 # )
 
 pacman::p_load(janitor, pacman, rio, skimr, here, conflicted,
-               tidyverse, crsp)
+               tidyverse, crsp, gt)
 
 conflict_prefer("clean_names", "janitor")
 conflict_prefer("filter", "dplyr")
@@ -130,14 +130,14 @@ mtcars %>%
   geom_smooth(method = "lm", se = FALSE, color = "black") + 
   geom_point(shape = 21, size = 4) + 
   scale_fill_manual(values = hexes) +
-  labs(title = "test", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders")
+  labs(title = "No Theme", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders")
 
 mtcars %>% 
   ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
   geom_smooth(method = "lm", se = FALSE, color = "black") + 
   geom_point(shape = 21, size = 4) + 
   scale_fill_manual(values = hexes) +
-  labs(title = "test", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders") +
+  labs(title = "theme_crsp", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders") +
   theme_crsp()
 
 ```
