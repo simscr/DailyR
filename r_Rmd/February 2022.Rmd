@@ -142,7 +142,23 @@ mtcars %>%
 
 ```
 
+# 20220204: `{reactable}` and Harry Potter Kaggle Dataset
 
+```{r 04-setup, include = FALSE}
+pacman::p_load(reactable, httr)
+
+hp <- import(here("data", "kaggle", "hp", "Characters.csv")) %>% 
+  mutate(across(everything(), .fns = str_remove_all, "Â")) %>% 
+  clean_names()
+```
+
+```{r 04-table, include = TRUE}
+hp %>% 
+  filter(blood_status == "Pure-blood") %>% 
+  select(-id) %>% 
+  rename_with(str_to_title, everything()) %>% 
+  reactable()
+```
 # Ideas
 
 
