@@ -88,7 +88,6 @@ Just for fun, I'm going to setup a custom plotting theme for ggplot. I may
 incorporate this into `crsp` if it seems useful.
 
 ```{r crsp-theme, include = FALSE}
-
 hexes <- c("#E1CE7A", "#006E90", "#C7CEDB", "#D36135", "#020202", "#FFFFFF")
 
 scales::show_col(hexes)
@@ -124,7 +123,10 @@ theme_crsp <- function(..., base_size = 14) {
       ...
     )
 }
+```
 
+
+```{r crsp-theme-2, include = TRUE, echo = TRUE}
 mtcars %>% 
   ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
   geom_smooth(method = "lm", se = FALSE, color = "black") + 
@@ -159,6 +161,8 @@ hp %>%
   rename_with(str_to_title, everything()) %>% 
   reactable()
 ```
+
+
 # Ideas
 
 
