@@ -144,10 +144,10 @@ mtcars %>%
 
 ```
 
-# 20220204: `{reactable}` and Harry Potter Kaggle Dataset
+# 20220204: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset
 
 ```{r 04-setup, include = FALSE}
-pacman::p_load(reactable, httr)
+pacman::p_load(reactable)
 
 hp <- import(here("data", "kaggle", "hp", "Characters.csv")) %>% 
   mutate(across(everything(), .fns = str_remove_all, "Â")) %>% 
@@ -161,6 +161,31 @@ hp %>%
   rename_with(str_to_title, everything()) %>% 
   reactable()
 ```
+
+# 20220207: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset - Number 2
+
+```{r 05-setup, include = FALSE}
+pacman::p_load(reactable)
+
+hp <- import(here("data", "kaggle", "hp", "Characters.csv")) %>% 
+  mutate(across(everything(), .fns = str_remove_all, "Â|â|€|™|˜")) %>% 
+  clean_names() %>% 
+  mutate_all(na_if, "") %>% 
+  select(-c(id, wand, patronus, hair_colour, eye_colour))
+```
+
+```{r 05-table, include = TRUE}
+hp %>% 
+  filter(blood_status == "Pure-blood") %>% 
+  rename_with(str_to_title, everything()) %>% 
+  reactable(resizable = TRUE, 
+            filterable = TRUE,
+            searchable = TRUE, 
+            showPageSizeOptions = TRUE, 
+            highlight = TRUE)
+```
+
+Also see, **[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
 
 
 # Ideas

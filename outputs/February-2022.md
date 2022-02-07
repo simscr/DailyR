@@ -12,7 +12,7 @@ may incorporate this into `crsp` if it seems useful.
       scale_fill_manual(values = hexes) +
       labs(title = "No Theme", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders")
 
-<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/crsp-theme-2-1.png" width="672" />
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/crsp-theme-2-1.png" width="672" />
 
     mtcars %>% 
       ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
@@ -22,11 +22,18 @@ may incorporate this into `crsp` if it seems useful.
       labs(title = "theme_crsp", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders") +
       theme_crsp()
 
-<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/crsp-theme-2-2.png" width="672" />
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/crsp-theme-2-2.png" width="672" />
 
-# 20220204: `{reactable}` and Harry Potter Kaggle Dataset
+# 20220204: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset
 
-<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/04-table-1.png" width="672" />
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/04-table-1.png" width="672" />
+
+# 20220207: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset - Number 2
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/05-table-1.png" width="672" />
+
+Also see,
+**[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
 
 # Ideas
 
