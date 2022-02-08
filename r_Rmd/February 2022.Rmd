@@ -187,6 +187,70 @@ hp %>%
 
 Also see, **[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
 
+# 20220208: #TidyTuesday and the Tuskegee Airmen
+
+```{r tt-import-feb-8, include = FALSE}
+p_load(tidytuesdayR, sf, maps)
+
+
+tam_raw <- tt_load("2022-02-08")
+readme(tam_raw)
+
+tam <- tam_raw$airmen %>% 
+  mutate(state = case_when(state == "HT" ~ "Haiti",
+                           state == "CN" ~ "Canada",
+                           state == "TD" ~ "Trinidad",
+                           state == "In" ~ "IN",
+                           state == "KN" ~ "KY",
+                           state == "VI" ~ "U.S. Virgin Islands",
+                           TRUE ~ state))
+
+skim(tam)
+
+tam %>% count(state) %>% view()
+
+states <- list(state.abb, state.name, state.center, state.region) %>% 
+  reduce(bind_cols) %>% 
+  rename("state" = 1, 
+         "name" = 2, 
+         "region" = 5) %>% 
+  add_row(state = "DC",
+          name = "District of Columbia",
+          x = -77.03529789,
+          y = 38.8961735,
+          region = "South") %>% 
+  mutate(.state = tolower(name))
+
+
+# 38.89617352335707, -77.03529789133555
+
+
+state_count <- tam %>% 
+#  filter(!state %in% c("Haiti", "TD", "Unk", "CN"), !is.na(state)) %>%  # 3 from Haiti, 1 from Trinidad, 1 from Canada
+  group_by(state) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  left_join(states)
+```
+
+```{r tam-map, include = FALSE}
+
+us_map <- st_as_sf(maps::map("state", plot = FALSE, fill = TRUE)) %>% 
+  rename(.state = ID) %>% 
+  left_join(state_count)
+
+us_map %>% 
+  ggplot() +
+  geom_sf(aes(fill = n), color = "black") + 
+  paletteer::scale_fill_paletteer_c("harrypotter::always", direction = -1, 
+                                    na.value = "gray90") + 
+  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top")) +
+  theme_void() +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+  
+
+```
+
 
 # Ideas
 
