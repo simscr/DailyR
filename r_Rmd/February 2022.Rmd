@@ -187,7 +187,7 @@ hp %>%
 
 Also see, **[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
 
-# 20220208: #TidyTuesday and the Tuskegee Airmen
+# 20220208 and 20220209: #TidyTuesday and the Tuskegee Airmen
 
 ```{r tt-import-feb-8, include = FALSE}
 p_load(tidytuesdayR, sf, maps)
@@ -205,9 +205,9 @@ tam <- tam_raw$airmen %>%
                            state == "VI" ~ "U.S. Virgin Islands",
                            TRUE ~ state))
 
-skim(tam)
-
-tam %>% count(state) %>% view()
+# skim(tam)
+# 
+# tam %>% count(state) %>% view()
 
 states <- list(state.abb, state.name, state.center, state.region) %>% 
   reduce(bind_cols) %>% 
@@ -230,23 +230,35 @@ state_count <- tam %>%
   group_by(state) %>% 
   count() %>% 
   arrange(-n) %>% 
-  left_join(states)
+  left_join(states) %>% 
+  mutate(qt_count = case_when(n < 25 ~ "< 25",
+                              n >= 25 & n < 50 ~ "25 - 49",
+                              n >= 50 & n < 75 ~ "50 - 74",
+                              TRUE ~ ">= 75"))
+
+us_map <- st_as_sf(maps::map("state", plot = FALSE, fill = TRUE)) %>% 
+  rename(.state = ID) %>% 
+  left_join(state_count) %>% 
+  mutate(qt_count = case_when(is.na(qt_count) ~ "0",
+                              TRUE ~ qt_count)) %>% 
+  mutate(qt_count = factor(qt_count, levels = c("0", "< 25", "25 - 49", "50 - 74", ">= 75")))
 ```
 
 ```{r tam-map, include = FALSE}
 
-us_map <- st_as_sf(maps::map("state", plot = FALSE, fill = TRUE)) %>% 
-  rename(.state = ID) %>% 
-  left_join(state_count)
+tam_pal <- c("#211A1D" ,"#0608B2", "#FFF94F", "#FB3640", "#E6EED6")
+
+scales::show_col(tam_pal)
 
 us_map %>% 
   ggplot() +
-  geom_sf(aes(fill = n), color = "black") + 
-  paletteer::scale_fill_paletteer_c("harrypotter::always", direction = -1, 
-                                    na.value = "gray90") + 
-  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top")) +
+  geom_sf(aes(fill = qt_count), color = "black") + 
+  scale_fill_manual(values = rev(tam_pal), na.value = tam_pal[5]) +
+#  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top")) +
+  labs(fill = "Number of Pilots") + 
   theme_void() +
-  theme(legend.position = "bottom", legend.direction = "horizontal")
+  theme(legend.position = "bottom", legend.direction = "horizontal") +
+  labs(title = "Where were the Tuskegee Airmen From?")
   
 
 ```
