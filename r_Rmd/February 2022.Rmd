@@ -263,7 +263,7 @@ us_map %>%
 
 ```
 
-# 20220210: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)**
+# 20220210 and 20220211: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)**
 
 ```{r ggvoronoi-setup, include = FALSE}
 p_load(ggvoronoi)
@@ -278,20 +278,31 @@ circle <- data.frame(x = 100*(1 + cos(seq(0, 2*pi, length.out = 2500))),
                      y = 100*(1 + sin(seq(0, 2*pi, length.out = 2500))),
                      group = rep(1,2500))
 
+
+set.seed(20220211)
+x2 <- sample(1:200,100)
+y2 <- sample(1:200,100)
+points2 <- data.frame(x2, y2,
+                     distance = sqrt((x2 - 100)^2 + (y2 - 100)^2))
+
 ```
+
+
 
 ```{r ggvoronoi-plots, include = TRUE}
 ggplot(data = points, aes(x = x, y = y, fill = distance)) + 
-  geom_voronoi(outline = circle) +
-  theme(aspect.ratio = 1)
-
-ggplot(data = points, aes(x = x, y = y, fill = distance)) + 
   geom_voronoi(outline = circle, color = "white", show.legend = FALSE) +
-  paletteer::scale_fill_paletteer_c("ggthemes::Green-Blue-White Diverging") + 
+  paletteer::scale_fill_paletteer_c("ggthemes::Orange-Blue-White Diverging") + 
   coord_fixed(ratio = 1) + 
   theme(legend.position = "none") +
   theme_void()
 
+ggplot(data = points2, aes(x = x2, y = y2, fill = distance)) + 
+  geom_voronoi(outline = circle, color = "white", show.legend = FALSE) +
+  paletteer::scale_fill_paletteer_c("ggthemes::Red-Green-White Diverging") + 
+  coord_fixed(ratio = 1) + 
+  theme(legend.position = "none") +
+  theme_void()
 ```
 
 

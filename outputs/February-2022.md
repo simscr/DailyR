@@ -35,6 +35,12 @@ may incorporate this into `crsp` if it seems useful.
 Also see,
 **[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
 
+# 20220208 and 20220209: #TidyTuesday and the Tuskegee Airmen
+
+# 20220210 and 20220211: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)**
+
+<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/ggvoronoi-plots-1.png" width="672" /><img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/ggvoronoi-plots-2.png" width="672" />
+
 # Ideas
 
 {template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista},
