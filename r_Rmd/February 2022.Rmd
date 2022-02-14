@@ -306,11 +306,44 @@ ggplot(data = points2, aes(x = x2, y = y2, fill = distance)) +
 ```
 
 
+
+# 20220214: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)** in a heart
+
+```{r heart-setup, include = FALSE}
+p_load(ggvoronoi)
+
+set.seed(0214)
+x3 <- sample(0:30, 25)
+y3 <- sample(0:30, 25)
+points3 <- data.frame(x, y,
+                      distance = sqrt((x - 15)^2 + (y - 15)^2))
+
+xhrt <-  function(t) 16*sin(t)^3
+yhrt  <-  function(t) 13*cos(t) - 5*cos(2*t) - 2*cos(3*t) - cos(4*t)
+
+heart <- data.frame(t = seq(0, 2*pi, by = 0.01)) %>% 
+  mutate(x = xhrt(t) + 15,
+         y = yhrt(t) + 15, 
+         group = 1) %>% 
+  select(-t)
+
+ggplot(data = points, aes(x = x, y = y, fill = distance)) + 
+  geom_voronoi(outline = heart, color = "white", show.legend = FALSE) +
+  paletteer::scale_fill_paletteer_c("ggthemes::Classic Red") + 
+  coord_fixed(ratio = 1) + 
+  theme(legend.position = "none") +
+  theme_void()
+
+```
 # Ideas
 
 
-{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}
+{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}
 
+
+```{r end-knit, include = FALSE}
+knitr::knit_exit()
+```
 <https://github.com/richardvogg/30DayMapChallenge21>
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
