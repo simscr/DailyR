@@ -335,6 +335,41 @@ ggplot(data = points, aes(x = x, y = y, fill = distance)) +
   theme_void()
 
 ```
+
+# 20220215: #TidyTuesday and #DuBoisChallenge2022
+
+I'm going to try Day 6.
+
+```{r tt-feb-wk-2, include = FALSE}
+# p_load(tidytuesdayR)
+# 
+# tt_raw <- tt_load("2022-02-15")
+
+d6 <- tibble::tribble(
+  ~date, ~illiteracy,
+  1860,              99,
+  1870,            92.1,
+  1880,            81.6,
+  1890,            67.2,
+  1900,              50
+  )
+```
+
+```{r webd-d6, include = TRUE}
+d6 %>% 
+  ggplot(aes(illiteracy, date)) + 
+  geom_point() + 
+  geom_segment(aes(x = illiteracy, xend = illiteracy, y = date, yend = 1930), color = "black", size = 5) +
+  geom_segment(aes(x = illiteracy, xend = 100, y = date, yend = date), color = "black", size = 5) +
+  geom_segment(aes(x = illiteracy, xend = 100, y = date, yend = date), color = "white", size = 4) +
+  scale_y_reverse(limits = c(1930, 1860)) +
+  scale_x_reverse() + 
+  coord_fixed(ratio = 1.2) +
+  theme_classic() + 
+  theme(axis.ticks = element_blank(), axis.line = element_blank())
+```
+
+
 # Ideas
 
 
