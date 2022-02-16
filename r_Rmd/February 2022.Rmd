@@ -336,7 +336,7 @@ ggplot(data = points, aes(x = x, y = y, fill = distance)) +
 
 ```
 
-# 20220215: #TidyTuesday and #DuBoisChallenge2022
+# 20220215 and 20220216: #TidyTuesday and #DuBoisChallenge2022
 
 I'm going to try Day 6.
 
@@ -357,18 +357,23 @@ d6 <- tibble::tribble(
 
 ```{r webd-d6, include = TRUE}
 d6 %>% 
-  ggplot(aes(illiteracy, date)) + 
+  ggplot(aes(illiteracy/100, date)) + 
   geom_point() + 
-  geom_segment(aes(x = illiteracy, xend = illiteracy, y = date, yend = 1930), color = "black", size = 5) +
-  geom_segment(aes(x = illiteracy, xend = 100, y = date, yend = date), color = "black", size = 5) +
-  geom_segment(aes(x = illiteracy, xend = 100, y = date, yend = date), color = "white", size = 4) +
+  geom_segment(aes(x = illiteracy/100, xend = illiteracy/100, y = date, yend = 1930), color = "black", size = 5) +
+  geom_segment(aes(x = illiteracy/100, xend = 1, y = date, yend = date), color = "black", size = 5) +
+  geom_segment(aes(x = illiteracy/100, xend = 1, y = date, yend = date), color = "antiquewhite1", size = 4) +
   scale_y_reverse(limits = c(1930, 1860)) +
-  scale_x_reverse() + 
-  coord_fixed(ratio = 1.2) +
+# scale_x_continuous(labels = scales::percent)
+  scale_x_reverse(labels = scales::percent) + 
+#  coord_fixed(ratio = 1.2) +
+  labs(y = NULL, x = "Percent Of Illiteracy") + 
   theme_classic() + 
-  theme(axis.ticks = element_blank(), axis.line = element_blank())
+  theme(axis.ticks = element_blank(), axis.line = element_blank(), 
+        plot.background = element_rect("antiquewhite1"), panel.background = element_rect("antiquewhite1"),
+        aspect.ratio = 1.2)
 ```
-
+ 
+It'll do for the amount of time I have.
 
 # Ideas
 
