@@ -375,10 +375,33 @@ d6 %>%
  
 It'll do for the amount of time I have.
 
+# 20220217: **[{engsoccerdata}](https://github.com/jalapic/engsoccerdata)**
+
+```{r esd-setup, include = FALSE}
+p_load(engsoccerdata, reactable)
+
+data(package = "engsoccerdata")
+
+str(mls)
+
+```
+
+```{r esd-tests, include = TRUE}
+mls %>% 
+  filter(round == "regular") %>% 
+  maketable_all() %>% 
+  rename("Team" = team, "Goals For" = gf, "Goals Allowed" = ga, "Goal Difference" = gd, "Overall Position" = Pos) %>% 
+  reactable(resizable = TRUE, 
+#            filterable = TRUE,
+#            searchable = TRUE, 
+            showPageSizeOptions = TRUE, 
+            highlight = TRUE)
+```
+
 # Ideas
 
 
-{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}
+{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, voronoi, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {engsoccerdata} 
 
 
 ```{r end-knit, include = FALSE}
