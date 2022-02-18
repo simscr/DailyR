@@ -380,7 +380,7 @@ It'll do for the amount of time I have.
 ```{r esd-setup, include = FALSE}
 p_load(engsoccerdata, reactable)
 
-data(package = "engsoccerdata")
+#data(package = "engsoccerdata")
 
 str(mls)
 
@@ -396,6 +396,41 @@ mls %>%
 #            searchable = TRUE, 
             showPageSizeOptions = TRUE, 
             highlight = TRUE)
+```
+
+# 20220218: More Soccer Data
+
+```{r esd-d2, include = FALSE}
+p_load(engsoccerdata)
+
+mls %>% 
+  filter(round == "regular", Season == 1996) %>% 
+  maketable_all() %>% str()
+
+
+mls_pos <- function(season) {
+  df <- mls %>% 
+            filter(round == "regular", Season == season)
+  
+  maketable_all(df) %>% 
+    select(team, position = Pos) %>% 
+    mutate(year = season,
+           position = as.numeric(position))
+}
+
+mls_pos(1996)
+
+
+league_pos <- map(c(1996:2015), .f = mls_pos) %>% 
+  reduce(full_join)
+
+league_pos %>% 
+  ggplot(aes(year, position)) + 
+  geom_point(alpha = 0.2) + 
+  geom_line(aes(group = team), alpha = 0.2) +
+  geom_line(data = league_pos %>% filter(team == "Sporting Kansas City"), color = "blue") +
+  scale_y_reverse()
+
 ```
 
 # Ideas
