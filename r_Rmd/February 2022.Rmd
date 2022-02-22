@@ -433,6 +433,28 @@ league_pos %>%
 
 ```
 
+# 20220222: More Soccer Data
+
+```{r mls-plot-again, include = TRUE}
+
+
+team_work <- mls %>% 
+  select(Season, home) %>% 
+  filter(Season %in% c(1996, 2016)) %>% 
+  mutate(team_sea = paste0(home, "_", Season)) %>% 
+  distinct(team_sea, .keep_all = TRUE) %>% 
+  pivot_wider(names_from = Season, values_from = home)
+  
+teams_orig <- intersect(team_work$`1996`, team_work$`2016`)
+
+
+league_pos %>% 
+  filter(team %in% teams_orig) %>% 
+  ggplot(aes(year, position)) + 
+  geom_line(aes(group = team, color = team)) +
+#  geom_line(data = league_pos %>% filter(team == "Sporting Kansas City"), color = "blue") +
+  scale_y_reverse()
+```
 # Ideas
 
 
