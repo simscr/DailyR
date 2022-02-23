@@ -456,7 +456,7 @@ league_pos %>%
   scale_y_reverse()
 ```
 
-# 20220223: More Soccer Data with {gt}
+# 20220223: More Soccer Data with {gt} (eventually)
 
 ```{r mls-gt, include = TRUE}
 p_load(engsoccerdata)
@@ -469,23 +469,28 @@ s2016 <- mls %>%
          loser = case_when(hgoal > vgoal ~ visitor,
                           hgoal < vgoal ~ home))
 
-s2016 %>%
-  filter(home == "Sporting Kansas City" | visitor == "Sporting Kansas City") %>% 
-  mutate(gf = case_when(home == "Sporting Kansas City" ~ hgoal,
-                        visitor == "Sporting Kansas City" ~ vgoal),
-         ga = case_when(home == "Sporting Kansas City" ~ vgoal,
-                        visitor == "Sporting Kansas City" ~ hgoal),
+team_sum <- function(team) {
+  games <- s2016 %>%
+  filter(home == team | visitor == team) %>% 
+  mutate(gf = case_when(home == team ~ hgoal,
+                        visitor == team ~ vgoal),
+         ga = case_when(home == team ~ vgoal,
+                        visitor == team ~ hgoal),
          result = case_when(gf > ga ~ "win",
                             gf < ga ~ "loss", 
                             TRUE ~ "draw"),
          pts = case_when(result == "win" ~ 3,
                          result == "draw" ~ 1,
-                         TRUE ~ 0)) %>% 
+                         TRUE ~ 0))
+  table_sum <- games %>% 
   summarize(overall_pts = sum(pts), gf = sum(gf), ga = sum(ga), gd = sum(gf) - sum(ga))
-  count(result)
-  group_by(winner) %>% 
-  count() %>% 
-  arrange(-n)
+  
+  return(list(table_sum = table_sum, last_10 = tail(games, 10)$result))
+}
+  
+team_sum("FC Dallas")
+
+map(c("FC Dallas", "Sporting Kansas City"), team_sum)
 
 ```
 # Ideas
