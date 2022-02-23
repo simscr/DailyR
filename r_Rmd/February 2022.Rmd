@@ -455,6 +455,39 @@ league_pos %>%
 #  geom_line(data = league_pos %>% filter(team == "Sporting Kansas City"), color = "blue") +
   scale_y_reverse()
 ```
+
+# 20220223: More Soccer Data with {gt}
+
+```{r mls-gt, include = TRUE}
+p_load(engsoccerdata)
+
+s2016 <- mls %>% 
+  filter(round == "regular", Season == 2016) %>% 
+  select("date" = Date,home, visitor, hgoal, vgoal, hconf, vconf) %>% 
+  mutate(winner = case_when(hgoal > vgoal ~ home,
+                          hgoal < vgoal ~ visitor),
+         loser = case_when(hgoal > vgoal ~ visitor,
+                          hgoal < vgoal ~ home))
+
+s2016 %>%
+  filter(home == "Sporting Kansas City" | visitor == "Sporting Kansas City") %>% 
+  mutate(gf = case_when(home == "Sporting Kansas City" ~ hgoal,
+                        visitor == "Sporting Kansas City" ~ vgoal),
+         ga = case_when(home == "Sporting Kansas City" ~ vgoal,
+                        visitor == "Sporting Kansas City" ~ hgoal),
+         result = case_when(gf > ga ~ "win",
+                            gf < ga ~ "loss", 
+                            TRUE ~ "draw"),
+         pts = case_when(result == "win" ~ 3,
+                         result == "draw" ~ 1,
+                         TRUE ~ 0)) %>% 
+  summarize(overall_pts = sum(pts), gf = sum(gf), ga = sum(ga), gd = sum(gf) - sum(ga))
+  count(result)
+  group_by(winner) %>% 
+  count() %>% 
+  arrange(-n)
+
+```
 # Ideas
 
 
