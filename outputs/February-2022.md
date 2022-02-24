@@ -12,7 +12,7 @@ may incorporate this into `crsp` if it seems useful.
       scale_fill_manual(values = hexes) +
       labs(title = "No Theme", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders")
 
-<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/crsp-theme-2-1.png" width="672" />
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/crsp-theme-2-1.png" width="672" />
 
     mtcars %>% 
       ggplot(aes(hp, mpg, fill = as.factor(cyl))) + 
@@ -22,15 +22,15 @@ may incorporate this into `crsp` if it seems useful.
       labs(title = "theme_crsp", subtitle = "test 2", x = "Horse Power", y = "MPG", fill = "Cylinders") +
       theme_crsp()
 
-<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/crsp-theme-2-2.png" width="672" />
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/crsp-theme-2-2.png" width="672" />
 
 # 20220204: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset
 
-<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/04-table-1.png" width="672" />
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/04-table-1.png" width="672" />
 
 # 20220207: **[`{reactable}`](https://glin.github.io/reactable/index.html)** and Harry Potter Kaggle Dataset - Number 2
 
-<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/05-table-1.png" width="672" />
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/05-table-1.png" width="672" />
 
 Also see,
 **[`reactablefmtr`](https://github.com/kcuilla/reactablefmtr)**
@@ -39,36 +39,32 @@ Also see,
 
 # 20220210 and 20220211: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)**
 
-<img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/ggvoronoi-plots-1.png" width="672" /><img src="C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/February_2022/ggvoronoi-plots-2.png" width="672" />
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/ggvoronoi-plots-1.png" width="672" /><img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/ggvoronoi-plots-2.png" width="672" />
 
-# Ideas
+# 20220214: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)** in a heart
 
-{template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista},
-{camcorder}, {renv}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr},
-voronoi, {reprex}, debug = T for geom\_text, {lcmm}, {rolldown}, {muvr},
-{pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {biscale},
-{prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}
+# 20220215 and 20220216: #TidyTuesday and #DuBoisChallenge2022
 
-<https://github.com/richardvogg/30DayMapChallenge21>
+I’m going to try Day 6.
 
-<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/webd-d6-1.png" width="672" />
 
-<https://www.swisstopo.admin.ch/>
+It’ll do for the amount of time I have.
 
-<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+# 20220217: **[{engsoccerdata}](https://github.com/jalapic/engsoccerdata)**
 
-<http://shadedrelief.com/SampleElevationModels/>
+<img src="C:/Users/simsc/Desktop/DailyR/exports/February_2022/esd-tests-1.png" width="672" />
 
-<https://www.neonscience.org/resources/learning-hub/tutorials>
+# 20220218: More Soccer Data
 
-<https://docs.ropensci.org/rgbif/articles/rgbif.html>
-
-<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
-
-<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
-
-<https://github.com/thebioengineer/camcorder>
-
-<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
-
-<https://www.tjmahr.com/lists-knitr-secret-weapon/>
+    ##                      team position year
+    ## 1        Tampa Bay Mutiny        1 1996
+    ## 2               LA Galaxy        2 1996
+    ## 3               FC Dallas        3 1996
+    ## 4    Sporting Kansas City        4 1996
+    ## 5               DC United        5 1996
+    ## 6           Columbus Crew        6 1996
+    ## 7      New York Red Bulls        7 1996
+    ## 8    San Jose Earthquakes        8 1996
+    ## 9  New England Revolution        9 1996
+    ## 10        Colorado Rapids       10 1996

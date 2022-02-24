@@ -309,7 +309,7 @@ ggplot(data = points2, aes(x = x2, y = y2, fill = distance)) +
 
 # 20220214: **[`ggvoronoi`](https://cran.r-project.org/web/packages/ggvoronoi/vignettes/ggvoronoi.html)** in a heart
 
-```{r heart-setup, include = FALSE}
+```{r heart-setup, include = TRUE}
 p_load(ggvoronoi)
 
 set.seed(0214)
@@ -400,13 +400,12 @@ mls %>%
 
 # 20220218: More Soccer Data
 
-```{r esd-d2, include = FALSE}
+```{r esd-d2, eval = FALSE}
 p_load(engsoccerdata)
 
 mls %>% 
   filter(round == "regular", Season == 1996) %>% 
   maketable_all() %>% str()
-
 
 mls_pos <- function(season) {
   df <- mls %>% 
@@ -420,9 +419,9 @@ mls_pos <- function(season) {
 
 mls_pos(1996)
 
-
-league_pos <- map(c(1996:2015), .f = mls_pos) %>% 
-  reduce(full_join)
+league_pos <- map(c(1996:2015), .f = mls_pos)
+# %>% 
+#   reduce(full_join)
 
 league_pos %>% 
   ggplot(aes(year, position)) + 
@@ -435,7 +434,7 @@ league_pos %>%
 
 # 20220222: More Soccer Data
 
-```{r mls-plot-again, include = TRUE}
+```{r mls-plot-again, eval = FALSE}
 
 
 team_work <- mls %>% 
@@ -456,9 +455,9 @@ league_pos %>%
   scale_y_reverse()
 ```
 
-# 20220223: More Soccer Data with {gt} (eventually)
+# 20220223 and 20220224: More Soccer Data with {gt} (eventually)
 
-```{r mls-gt, include = TRUE}
+```{r mls-gt-setup, include = FALSE}
 p_load(engsoccerdata)
 
 s2016 <- mls %>% 
@@ -479,19 +478,41 @@ team_sum <- function(team) {
          result = case_when(gf > ga ~ "win",
                             gf < ga ~ "loss", 
                             TRUE ~ "draw"),
+         result_num = case_when(result == "win" ~ 1,
+                                result == "draw" ~ 0.5,
+                                TRUE ~ 0),
          pts = case_when(result == "win" ~ 3,
                          result == "draw" ~ 1,
                          TRUE ~ 0))
   table_sum <- games %>% 
   summarize(overall_pts = sum(pts), gf = sum(gf), ga = sum(ga), gd = sum(gf) - sum(ga))
   
-  return(list(table_sum = table_sum, last_10 = tail(games, 10)$result))
+  table_sum %>% 
+    mutate(team = team, .before = overall_pts) %>% 
+    mutate(results = list(tail(games, 10)$result_num))
+  
+  #return(list(table_sum = table_sum, last_10 = tail(games, 10)$result))
 }
   
-team_sum("FC Dallas")
+# team_sum("FC Dallas") %>% gt() %>% 
+#   gtExtras::gt_plt_winloss(results)
+# 
+# bind_cols(team_sum("FC Dallas")$table_sum, team_sum("FC Dallas")$last_10 %>% list())
+# 
+# map(c("FC Dallas", "Sporting Kansas City"), team_sum) %>% 
+#   reduce(bind_rows)
 
-map(c("FC Dallas", "Sporting Kansas City"), team_sum)
+mls_teams <- distinct(s2016, home)$home %>% as.vector()
 
+lg_tbl <- map(mls_teams, team_sum) %>% reduce(bind_rows) %>% 
+  arrange(-overall_pts)
+```
+
+
+```{r mls-gt, include = TRUE}
+lg_tbl %>% 
+  gt() %>% 
+  gtExtras::gt_plt_winloss(results)
 ```
 # Ideas
 
