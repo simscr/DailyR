@@ -464,14 +464,11 @@ league_pos %>%
   scale_y_reverse()
 ```
 
-# 20220223 and 20220224: More Soccer Data with {gt} (eventually)
+# 20220223, 20220224 and 20220225: More Soccer Data with {gt} (eventually)
 
 ```{r mls-gt-setup, include = FALSE}
-p_load(engsoccerdata)
-```
+p_load(engsoccerdata, gtExtras)
 
-
-```{r mls-gt-setup-2, include = FALSE}
 s2016 <- mls %>% 
   filter(round == "regular", Season == 2016) %>% 
   select("date" = Date,home, visitor, hgoal, vgoal, hconf, vconf) %>% 
@@ -495,12 +492,14 @@ team_sum <- function(team) {
                                 TRUE ~ 0),
          pts = case_when(result == "win" ~ 3,
                          result == "draw" ~ 1,
-                         TRUE ~ 0))
+                         TRUE ~ 0),
+         conf = case_when(home == team ~ paste0(as.character(hconf), "ern Conference"),
+                          visitor == team ~ paste0(as.character(vconf), "ern Conference")))
   table_sum <- games %>% 
   summarize(overall_pts = sum(pts), gf = sum(gf), ga = sum(ga), gd = sum(gf) - sum(ga))
   
   table_sum %>% 
-    mutate(team = team, .before = overall_pts) %>% 
+    mutate(team = team, .before = overall_pts, conf = pluck(distinct(games, conf), "conf")) %>% 
     mutate(results = list(tail(games, 10)$result_num))
   
   #return(list(table_sum = table_sum, last_10 = tail(games, 10)$result))
@@ -526,8 +525,18 @@ lg_tbl <- map_df(mls_teams, team_sum) %>%
 
 ```{r mls-gt, include = TRUE}
 lg_tbl %>% 
-  gt() %>% 
-  gtExtras::gt_plt_winloss(results)
+#  select(-conf) %>% 
+  rename("Team" = team, "Points" = overall_pts, "Last 10 Games" = results) %>% 
+  gt(groupname_col = "conf") %>% 
+  gt_plt_winloss(`Last 10 Games`, 
+                 colors = c("#007A33", "#BA0C2F", "lightgrey"), 
+                 max_wins = 10,
+                 width = 18, 
+                 type = "pill") %>% 
+  cols_align(align = "center", 
+             columns = -Team) %>% 
+  gt_theme_espn() %>% 
+  tab_source_note(md("|| Data from `{engsoccerdata}` || Table by Clark Sims ||"))
 ```
 # Ideas
 
