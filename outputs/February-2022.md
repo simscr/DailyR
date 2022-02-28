@@ -618,6 +618,8 @@ html {
 </table>
 </div>
 
+# 20220228: Wrapping Up
+
 # Ideas
 
 {template}, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista},

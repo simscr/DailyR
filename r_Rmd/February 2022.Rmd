@@ -5,8 +5,12 @@ description: |
 author:
   - name: Clark Sims 
 date: "`r Sys.Date()`"
-output: distill::distill_article
-knit: crsp::knit_to_outputs_folder
+output: 
+  distill::distill_article:
+    toc: true
+    toc_float: true
+
+knit: crsp::knit_html_to_outputs
 
 ---
 
@@ -538,6 +542,9 @@ lg_tbl %>%
   gt_theme_espn() %>% 
   tab_source_note(md("|| Data from `{engsoccerdata}` || Table by Clark Sims ||"))
 ```
+
+# 20220228: Wrapping Up
+
 # Ideas
 
 
