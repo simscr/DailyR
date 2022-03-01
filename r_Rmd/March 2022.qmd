@@ -1,0 +1,49 @@
+---
+title: "March 2022: Trying Quarto"
+format:
+  html:
+    theme: flatly
+    toc: true
+knit: crsp::knit_html_to_outputs
+---
+
+For March, I am going to try using a [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html) document. It is similar to Rmarkdown, but I just found out about it and want to see how it differs.
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "March_2022", "/")
+)
+
+pacman::p_load(janitor, pacman, rio, skimr, here, conflicted,
+               tidyverse, crsp, gt)
+
+conflict_prefer("clean_names", "janitor")
+conflict_prefer("filter", "dplyr")
+
+theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+# 20220301: Initial Quarto Setup and Testing
+
+```{r}
+#| label: test-plot
+#| include: true
+#| echo: true
+
+data(mpg, package = "ggplot2")
+
+mpg %>% 
+  ggplot(aes(cty, hwy, color = cyl)) + 
+  geom_jitter(shape = 21, 
+              fill = "#1D4289", color = "#B1B3B3", alpha = 0.7, 
+              size = 3) + 
+  geom_smooth(method = "lm", color = "#C8102E", 
+              lty = 2, size = 0.5) + 
+  facet_wrap(~ drv)
+  
+```
