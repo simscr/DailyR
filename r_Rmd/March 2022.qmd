@@ -47,3 +47,40 @@ mpg %>%
   facet_wrap(~ drv)
   
 ```
+
+# 20220302: Trying Challenge #1 of the [Unlocked](https://www.hp.com/us-en/workstations/industries/data-science/unlocked-challenge.html) [Challenge](https://github.com/Z-Unlocked/Unlocked_Challenge_1)
+
+```{r data-import, include = FALSE}
+
+p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos, biscale)
+
+world <- ne_countries(returnclass = 'sf')
+
+energy_use <- cs_import(here("data", "z_hp", "challenge-1", "energy_use_data_11-29-2021.csv")) 
+
+energy_use %>% 
+  group_by(year, item) %>% 
+  summarize(mean(value))
+
+energy_use %>% 
+  group_by(item) %>% 
+  summarize(mn = mean(value)) %>% 
+  arrange(-mn)
+
+e2 <- energy_use %>% 
+  filter(item_code %in% c(6807, 6801, 6809, 6803)) %>% 
+  mutate(type = case_when(str_detect(item, "as") ~ "Gas",
+                         TRUE ~ item)) %>% 
+  filter(year %in% c(1990, 2019)) %>% 
+  rename(use_kilotonnes = value) %>% 
+  select(area_code_iso3, area, type, item, year, use_kilotonnes) %>% 
+  pivot_wider(names_from = year, values_from = use_kilotonnes) %>% 
+  rowwise() %>% 
+  mutate(pct_change = ((`2019` - `1990`) / `1990`) * 100)
+
+e2 %>% pivot_longer(cols = pct_change)
+
+e2 %>% count(type)
+
+# browseURL("https://slu-opengis.github.io/biscale/articles/biscale.html")
+```
