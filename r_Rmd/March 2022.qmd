@@ -48,7 +48,7 @@ mpg %>%
   
 ```
 
-# 20220302: Trying Challenge #1 of the [Unlocked](https://www.hp.com/us-en/workstations/industries/data-science/unlocked-challenge.html) [Challenge](https://github.com/Z-Unlocked/Unlocked_Challenge_1)
+# 20220302 and 20220303: Trying Challenge #1 of the [Unlocked](https://www.hp.com/us-en/workstations/industries/data-science/unlocked-challenge.html) [Challenge](https://github.com/Z-Unlocked/Unlocked_Challenge_1)
 
 ```{r data-import, include = FALSE}
 
@@ -78,9 +78,20 @@ e2 <- energy_use %>%
   rowwise() %>% 
   mutate(pct_change = ((`2019` - `1990`) / `1990`) * 100)
 
-e2 %>% pivot_longer(cols = pct_change)
+e3 <- e2 %>% 
+  select(area_code_iso3, area, type, pct_change) %>% 
+  filter(!is.na(pct_change)) %>% 
+  pivot_wider(names_from = type, values_from = pct_change) %>% 
+  bi_class(x = Gas, y = Electricity, style = "jenks", dim = 3) %>% 
+  right_join(world, by = c("area_code_iso3" = "iso_a3"))
 
-e2 %>% count(type)
 
 # browseURL("https://slu-opengis.github.io/biscale/articles/biscale.html")
+```
+
+```{r map, include = FALSE}
+ggplot(data = e3, aes(fill = bi_class, geometry = geometry)) + 
+  geom_sf(show.legend = FALSE) + 
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  bi_theme()
 ```
