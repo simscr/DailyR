@@ -52,7 +52,7 @@ mpg %>%
 
 ```{r data-import, include = FALSE}
 
-p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos, biscale)
+p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos, biscale, cowplot)
 
 world <- ne_countries(returnclass = 'sf')
 
@@ -82,7 +82,7 @@ e3 <- e2 %>%
   select(area_code_iso3, area, type, pct_change) %>% 
   filter(!is.na(pct_change)) %>% 
   pivot_wider(names_from = type, values_from = pct_change) %>% 
-  bi_class(x = Gas, y = Electricity, style = "jenks", dim = 3) %>% 
+  bi_class(x = Gas, y = Electricity, style = "fisher", dim = 3) %>% 
   right_join(world, by = c("area_code_iso3" = "iso_a3"))
 
 
@@ -90,8 +90,40 @@ e3 <- e2 %>%
 ```
 
 ```{r map, include = FALSE}
-ggplot(data = e3, aes(fill = bi_class, geometry = geometry)) + 
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher Gas ",
+                    ylab = "Higher Electricity ",
+                    size = 8)
+
+map <- ggplot(data = e3, aes(fill = bi_class, geometry = geometry)) + 
   geom_sf(show.legend = FALSE) + 
   bi_scale_fill(pal = "DkBlue", dim = 3) +
   bi_theme()
+
+ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.2, .65, 0.2, 0.2)
+```
+
+# 20220304: Still working on Unlocked Challenge #1
+
+```{r new-plot, include = FALSE}
+
+waste <- cs_import(here("data", "z_hp", "challenge-1", "waste_disposal_data_11-29-2021.csv")) %>% remove_constant() %>% 
+  select(-c(flag, flag_description)) %>% 
+  rename(incinerated_waste_kt = value) 
+
+skim(waste)
+
+w2 <- world %>% 
+  select(area_code_iso3 = iso_a3, geometry) %>% 
+  left_join(waste)
+
+w2 %>% 
+  filter(!is.na(year)) %>% 
+  ggplot(aes(fill = incinerated_waste_kt, geometry = geometry)) +
+  geom_sf() + 
+  scale_fill_viridis_c() + 
+  facet_wrap(~ year)
 ```
