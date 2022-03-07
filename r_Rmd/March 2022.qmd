@@ -52,7 +52,7 @@ mpg %>%
 
 ```{r data-import, include = FALSE}
 
-p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos, biscale, cowplot)
+p_load(rnaturalearth, rnaturalearthdata, maps, sp, sf, rgeos, gganimate, paletteer)
 
 world <- ne_countries(returnclass = 'sf')
 
@@ -78,18 +78,18 @@ e2 <- energy_use %>%
   rowwise() %>% 
   mutate(pct_change = ((`2019` - `1990`) / `1990`) * 100)
 
-e3 <- e2 %>% 
-  select(area_code_iso3, area, type, pct_change) %>% 
-  filter(!is.na(pct_change)) %>% 
-  pivot_wider(names_from = type, values_from = pct_change) %>% 
-  bi_class(x = Gas, y = Electricity, style = "fisher", dim = 3) %>% 
-  right_join(world, by = c("area_code_iso3" = "iso_a3"))
+# e3 <- e2 %>% 
+#   select(area_code_iso3, area, type, pct_change) %>% 
+#   filter(!is.na(pct_change)) %>% 
+#   pivot_wider(names_from = type, values_from = pct_change) %>% 
+#   bi_class(x = Gas, y = Electricity, style = "fisher", dim = 3) %>% 
+#   right_join(world, by = c("area_code_iso3" = "iso_a3"))
 
 
 # browseURL("https://slu-opengis.github.io/biscale/articles/biscale.html")
 ```
 
-```{r map, include = FALSE}
+```{r map, eval = FALSE}
 legend <- bi_legend(pal = "DkBlue",
                     dim = 3,
                     xlab = "Higher Gas ",
@@ -106,24 +106,69 @@ ggdraw() +
   draw_plot(legend, 0.2, .65, 0.2, 0.2)
 ```
 
-# 20220304: Still working on Unlocked Challenge #1
+# 20220304 and 20220307: Still working on Unlocked Challenge #1
 
-```{r new-plot, include = FALSE}
+```{r new-plot, eval = FALSE}
 
 waste <- cs_import(here("data", "z_hp", "challenge-1", "waste_disposal_data_11-29-2021.csv")) %>% remove_constant() %>% 
   select(-c(flag, flag_description)) %>% 
   rename(incinerated_waste_kt = value) 
 
-skim(waste)
+# skim(waste)
 
 w2 <- world %>% 
   select(area_code_iso3 = iso_a3, geometry) %>% 
-  left_join(waste)
+  left_join(waste) %>% 
+  mutate(test = log10(incinerated_waste_kt))
 
 w2 %>% 
-  filter(!is.na(year)) %>% 
+  filter(!is.na(year), year %in% c(2019)) %>% 
   ggplot(aes(fill = incinerated_waste_kt, geometry = geometry)) +
   geom_sf() + 
-  scale_fill_viridis_c() + 
-  facet_wrap(~ year)
+  scale_fill_paletteer_c("grDevices::YlOrRd", direction = -1, na.value="yellow") +
+  facet_wrap(~ year) + 
+  theme_void() + 
+  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top", 
+                               title = "Total Incinerated Waste (kilotonnes) in 2019")) +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+```
+
+```{r animated-plot, eval = FALSE}
+w2 %>% 
+  filter(!is.na(year)) %>% 
+  ggplot(aes(geometry = geometry, fill = incinerated_waste_kt)) + 
+  geom_sf(color = "black", size = 0.5) + 
+  transition_states(as.factor(year), transition_length = 2, state_length = 2) + 
+  scale_fill_paletteer_c("grDevices::Red-Purple", direction = -1) +
+  theme_void() + 
+  labs(fill = "Total Waste Incinerated (kilotonnes)", title = "Year: {closest_state}") + 
+  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top")) +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+
+
+anim_save(filename = here("exports", "March_2022", "waste.gif"))
+```
+
+```{r}
+waste <- cs_import(here("data", "z_hp", "challenge-1", "waste_disposal_data_11-29-2021.csv")) %>% remove_constant() %>% 
+  select(-c(flag, flag_description)) %>% 
+  rename(incinerated_waste_kt = value) 
+
+# skim(waste)
+
+w2 <- world %>% 
+  select(area_code_iso3 = iso_a3, geometry) %>% 
+  left_join(waste) %>% 
+  mutate(test = log10(incinerated_waste_kt))
+
+w2 %>% 
+  filter(!is.na(year), year %in% c(2019)) %>% 
+  ggplot(aes(fill = incinerated_waste_kt, geometry = geometry)) +
+  geom_sf() + 
+  scale_fill_paletteer_c("grDevices::YlOrRd", direction = -1, na.value="yellow") +
+  facet_wrap(~ year) + 
+  theme_void() + 
+  guides(fill = guide_colorbar(barwidth = 20, barheight = 1, title.position = "top", 
+                               title = "Total Incinerated Waste (kilotonnes) in 2019")) +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
 ```
