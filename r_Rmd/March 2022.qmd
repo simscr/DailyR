@@ -177,3 +177,28 @@ land_use_map <- l2 %>%
 ggsave(plot = land_use_map, filename = here("outputs", "z_hp", "Challenge 1 Land Use 2018.png"))
 
 ```
+
+# 20220310: Unlocked Challenge #2 - Natural Language Processing.
+
+```{r z2-setup, include = FALSE}
+p_load(tidytext)
+
+# browseURL("https://www.tidytextmining.com/")
+# browseURL("https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html")
+# browseURL("https://angela-wong.medium.com/import-and-combine-multiple-text-files-from-a-folder-with-r-and-sub-folders-f69ef308977f")
+
+txt_files <- list.files(here("data", "z_hp", "challenge-2", "challenge2-articles"),
+                        pattern = "txt", full.names = TRUE, recursive = TRUE)
+
+for (i in 1:length(txt_files)){
+if(i==1){
+assign(paste0("Data"), read.table(txt_files[i],header = FALSE, sep = ","))
+}
+if(!i==1){
+assign(paste0("Test",i), read.table(txt_files[i],header = FALSE, sep = ","))
+Data <- rbind(Data,get(paste0("Test",i)))
+rm(list = ls(pattern = "Test"))
+}
+}
+rm(list = ls(pattern = "list.+?"))
+```
