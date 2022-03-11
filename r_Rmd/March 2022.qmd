@@ -181,7 +181,7 @@ ggsave(plot = land_use_map, filename = here("outputs", "z_hp", "Challenge 1 Land
 # 20220310: Unlocked Challenge #2 - Natural Language Processing.
 
 ```{r z2-setup, include = FALSE}
-p_load(tidytext)
+p_load(tidytext, wordcloud, reshape2)
 
 # browseURL("https://www.tidytextmining.com/")
 # browseURL("https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html")
@@ -190,15 +190,40 @@ p_load(tidytext)
 txt_files <- list.files(here("data", "z_hp", "challenge-2", "challenge2-articles"),
                         pattern = "txt", full.names = TRUE, recursive = TRUE)
 
-for (i in 1:length(txt_files)){
-if(i==1){
-assign(paste0("Data"), read.table(txt_files[i],header = FALSE, sep = ","))
+texts <- data.frame(file=character(),
+                    paragraph=as.numeric(),
+                    text=character(),
+                    stringsAsFactors = FALSE)
+
+for (i in 1:length(txt_files)) {
+  p <- read.delim(txt_files[i],
+                  header=FALSE,
+                  col.names = "text",
+                  stringsAsFactors = FALSE) # read.delim here is automatically splitting by paragraph
+  p <- p %>% mutate(file=sub(".txt", "", x = txt_files[i]), # add filename as label
+                    paragraph=row_number()) # add paragraph number
+  texts <- bind_rows(texts, p) # adds to existing dataframe
 }
-if(!i==1){
-assign(paste0("Test",i), read.table(txt_files[i],header = FALSE, sep = ","))
-Data <- rbind(Data,get(paste0("Test",i)))
-rm(list = ls(pattern = "Test"))
-}
-}
-rm(list = ls(pattern = "list.+?"))
+
+words <- texts %>% unnest_tokens(word, text) %>%  # creates dataframe with one word per row, indexed
+  mutate(file_number = substr(file, nchar(file) - 2, nchar(file)),
+         word = str_remove(word, "â|œ"))
+
+cleaned_words <- words %>% 
+  anti_join(get_stopwords())
+
+bing <- get_sentiments("bing")
+```
+
+```{r wordcloud-1, include = TRUE}
+cleaned_words %>% 
+  count(word) %>% 
+  with(wordcloud(word, n, max.words = 100))
+
+cleaned_words %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("#F8766D", "#00BFC4"),
+                   max.words = 100)
 ```
