@@ -178,10 +178,10 @@ ggsave(plot = land_use_map, filename = here("outputs", "z_hp", "Challenge 1 Land
 
 ```
 
-# 20220310: Unlocked Challenge #2 - Natural Language Processing.
+# 20220310, 20220311, 20220314: Unlocked Challenge #2 - Natural Language Processing.
 
 ```{r z2-setup, include = FALSE}
-p_load(tidytext, wordcloud, reshape2)
+p_load(tidytext, wordcloud, reshape2, topicmodels)
 
 # browseURL("https://www.tidytextmining.com/")
 # browseURL("https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html")
@@ -190,18 +190,18 @@ p_load(tidytext, wordcloud, reshape2)
 txt_files <- list.files(here("data", "z_hp", "challenge-2", "challenge2-articles"),
                         pattern = "txt", full.names = TRUE, recursive = TRUE)
 
-texts <- data.frame(file=character(),
-                    paragraph=as.numeric(),
-                    text=character(),
+texts <- data.frame(file = character(),
+                    paragraph = as.numeric(),
+                    text = character(),
                     stringsAsFactors = FALSE)
 
 for (i in 1:length(txt_files)) {
   p <- read.delim(txt_files[i],
-                  header=FALSE,
+                  header = FALSE,
                   col.names = "text",
                   stringsAsFactors = FALSE) # read.delim here is automatically splitting by paragraph
-  p <- p %>% mutate(file=sub(".txt", "", x = txt_files[i]), # add filename as label
-                    paragraph=row_number()) # add paragraph number
+  p <- p %>% mutate(file = sub(".txt", "", x = txt_files[i]), # add filename as label
+                    paragraph = row_number()) # add paragraph number
   texts <- bind_rows(texts, p) # adds to existing dataframe
 }
 
@@ -226,4 +226,15 @@ cleaned_words %>%
   acast(word ~ sentiment, value.var = "n", fill = 0) %>%
   comparison.cloud(colors = c("#F8766D", "#00BFC4"),
                    max.words = 100)
+```
+
+```{r lda-test, include = FALSE}
+# browseURL("https://www.tidytextmining.com/topicmodeling.html")
+
+words_dtm <- cleaned_words %>% 
+  group_by(paragraph, word) %>% 
+  summarize(count = n()) %>% 
+  cast_dtm(paragraph, word, count)
+
+test <- LDA(words_dtm, k = 2)
 ```
