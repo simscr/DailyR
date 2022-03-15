@@ -205,7 +205,11 @@ for (i in 1:length(txt_files)) {
   texts <- bind_rows(texts, p) # adds to existing dataframe
 }
 
-words <- texts %>% unnest_tokens(word, text) %>%  # creates dataframe with one word per row, indexed
+texts2 <- texts %>%
+  mutate(text = str_replace(text, "La Eterna", "la_eterna"))
+
+words <- texts2 %>% 
+  unnest_tokens(word, text) %>%  # creates dataframe with one word per row, indexed
   mutate(file_number = substr(file, nchar(file) - 2, nchar(file)),
          word = str_remove(word, "â|œ"))
 
@@ -236,5 +240,35 @@ words_dtm <- cleaned_words %>%
   summarize(count = n()) %>% 
   cast_dtm(paragraph, word, count)
 
-test <- LDA(words_dtm, k = 2)
+all_terms <- LDA(words_dtm, k = 6)
+
+
+
+all_sum <- all_terms %>% 
+  tidy() %>% 
+  group_by(topic) %>% 
+  slice_max(beta, n = 10) %>% 
+  ungroup() %>% 
+  arrange(topic, beta)
+
+all_sum %>% 
+  filter(nchar(term) > 2) %>% 
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
+
+all_terms %>% 
+  tidy() %>% 
+  filter(nchar(term) > 2) %>% 
+  group_by(topic) %>% 
+  slice_max(beta, n = 25) %>% 
+  ungroup() %>% 
+  select(-beta) %>% 
+  pivot_wider(names_from = topic, values_from = term, values_fn = list) %>% 
+  unnest(cols = everything()) %>% 
+  gt::gt()
+  
+  
 ```
