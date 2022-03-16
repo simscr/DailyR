@@ -181,7 +181,7 @@ ggsave(plot = land_use_map, filename = here("outputs", "z_hp", "Challenge 1 Land
 # 20220310, 20220311, 20220314: Unlocked Challenge #2 - Natural Language Processing.
 
 ```{r z2-setup, include = FALSE}
-p_load(tidytext, wordcloud, reshape2, topicmodels)
+p_load(tidytext, wordcloud, reshape2, topicmodels, gt, gtExtras)
 
 # browseURL("https://www.tidytextmining.com/")
 # browseURL("https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html")
@@ -259,16 +259,29 @@ all_sum %>%
   facet_wrap(~ topic, scales = "free") +
   scale_y_reordered()
 
-all_terms %>% 
+(lda_sum <- all_terms %>% 
   tidy() %>% 
-  filter(nchar(term) > 2) %>% 
+  filter(nchar(term) > 2, 
+         !term %in% c("also", "can", "many", "eterna")) %>% 
   group_by(topic) %>% 
-  slice_max(beta, n = 25) %>% 
+  slice_max(beta, n = 10) %>% 
   ungroup() %>% 
   select(-beta) %>% 
   pivot_wider(names_from = topic, values_from = term, values_fn = list) %>% 
   unnest(cols = everything()) %>% 
-  gt::gt()
+  gt() %>% 
+  tab_header(md("**La Eterna LDA Modeling**"), 
+             subtitle = "Top 10 words when using 6 topics") %>% 
+  tab_source_note(md("**Data Source**: Z by HP Unlocked Challenge")) %>% 
+  cols_align(align = "center", columns = everything()) %>% 
+  cols_width(everything() ~ px(100)) %>% 
+  gt_theme_nytimes()
+)
   
-  
+
+gtsave(lda_sum, filename = here("data", "z_hp", "challenge-2", "LDA Summary Table.png"))
+
 ```
+
+
+https://www.hp.com/us-en/workstations/industries/data-science/unlocked-challenge.html
