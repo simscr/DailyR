@@ -149,7 +149,7 @@ w2 %>%
 anim_save(filename = here("exports", "March_2022", "waste.gif"))
 ```
 
-```{r}
+```{r, eval = FALSE}
 land <- cs_import(here("data", "z_hp", "challenge-1", "land_cover_data_11-30-2021.csv")) %>% remove_constant() %>% 
   select(-c(flag, flag_description)) %>% 
   rename(land_area_1000ha = value) 
@@ -178,9 +178,13 @@ ggsave(plot = land_use_map, filename = here("outputs", "z_hp", "Challenge 1 Land
 
 ```
 
-# 20220310, 20220311, 20220314: Unlocked Challenge #2 - Natural Language Processing.
+```{r land-use-final, include = TRUE}
+knitr::include_graphics(path = here("outputs", "z_hp", "Challenge 1 Land Use 2018.png"))
+```
 
-```{r z2-setup, include = FALSE}
+# 20220310, 20220311, 20220314-16: Unlocked Challenge #2 - Natural Language Processing.
+
+```{r z2-setup, eval = FALSE}
 p_load(tidytext, wordcloud, reshape2, topicmodels, gt, gtExtras)
 
 # browseURL("https://www.tidytextmining.com/")
@@ -219,7 +223,7 @@ cleaned_words <- words %>%
 bing <- get_sentiments("bing")
 ```
 
-```{r wordcloud-1, include = TRUE}
+```{r wordcloud-1, eval = FALSE}
 cleaned_words %>% 
   count(word) %>% 
   with(wordcloud(word, n, max.words = 100))
@@ -232,7 +236,7 @@ cleaned_words %>%
                    max.words = 100)
 ```
 
-```{r lda-test, include = FALSE}
+```{r lda-test, eval = FALSE}
 # browseURL("https://www.tidytextmining.com/topicmodeling.html")
 
 words_dtm <- cleaned_words %>% 
@@ -283,5 +287,59 @@ gtsave(lda_sum, filename = here("data", "z_hp", "challenge-2", "LDA Summary Tabl
 
 ```
 
+```{r lda-final, include = TRUE}
+knitr::include_graphics(path = here("data", "z_hp", "challenge-2", "LDA Summary Table.png"))
+```
 
-https://www.hp.com/us-en/workstations/industries/data-science/unlocked-challenge.html
+
+# 20220317: Trying something new
+
+I don't know enough about audio or image analysis in R to try Challenges #3 and #4 of the Unlocked Challenge.
+
+Trying {flametree}
+
+```{r flametree-setup, include = FALSE}
+p_load(flametree)
+
+shades <- c("#FED789", "#023743", "#72874E", "#476F84", "#A4BED5", "#453947")
+
+dat <- flametree_grow(time = 10, trees = 6)
+```
+
+
+```{r flametree-plots, include = TRUE}
+dat %>% 
+  flametree_plot(
+    background = "antiquewhite",
+    palette = shades, 
+    style = "plain"
+  )
+
+dat %>% 
+  flametree_plot(
+    background = "antiquewhite",
+    palette = shades, 
+    style = "voronoi"
+  )
+
+dat %>% 
+  flametree_plot(
+    background = "antiquewhite",
+    palette = shades, 
+    style = "nativeflora"
+  )
+
+dat %>% 
+  flametree_plot(
+    background = "antiquewhite",
+    palette = shades, 
+    style = "wisp"
+  )
+
+dat %>% 
+  flametree_plot(
+    background = "antiquewhite",
+    palette = rev(shades), 
+    style = "minimal"
+  )
+```
