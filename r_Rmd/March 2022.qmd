@@ -343,3 +343,17 @@ dat %>%
     style = "minimal"
   )
 ```
+
+# 20220318: Looking into [renv](https://rstudio.github.io/renv/index.html)
+
+{renv} is a package that allows you to create a file for each project that maintains a record of which versions of R and packages were used in the project. 
+
+[Here is an intro to renv.](https://rstudio.github.io/renv/articles/renv.html)
+
+
+
+```{r renv-setup, include = FALSE}
+p_load(renv)
+
+# browseURL("https://rstudio.github.io/renv/articles/renv.html")
+```
