@@ -350,10 +350,64 @@ dat %>%
 
 [Here is an intro to renv.](https://rstudio.github.io/renv/articles/renv.html)
 
-
-
-```{r renv-setup, include = FALSE}
+```{r renv-setup, eval = FALSE, echo = TRUE}
 p_load(renv)
 
-# browseURL("https://rstudio.github.io/renv/articles/renv.html")
+renv::init()
+
+renv::snapshot()
+
 ```
+
+# 20220321: Trying [ungeviz](https://github.com/wilkelab/ungeviz)
+
+The **{ungeviz}** package is used to help visualize uncertainty using 
+hypothetical outcome plots (HOPS).
+
+```{r ungeviz, include = TRUE}
+p_load(ungeviz, gganimate)
+
+ggplot(mtcars, aes(hp, mpg)) + 
+  geom_point() +
+  stat_smooth_draws(times = 20, aes(group = stat(.draw))) + 
+  theme_bw() +
+  transition_states(stat(.draw), 1, 2) +
+  enter_fade() + exit_fade()
+
+```
+
+
+
+```{r knit-exit, include = FALSE}
+knitr::knit_exit()
+```
+
+template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr} 
+
+
+```{r end-knit, include = FALSE}
+knitr::knit_exit()
+```
+<https://github.com/richardvogg/30DayMapChallenge21>
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
+
+<https://www.tjmahr.com/lists-knitr-secret-weapon/>
