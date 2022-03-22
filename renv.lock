@@ -4189,10 +4189,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.0.1",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "3bf0219f19d9f5b3c682acbb3546a151",
+      "Hash": "04884d9a75d778aca22c7154b8333ec9",
       "Requirements": []
     },
     "rlist": {
@@ -4725,6 +4725,25 @@
         "zeallot"
       ]
     },
+    "strapgod": {
+      "Package": "strapgod",
+      "Version": "0.0.4.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "strapgod",
+      "RemoteUsername": "DavisVaughan",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "ea2b1ecfc780a44ffa934c9bc7c2032954f4ffaa",
+      "Hash": "37ff23b67a3ffc9bef4c16bf540035e3",
+      "Requirements": [
+        "dplyr",
+        "lifecycle",
+        "rlang",
+        "tibble",
+        "tidyr"
+      ]
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.7.6",
@@ -5190,6 +5209,31 @@
       "Hash": "5e069fb033daf2317bd628d3100b75c5",
       "Requirements": [
         "cpp11"
+      ]
+    },
+    "ungeviz": {
+      "Package": "ungeviz",
+      "Version": "0.1.0",
+      "Source": "GitHub",
+      "Remotes": "DavisVaughan/strapgod",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "ungeviz",
+      "RemoteUsername": "wilkelab",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "aeae12b014c718dcd01343548f2221b58ece63f6",
+      "Hash": "27fb4480b999d9f2a3c844ec79d738ff",
+      "Requirements": [
+        "dplyr",
+        "ggplot2",
+        "mgcv",
+        "mvtnorm",
+        "purrr",
+        "rlang",
+        "strapgod",
+        "tibble",
+        "tidyr",
+        "withr"
       ]
     },
     "units": {

@@ -376,6 +376,49 @@ ggplot(mtcars, aes(hp, mpg)) +
 
 ```
 
+# 20220322: #TidyTuesday and Names
+
+```{r tt-names-setup, include = FALSE}
+p_load(tidytuesdayR)
+
+tt_raw <- tt_load("2022-03-22")
+readme(tt_raw)
+
+bn <- tt_raw$babynames
+
+calc_p_change <- function(sex) {
+  bn %>% 
+    filter(year %in% c(1880, 2017), 
+         sex == {{ sex }}) %>% 
+  select(-c(sex, n)) %>% 
+  pivot_wider(names_from = year, values_from = prop) %>% 
+  rowwise() %>% 
+  mutate(percent_change = ((`2017` - `1880`) / `1880`) * 100) %>% 
+  arrange(-percent_change)
+}
+
+m_sum <- calc_p_change("M") %>% 
+  mutate(sex = "M") %>% 
+  select(name, percent_change, sex) %>% 
+  rowid_to_column(var = "rank")
+f_sum <- calc_p_change("F") %>% 
+  mutate(sex = "F") %>% 
+  select(name, percent_change, sex) %>% 
+  rowid_to_column(var = "rank")
+
+all_sum <- bind_rows(m_sum, f_sum) %>% 
+  arrange(-percent_change) %>% 
+  rowid_to_column(var = "overall_rank")
+```
+
+```{r plot, include = FALSE}
+all_sum %>% 
+  filter(!is.na(percent_change)) %>%
+  ggplot(aes(percent_change, rank, fill = sex)) + 
+  geom_point() +
+  scale_x_log10() + 
+  facet_wrap( ~ sex)
+```
 
 
 ```{r knit-exit, include = FALSE}
