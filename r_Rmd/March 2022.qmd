@@ -376,7 +376,7 @@ ggplot(mtcars, aes(hp, mpg)) +
 
 ```
 
-# 20220322: #TidyTuesday and Names
+# 20220322 and 23: #TidyTuesday and Names
 
 ```{r tt-names-setup, include = FALSE}
 p_load(tidytuesdayR)
@@ -425,6 +425,11 @@ all_sum %>%
   labs(x = "Percent Decrease")
 ```
 
+
+#20220324: Endnote?
+It would be useful for our lab to use *Executable Manuscripts* but one speed bump I can think of right now is citations. I'm going to try to figure out how to use **Endnote** citations in R.
+
+I'm going to try this in a separate Rmd file instead of this Quarto file.
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
