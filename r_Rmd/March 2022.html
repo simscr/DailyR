@@ -86,6 +86,10 @@
   <script src="March 2022_files/libs/bootstrap/bootstrap.min.js"></script>
   <link href="March 2022_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
   <link href="March 2022_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <script src="March 2022_files\libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+  <link href="March 2022_files\libs/image-compare-viewer-1.5.0/image-compare-viewer.min.css" rel="stylesheet">
+  <script src="March 2022_files\libs/image-compare-viewer-1.5.0/image-compare-viewer.min.js"></script>
+  <script src="March 2022_files\libs/ricv-binding-0.1.0/ricv.js"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -101,6 +105,11 @@
 <li><a href="#and-09-still-working-on-unlocked-challenge-1" class="nav-link" data-scroll-target="#and-09-still-working-on-unlocked-challenge-1">20220304, 07 and 09: Still working on Unlocked Challenge #1</a></li>
 <li><a href="#unlocked-challenge-2---natural-language-processing." class="nav-link" data-scroll-target="#unlocked-challenge-2---natural-language-processing.">20220310, 20220311, 20220314-16: Unlocked Challenge #2 - Natural Language Processing.</a></li>
 <li><a href="#trying-something-new" class="nav-link" data-scroll-target="#trying-something-new">20220317: Trying something new</a></li>
+<li><a href="#looking-into-renv" class="nav-link" data-scroll-target="#looking-into-renv">20220318: Looking into <span>renv</span></a></li>
+<li><a href="#trying-ungeviz" class="nav-link" data-scroll-target="#trying-ungeviz">20220321: Trying <span>ungeviz</span></a></li>
+<li><a href="#and-23-tidytuesday-and-names" class="nav-link" data-scroll-target="#and-23-tidytuesday-and-names">20220322 and 23: #TidyTuesday and Names</a></li>
+<li><a href="#endnote" class="nav-link" data-scroll-target="#endnote">20220324: Endnote?</a></li>
+<li><a href="#trying-ricv" class="nav-link" data-scroll-target="#trying-ricv">20220325: Trying <strong><span>{ricv}</span></strong></a></li>
 </ul>
 </nav>
 </div>
@@ -187,6 +196,56 @@
 </div>
 <div class="cell-output-display">
 <p><img src="C-/Users/2513851/OneDrive%20-%20University%20of%20Arkansas%20for%20Medical%20Sciences/work/Daily%20R/exports/March_2022/flametree-plots-5.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="looking-into-renv" class="level1">
+<h1>20220318: Looking into <a href="https://rstudio.github.io/renv/index.html">renv</a></h1>
+<p>{renv} is a package that allows you to create a file for each project that maintains a record of which versions of R and packages were used in the project.</p>
+<p><a href="https://rstudio.github.io/renv/articles/renv.html">Here is an intro to renv.</a></p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(renv)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">init</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">snapshot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="trying-ungeviz" class="level1">
+<h1>20220321: Trying <a href="https://github.com/wilkelab/ungeviz">ungeviz</a></h1>
+<p>The <strong>{ungeviz}</strong> package is used to help visualize uncertainty using hypothetical outcome plots (HOPS).</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="C-/Users/2513851/OneDrive%20-%20University%20of%20Arkansas%20for%20Medical%20Sciences/work/Daily%20R/exports/March_2022/ungeviz-1.gif" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="and-23-tidytuesday-and-names" class="level1">
+<h1>20220322 and 23: #TidyTuesday and Names</h1>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="C-/Users/2513851/OneDrive%20-%20University%20of%20Arkansas%20for%20Medical%20Sciences/work/Daily%20R/exports/March_2022/plot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="endnote" class="level1">
+<h1>20220324: Endnote?</h1>
+<p>It would be useful for our lab to use <em>Executable Manuscripts</em> but one speed bump I can think of right now is citations. I’m going to try to figure out how to use <strong>Endnote</strong> citations in R.</p>
+<p>I’m going to try this in a separate Rmd file instead of this Quarto file.</p>
+</section>
+<section id="trying-ricv" class="level1">
+<h1>20220325: Trying <strong><a href="https://xvrdm.github.io/ricv/">{ricv}</a></strong></h1>
+<div class="cell">
+<div class="cell-output-stdout">
+<pre><code>NULL
+NULL
+list()
+attr(,"class")
+[1] "Options"</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="htmlwidget-af5e63412ae617b6b8f8" style="width:100%;height:464px;" class="ricv html-widget"></div>
+<script type="application/json" data-for="htmlwidget-af5e63412ae617b6b8f8">{"x":{"img1":"C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/loess.jpg","img2":"C:/Users/2513851/OneDrive - University of Arkansas for Medical Sciences/work/Daily R/exports/linear.jpg","options":[],"css":null},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>

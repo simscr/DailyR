@@ -426,10 +426,36 @@ all_sum %>%
 ```
 
 
-#20220324: Endnote?
+# 20220324: Endnote?
 It would be useful for our lab to use *Executable Manuscripts* but one speed bump I can think of right now is citations. I'm going to try to figure out how to use **Endnote** citations in R.
 
 I'm going to try this in a separate Rmd file instead of this Quarto file.
+
+# 20220325: Trying **[{ricv}](https://xvrdm.github.io/ricv/)**
+
+```{r ricv-setup, include = FALSE}
+p_load(ricv)
+
+mpg %>% 
+  ggplot(aes(cty, hwy)) + 
+  geom_jitter() + 
+  geom_smooth()
+
+# ggsave(filename = here("exports", "loess.jpg"))
+
+mpg %>% 
+  ggplot(aes(cty, hwy)) + 
+  geom_jitter() + 
+  geom_smooth(method = "lm")
+
+# ggsave(filename = here("exports", "linear.jpg"))
+
+```
+
+```{r ricv, include = TRUE}
+ricv(img1 = here("exports", "loess.jpg"),
+     img2 = here("exports", "linear.jpg"))
+```
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
