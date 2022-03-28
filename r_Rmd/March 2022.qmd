@@ -457,11 +457,27 @@ ricv(img1 = here("exports", "loess.jpg"),
      img2 = here("exports", "linear.jpg"))
 ```
 
+# 20220328: Trying `debug = TRUE` for `element_text`
+
+This gives you a visual cue for where the `element_text` is anchored. Could be
+useful for accurately placing annotations, etc.
+
+```{r debug, include = TRUE}
+mpg %>% 
+  filter(manufacturer %in% c("dodge", "toyota")) %>% 
+  ggplot(aes(as.factor(cyl), cty)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(aes(color = manufacturer), width = 0.2, alpha = 0.5) + 
+  theme(legend.text = element_text(size = rel(1.4), debug = TRUE),
+        legend.title = element_blank())
+
+```
+
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
 ```
 
-template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {hrbrthemes}, {firatheme}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr} 
+template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr} 
 
 
 ```{r end-knit, include = FALSE}
