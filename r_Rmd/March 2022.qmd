@@ -473,6 +473,30 @@ mpg %>%
 
 ```
 
+# 20220329: #TidyTuesday and NCAA Sports Funding
+
+```{r tt-ncaa-setup, include = FALSE}
+p_load(tidytuesdayR)
+
+tt_raw <- tt_load("2022-03-29")
+readme(tt_raw)
+
+ncaa <- tt_raw$sports
+
+mf <- ncaa %>% 
+  filter(sum_partic_men > 0 & sum_partic_women > 0)
+
+popular_sports <- mf %>% 
+  count(sports) %>%
+  filter(n > 1000) %>% 
+  pluck("sports")
+
+final_ncaa <- mf %>% 
+  filter(sports %in% popular_sports)
+
+```
+
+
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
 ```
