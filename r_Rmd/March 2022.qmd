@@ -473,9 +473,9 @@ mpg %>%
 
 ```
 
-# 20220329: #TidyTuesday and NCAA Sports Funding
+# 20220329 - 20220331: #TidyTuesday and NCAA Sports Funding
 
-```{r tt-ncaa-setup, include = FALSE}
+```{r tt-ncaa-setup, eval = FALSE}
 p_load(tidytuesdayR)
 
 tt_raw <- tt_load("2022-03-29")
@@ -492,10 +492,51 @@ popular_sports <- mf %>%
   pluck("sports")
 
 final_ncaa <- mf %>% 
-  filter(sports %in% popular_sports)
+  filter(sports %in% popular_sports) %>% 
+  rowwise() %>% 
+  mutate(m_rpa = rev_men / sum_partic_men,
+         f_rpa = rev_women / sum_partic_women,
+         m_epa = exp_men / sum_partic_men,
+         f_epa = exp_women / sum_partic_women,
+         t_rpa = total_rev_menwomen / (sum_partic_men + sum_partic_women),
+         t_epa = total_exp_menwomen / (sum_partic_men + sum_partic_women))
+
+ncaa_sum <- final_ncaa %>% 
+  group_by(sports, classification_name) %>% 
+  summarize(across(c(m_rpa, m_epa, f_rpa, f_epa, t_rpa, t_epa), mean, na.rm = TRUE)) %>% 
+  pivot_longer(cols = c(m_rpa, f_rpa, t_rpa), names_to = "group", values_to = "rev_per_athlete") %>% 
+  mutate(group = case_when(group == "m_rpa" ~ "male", 
+                           group == "f_rpa" ~ "female",
+                           TRUE ~ "total")) %>% 
+  pivot_longer(cols = c(m_epa, f_epa, t_epa), names_to = "group2", values_to = "exp_per_athlete") %>% 
+  mutate(group2 = case_when(group2 == "m_epa" ~ "male", 
+                           group2 == "f_epa" ~ "female",
+                           TRUE ~ "total")) %>% 
+  filter(group == group2) %>% 
+  select(-group2)
+
+ncaa_sum2 <- ncaa_sum %>% 
+  pivot_longer(cols = c(rev_per_athlete, exp_per_athlete), 
+               names_to = "category", values_to = "total_dollars")
 
 ```
 
+```{r comp-plot, include = FALSE}
+
+ncaa_sum %>% 
+  filter(classification_name == "NCAA Division I-FBS") %>% 
+  ggplot() + 
+  geom_linerange(aes(x = sports, 
+                   ymin = exp_per_athlete, ymax = rev_per_athlete, 
+                   color = group), 
+               position = position_dodge(width = 0.8), show.legend = FALSE) + 
+  geom_point(aes(x = sports, y = rev_per_athlete, color = group),
+             position = position_dodge(width = 0.8), shape = 21) + 
+  geom_point(aes(x = sports, y = exp_per_athlete, color = group),
+             position = position_dodge(width = 0.8)) +
+  coord_flip()
+
+```
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
