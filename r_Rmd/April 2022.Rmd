@@ -1,0 +1,106 @@
+---
+title: "April 2022: 30 Day Chart Challenge"
+description: |
+  For the month of April, I will be attempting some of the 30 day chart challenge.
+author:
+  - name: Clark Sims 
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article
+    toc: true
+    toc_float: true
+
+knit: crsp::knit_html_to_outputs
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.retina = 3,
+  fig.path = here::here("exports", "April_2022", "/")
+)
+
+pacman::p_load(janitor, pacman, rio, skimr, here, conflicted,
+               tidyverse, crsp, gt)
+
+conflict_prefer("clean_names", "janitor")
+conflict_prefer("filter", "dplyr")
+
+theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+# Day 1: Part-to-Whole
+
+```{r d1-setup, include = FALSE}
+tx_sum <- txhousing %>% 
+  group_by(year) %>% 
+  mutate(total_sales = sum(sales, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  group_by(year, month) %>% 
+  mutate(monthly_sales = sum(sales, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  distinct(year, month, .keep_all = TRUE) %>% 
+  select(year, month, total_sales, monthly_sales) %>% 
+  rowwise() %>% 
+  mutate(monthly_pct = (monthly_sales / total_sales) * 100) %>% 
+  ungroup()
+  
+```
+
+```{r d1-chart, include = TRUE}
+# tx_sum %>% 
+#   group_by(month) %>% 
+#   summarize(mean_pct = mean(monthly_pct, na.rm = TRUE)) %>% 
+#   mutate(ymax = cumsum(mean_pct),
+#          ymin = dplyr::lag(mean_pct, default = 0)) %>% 
+#   ggplot(aes(xmin = 3, xmax = 4, ymin = ymax, ymax = ymin, fill = as.factor(month))) + 
+#   geom_rect() + 
+#   coord_polar(theta = "y") + 
+#   xlim(c(2, 4)) + 
+#   facet_wrap(~ year)
+
+tx_sum %>% 
+#  filter(year %in% c(2000, 2001)) %>%  
+  ggplot(aes(x = as.factor(year), y = monthly_pct, fill = as.factor(month))) + 
+  geom_col(width = 0.2, position = "stack") + 
+  coord_polar(theta = "y") + 
+  facet_wrap(~ year)
+
+
+
+```
+
+
+
+```{r knit-exit, include = FALSE}
+knitr::knit_exit()
+```
+
+template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr} 
+
+
+<https://github.com/richardvogg/30DayMapChallenge21>
+
+<https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
+
+<https://www.swisstopo.admin.ch/>
+
+<https://www.ign.es/web/ign/portal/cbg-area-cartografia>
+
+<http://shadedrelief.com/SampleElevationModels/>
+
+<https://www.neonscience.org/resources/learning-hub/tutorials>
+
+<https://docs.ropensci.org/rgbif/articles/rgbif.html>
+
+<https://ryo-n7.github.io/2020-05-14-webscrape-soccer-data-with-R/>
+
+<https://github.com/gkaramanis/aRt/blob/master/split-bar/split-bar.R>
+
+<https://github.com/thebioengineer/camcorder>
+
+<https://gist.github.com/Worville/c4149ece45a75928a404d316151ba0fe>
+
+<https://www.tjmahr.com/lists-knitr-secret-weapon/>
