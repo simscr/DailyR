@@ -93,7 +93,34 @@ tx_sum %>%
 
 ```
 
+# Day 4: Flora
 
+```{r d4-setup, include = FALSE}
+p_load(rgbif)
+
+sun <- name_suggest(q = 'Helianthus annuus', rank = 'species')$data$key[1]
+
+sun_n <- as.numeric(occ_search(taxonKey = sun)$meta$count)
+
+bes <- name_suggest(q = 'Rudbeckia hirta', rank = 'species')$data$key[1]
+
+bes_n <- as.numeric(occ_search(taxonKey = bes)$meta$count)
+
+flora <- tibble(
+  com_name = c("Sunflower", "Blackeyed Susan"),
+  sci_name = c("Helianthus annuus", "Rudbeckia hirta"),
+  occurences = c(sun_n, bes_n)
+)
+```
+
+```{r d4-chart, include = TRUE}
+flora %>% 
+  ggplot(aes(com_name, occurences)) + 
+  geom_point(shape = 8, size = 20, color = "yellow") +
+  geom_point(size = 6, color = "black") + 
+  scale_y_continuous(limits = c(0, 100000)) +
+  theme(panel.background = element_rect(fill = "blue"))
+```
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
