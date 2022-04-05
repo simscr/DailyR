@@ -116,10 +116,51 @@ flora <- tibble(
 ```{r d4-chart, include = TRUE}
 flora %>% 
   ggplot(aes(com_name, occurences)) + 
+  geom_segment(aes(x = com_name, xend = com_name, y = 0, yend = occurences), color = "#005C55FF") + 
   geom_point(shape = 8, size = 20, color = "yellow") +
   geom_point(size = 6, color = "black") + 
+  labs(x = NULL, y = "Number of Occurences", title = "Occurences of Two most common flowers in the United States according to GBIF") + 
   scale_y_continuous(limits = c(0, 100000)) +
-  theme(panel.background = element_rect(fill = "blue"))
+  theme(panel.background = element_rect(fill = "#CAD8D8FF"), panel.grid = element_blank(), 
+        plot.title.position = "plot", title = element_text(size = 14))
+```
+
+# Day 5: Slope 
+
+Today I will combine the #30DayChartChallenge with #TidyTuesdayR.
+
+```{r d5-setup, include = FALSE}
+p_load(tidytuesdayR)
+
+tt_raw <- tt_load("2022-04-05")
+
+news_orgs <- tt_raw$news_orgs
+
+state_sum <- bind_cols(state.abb, state.name, state.division, state.region) %>% 
+  rename("state" = 1, "name" = 2, "division" = 3, "region" = 4)
+
+news_sum <- news_orgs %>% 
+  group_by(state, year_founded) %>% 
+  filter(state %in% state.abb)%>% 
+  count() %>% 
+  left_join(state_sum) 
+
+
+
+```
+
+```{r d5-plot, include = FALSE}
+news_sum %>% 
+  filter(str_detect(division, "South Central")) %>% 
+  ggplot(aes(year_founded, n, color = name)) + 
+  geom_jitter(shape = 18, size = 2) +
+  geom_smooth(se = FALSE, method = "lm", size = 0.5, show.legend = FALSE) + 
+  paletteer::scale_color_paletteer_d("tidyquant::tq_light", direction = -1) + 
+  labs(x = NULL, y = NULL, 
+       title = "Number of News Organizations Founded Per Year in the South Central USA", 
+       color = NULL) + 
+  theme(plot.title.position = "plot", title = element_text(size = 12))
+
 ```
 
 ```{r knit-exit, include = FALSE}
