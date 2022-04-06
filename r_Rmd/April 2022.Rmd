@@ -141,15 +141,13 @@ state_sum <- bind_cols(state.abb, state.name, state.division, state.region) %>%
 
 news_sum <- news_orgs %>% 
   group_by(state, year_founded) %>% 
-  filter(state %in% state.abb)%>% 
+  filter(state %in% state.abb) %>% 
   count() %>% 
   left_join(state_sum) 
 
-
-
 ```
 
-```{r d5-plot, include = FALSE}
+```{r d5-plot, include = TRUE}
 news_sum %>% 
   filter(str_detect(division, "South Central")) %>% 
   ggplot(aes(year_founded, n, color = name)) + 
@@ -163,11 +161,46 @@ news_sum %>%
 
 ```
 
+# Day 6: Our World in Data
+
+```{r d6-setup, include = FALSE}
+p_load(owidR, ggtext)
+
+owid_search("education")
+
+ed <- owid("public-education-expenditure-as-share-of-gdp") %>% 
+  as_tibble() %>% 
+  rename("ed_gdp" = 4) %>% 
+  mutate(ed_gdp = ed_gdp / 100)
+```
+
+```{r d6-plot, include = TRUE}
+ed %>% 
+  ggplot(aes(year, ed_gdp, color = entity)) + 
+  geom_line(alpha = 0.5) + 
+  geom_line(data = ed %>% filter(entity == "United States"), 
+            aes(year, ed_gdp), color = "#D62728FF") + 
+  scale_x_continuous(labels = seq(from = 1870, to = 2000, by = 25), 
+                     breaks = seq(from = 1870, to = 2000, by = 25)) + 
+  scale_y_continuous(labels = scales::percent_format()) + 
+  geom_point(alpha = 1.5) + 
+  paletteer::scale_color_paletteer_d("ggsci::category20_d3", direction = -1) + 
+  labs(title = "**Public Spending as a Percentage of GDP**",
+       subtitle = "Selected Countries from *1870-1993*", 
+       x = NULL, y = NULL, color = NULL) + 
+  coord_fixed(ratio = 1000) + 
+  theme_light() + 
+  theme(plot.title = element_markdown(),
+        plot.subtitle = element_markdown(),
+        plot.title.position = "plot")
+```
+
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
 ```
 
-template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr} 
+# Extra Stuff
+template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
 
 
 <https://github.com/richardvogg/30DayMapChallenge21>

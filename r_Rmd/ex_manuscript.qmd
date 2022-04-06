@@ -1,0 +1,57 @@
+---
+title: "Executable Manuscript || Quarto"
+format:
+  html:
+    theme: simplex
+    toc: true
+    number-sections: true
+  docx:
+    toc: false
+    section-numbers: true
+    # output-file: here::here("ex_manuscript_files", "Test.docx")
+---
+
+## Creating an **"Executable Manuscript"** using Quarto
+
+**Quarto** is the next generation of Rmarkdown and can be used to perform data analysis and word processing in the same document. It can export multiple formats including `html`, Word, and PowerPoint. It can also handle citations and automatically create a bibliography.
+
+The goal for this document is to provide instructions for setting up and using **Quarto**.
+
+### Quarto Setup
+
+You have probably already completed some of these steps.
+
+-   [Install R](https://cran.microsoft.com/)
+
+-   [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
+
+-   Install `{quarto}` using `install.packages("quarto")`.
+
+-   Other packages you might find useful:
+
+    -   `{rio}` - import/export
+
+    -   `{here}` - locating files/exports
+
+    -   `{janitor}` - mainly just for the `clean_names()` function.
+
+    -   `{pacman}` - can be used to import/install multiple packages at once.
+
+### Packages and R Setup
+
+```{r r-setup}
+#| echo: true
+#| warning: false
+
+# install.packages("pacman")  # uncomment if you need to install {pacman}
+
+pacman::p_load(rio, here, janitor, tidyverse)
+
+pacman::p_load(palmerpenguins)  # example data set
+
+palmerpenguins::penguins
+```
+
+```{r}
+
+```
