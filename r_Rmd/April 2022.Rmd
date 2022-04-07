@@ -34,7 +34,7 @@ theme_set(theme_bw(base_size = 15) + theme(legend.position = "bottom"))
 For April I am going to complete some of the [30 Day Chart Challenge](https://github.com/dominicroye/30DayChartChallenge_Edition2022).
 
 
-# Day 1: Part-to-Whole
+# Day 1: Part-to-Whole Comparisons
 
 ```{r d1-setup, include = FALSE}
 tx_sum <- txhousing %>% 
@@ -93,7 +93,7 @@ tx_sum %>%
 
 ```
 
-# Day 4: Flora
+# Day 4: Flora Comparisons
 
 ```{r d4-setup, include = FALSE}
 p_load(rgbif)
@@ -125,7 +125,7 @@ flora %>%
         plot.title.position = "plot", title = element_text(size = 14))
 ```
 
-# Day 5: Slope 
+# Day 5: Slope Comparisons 
 
 Today I will combine the #30DayChartChallenge with #TidyTuesdayR.
 
@@ -161,7 +161,7 @@ news_sum %>%
 
 ```
 
-# Day 6: Our World in Data
+# Day 6: Our World in Data Comparisons
 
 ```{r d6-setup, include = FALSE}
 p_load(owidR, ggtext)
@@ -194,6 +194,32 @@ ed %>%
         plot.subtitle = element_markdown(),
         plot.title.position = "plot")
 ```
+
+# Day 7: Physical Distributions
+
+```{r d7-setup, include = FALSE}
+p_load(owidR, rnaturalearth)
+
+owid_search("terror")
+
+terror <- owid("terrorist-attacks-by-region") %>% 
+  clean_names() %>% 
+  group_by(code) %>% 
+  count()
+
+world <- ne_countries(returnclass = "sf") %>% 
+  left_join(terror, by = c("iso_a3" = "code"))
+
+
+world %>% 
+  ggplot() + 
+  geom_sf(aes(fill = n), color = "white", size = 0.25) + 
+#  coord_sf()
+  lims(x = c(-30, 50), y = c(30, 80)) + 
+  theme_void()
+```
+
+
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
