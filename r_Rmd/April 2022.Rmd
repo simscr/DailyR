@@ -252,6 +252,38 @@ mtns %>%
   labs(x = NULL, y = NULL)
 ```
 
+
+# Day 11: Circular Distributions
+
+```{r d11-setup, include = FALSE}
+planets <- tibble::tribble(
+          ~planet, ~distance_m, ~size_m,
+            "Sun",           "0", 865370,
+        "Mercury",    "35000000",   1516,
+          "Venus",    "67000000",   3760,
+          "Earth",    "93000000",   3959,
+           "Mars",   "142000000",   2106,
+        "Jupiter",   "484000000",  43441,
+         "Saturn",   "889000000",  36184,
+         "Uranus",  "1790000000",  15759,
+        "Neptune",  "2880000000",  15299
+  ) %>% 
+  mutate(distance_m = parse_number(distance_m),
+         location = sample(1:9, replace = FALSE),
+         order = seq(1:9),
+         plot_distance = distance_m + 865370 + )
+
+```
+
+```{r d11-plot, include = FALSE}
+planets %>% 
+  ggplot(aes(order, plot_distance, color = planet)) + 
+  geom_point(aes(size = size_m)) + 
+  geom_hline(aes(yintercept = plot_distance), lty = 3, alpha = 0.5) + 
+#  scale_y_continuous(limits = c(-1000000000, 3e+09)) + 
+  coord_polar()
+```
+
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
 ```
