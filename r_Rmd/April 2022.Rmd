@@ -271,18 +271,48 @@ planets <- tibble::tribble(
   mutate(distance_m = parse_number(distance_m),
          location = sample(1:9, replace = FALSE),
          order = seq(1:9),
-         plot_distance = distance_m + 865370 + )
+         plot_distance = case_when(planet == "Sun" ~ 0,
+                                   planet != "Sun" ~ ((865370 / 2) + 
+                                                        distance_m + (size_m / 2)) / 10000,
+                                   TRUE ~ 0))
 
 ```
 
-```{r d11-plot, include = FALSE}
+
+Not sure why this isn't working, but I'm moving on due to time.
+
+```{r d11-plot, include = TRUE}
 planets %>% 
-  ggplot(aes(order, plot_distance, color = planet)) + 
+  ggplot(aes(location, plot_distance, color = planet)) + 
   geom_point(aes(size = size_m)) + 
   geom_hline(aes(yintercept = plot_distance), lty = 3, alpha = 0.5) + 
 #  scale_y_continuous(limits = c(-1000000000, 3e+09)) + 
-  coord_polar()
+  scale_size_area() + 
+  coord_polar() + 
+  theme_void()
 ```
+
+# Day 12: Theme Day: *The Economist*
+
+I'm going to work more on Day 11, but use a theme from {ggthemes} based on 
+*The Economist* style.
+
+I'm moving on from the solar system. `r emo::ji("sun_with_face")`
+
+
+```{r d12-plot, include = TRUE}
+p_load(ggthemes)
+
+planets %>% 
+  ggplot(aes(location, plot_distance, color = planet)) + 
+  geom_point() + 
+  geom_hline(aes(yintercept = plot_distance), lty = 3, alpha = 0.5) + 
+#  scale_y_continuous(limits = c(-1000000000, 3e+09)) + 
+  scale_size_area() + 
+  coord_polar() + 
+  theme_economist()
+```
+
 
 ```{r knit-exit, include = FALSE}
 knitr::knit_exit()
