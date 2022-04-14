@@ -314,10 +314,6 @@ planets %>%
 ```
 
 
-```{r knit-exit, include = FALSE}
-knitr::knit_exit()
-```
-
 
 # Day 13: Correlation
 
@@ -350,7 +346,21 @@ hbr_maples %>%
         plot.caption = element_markdown())
 ```
 
+
+# Day 14: 3D Relationship
+
+Didn't have time to complete. May revisit.
+
+```{r d14-setup, include = FALSE}
+
+```
+
+
 # Extra Stuff
+
+```{r end-knit, include = FALSE}
+knitr::knit_exit()
+```
 template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
 
 
