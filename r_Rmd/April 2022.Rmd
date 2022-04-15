@@ -3,15 +3,12 @@ title: "April 2022: 30 Day Chart Challenge"
 author:
   - name: Clark Sims 
 date: "`r Sys.Date()`"
-output: 
-  distill::distill_article
-    toc: true
-    toc_float: true
+output: distill::distill_article
 
 knit: crsp::knit_html_to_outputs
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
@@ -203,7 +200,7 @@ p_load(owidR, rnaturalearth)
 # owid_search("terror")
 
 terror <- owid("terrorist-attacks-by-region") %>% 
-  clean_names() %>% view()
+  clean_names() %>% 
   group_by(code) %>% 
   count()
 
@@ -355,6 +352,32 @@ Didn't have time to complete. May revisit.
 
 ```
 
+# Day 15: Multivariate Relationship
+
+```{r d15-setup, include = FALSE}
+p_load(ggtext, ggrepel, paletteer)
+
+msleep2 <- msleep %>% 
+  mutate(brain_body = brainwt / bodywt)
+```
+
+```{r d15-plot, include = TRUE}
+msleep2 %>%
+  filter(conservation == "domesticated") %>%
+  ggplot(aes(sleep_total, brain_body, color = vore)) + 
+  geom_point(shape = 18, size = 3) + 
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_text_repel(aes(label = name), color = "black", min.segment.length = 0.2) +
+  scale_color_paletteer_d("dutchmasters::staalmeesters", direction = -1) + 
+  labs(title = "Relationship between **Brain Weight Ratio** and **Total Sleep** in Domesticated Animals: <span style = 'color:#D39C7B;'>Carnivores</span>, <span style = 'color:#060A0D;'>Herbivores</span>, and <span style = 'color:#D7E1D6;'>Omnivores</span>",
+       x = "Total Sleep", 
+       y = "Brain Weight / Body Weight", 
+       caption = "Data Source: {ggplot2::msleep}") +
+  theme(legend.position = "none", 
+        plot.title = element_textbox_simple(), plot.title.position = "plot",
+        plot.caption = element_markdown())
+  
+```
 
 # Extra Stuff
 
@@ -363,8 +386,6 @@ knitr::knit_exit()
 ```
 template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
 
-
-<https://github.com/richardvogg/30DayMapChallenge21>
 
 <https://albert-rapp.de/post/2021-09-16-similar-data-and-list-like-columns/#helpful-concepts>
 
