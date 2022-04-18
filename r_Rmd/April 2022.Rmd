@@ -379,6 +379,43 @@ msleep2 %>%
   
 ```
 
+
+# Day 18: [OECD](https://data.oecd.org/) Data
+
+```{r d18-setup, include = FALSE}
+p_load(OECD)
+
+# dataset_list <- get_datasets()
+# search_dataset("Health", data = dataset_list) %>% view()
+
+health <- get_dataset(dataset = "HEALTH_LVNG") %>% 
+  clean_names()
+
+smoking <- health %>% 
+  filter(var == "TOBATBCT", 
+         unit %in% c("PDLSFMTF", "PDLSHOTH", "PDLSTOTX")) %>% 
+  mutate(group = case_when(unit == "PDLSTOTX" ~ "Total", 
+                           unit == "PDLSFMTF" ~ "Women",
+                           unit == "PDLSHOTH" ~ "Men"),
+         percent_pop = parse_number(obs_value),
+         time = parse_number(time))
+
+```
+
+```{r d18-table, include = TRUE}
+p_load(gt, gtExtras)
+
+smoking_2019 <- smoking %>% 
+  select(cou, time, group, percent_pop) %>% 
+  filter(time == 2019) %>% 
+  arrange(-percent_pop)
+
+
+smoking_2019 %>% gt()
+
+
+```
+
 # Extra Stuff
 
 ```{r end-knit, include = FALSE}
