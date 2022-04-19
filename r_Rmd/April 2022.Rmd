@@ -407,13 +407,44 @@ p_load(gt, gtExtras)
 
 smoking_2019 <- smoking %>% 
   select(cou, time, group, percent_pop) %>% 
-  filter(time == 2019) %>% 
-  arrange(-percent_pop)
+  filter(time == 2019)
 
 
 smoking_2019 %>% gt()
 
 
+```
+
+# Day 19: Global Change
+
+I'm going to continue with the Day 18 OECD data.
+
+```{r d19-setup, include = FALSE}
+
+smk_19_w <- smoking_2019 %>% 
+  pivot_wider(names_from = group, values_from = percent_pop) %>% 
+  select(-time) %>% 
+  arrange(-Total)
+
+smoking %>% 
+  group_by(cou, group) %>% 
+  summarize(smk_data = list(percent_pop), .groups = "drop") %>% 
+  left_join(smk_19_w) %>% 
+  gt() %>% 
+  gt_sparkline(smk_data)
+  pivot_wider(names_from = group, values_from = percent_pop) %>% 
+  arrange(-Total) %>% 
+  group_by(cou) %>% 
+  summarize(smoking_data = list())
+  
+  gt_sparkline_tab <- mtcars %>%
+   dplyr::group_by(cyl) %>%
+   # must end up with list of data for each row in the input dataframe
+   dplyr::summarize(mpg_data = list(mpg), .groups = "drop") %>% view()
+   gt() %>%
+   gt_sparkline(mpg_data)
+  
+  
 ```
 
 # Extra Stuff
