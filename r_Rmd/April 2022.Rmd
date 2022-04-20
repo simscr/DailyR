@@ -432,6 +432,7 @@ smoking %>%
   left_join(smk_19_w) %>% 
   gt() %>% 
   gt_sparkline(smk_data)
+
   pivot_wider(names_from = group, values_from = percent_pop) %>% 
   arrange(-Total) %>% 
   group_by(cou) %>% 
