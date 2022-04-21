@@ -383,7 +383,7 @@ msleep2 %>%
 # Day 18: [OECD](https://data.oecd.org/) Data
 
 ```{r d18-setup, include = FALSE}
-p_load(OECD)
+p_load(OECD, countrycode)
 
 # dataset_list <- get_datasets()
 # search_dataset("Health", data = dataset_list) %>% view()
@@ -394,6 +394,8 @@ health <- get_dataset(dataset = "HEALTH_LVNG") %>%
 smoking <- health %>% 
   filter(var == "TOBATBCT", 
          unit %in% c("PDLSFMTF", "PDLSHOTH", "PDLSTOTX")) %>% 
+  mutate(country = countrycode(cou, origin = "iso3c", destination = "country.name"),
+         flag = countrycode(country, "country.name", "unicode.symbol"))  %>% 
   mutate(group = case_when(unit == "PDLSTOTX" ~ "Total", 
                            unit == "PDLSFMTF" ~ "Women",
                            unit == "PDLSHOTH" ~ "Men"),
@@ -406,7 +408,7 @@ smoking <- health %>%
 p_load(gt, gtExtras)
 
 smoking_2019 <- smoking %>% 
-  select(cou, time, group, percent_pop) %>% 
+  select(country, time, group, percent_pop, flag) %>% 
   filter(time == 2019)
 
 
@@ -415,35 +417,37 @@ smoking_2019 %>% gt()
 
 ```
 
-# Day 19: Global Change
+# Day 19 and 21: Global Change/Down
 
 I'm going to continue with the Day 18 OECD data.
 
 ```{r d19-setup, include = FALSE}
-
 smk_19_w <- smoking_2019 %>% 
   pivot_wider(names_from = group, values_from = percent_pop) %>% 
   select(-time) %>% 
   arrange(-Total)
+```
 
+
+```{r d19-gt, include = TRUE}
 smoking %>% 
-  group_by(cou, group) %>% 
+  group_by(country, group) %>% 
   summarize(smk_data = list(percent_pop), .groups = "drop") %>% 
   left_join(smk_19_w) %>% 
+  filter(group == "Total", 
+         !is.na(Total)) %>% 
+  select(-group) %>% 
+  rename(Country = country, Trend = smk_data) %>% 
+  relocate(Trend, .after = Total) %>% 
   gt() %>% 
-  gt_sparkline(smk_data)
+  gt_merge_stack(Country, flag) %>% 
+  tab_spanner(columns = c("Women", "Men", "Total"), label = "2019 Smoking Rates") %>% 
+  gt_sparkline(Trend, 
+               range_colors = c("#2E5A87", "#A90C38"),
+               line_color = "gray", 
+               width = 15)
 
-  pivot_wider(names_from = group, values_from = percent_pop) %>% 
-  arrange(-Total) %>% 
-  group_by(cou) %>% 
-  summarize(smoking_data = list())
-  
-  gt_sparkline_tab <- mtcars %>%
-   dplyr::group_by(cyl) %>%
-   # must end up with list of data for each row in the input dataframe
-   dplyr::summarize(mpg_data = list(mpg), .groups = "drop") %>% view()
-   gt() %>%
-   gt_sparkline(mpg_data)
+
   
   
 ```
