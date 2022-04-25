@@ -453,6 +453,23 @@ smoking %>%
 
 ```
 
+
+
+
+# Day 25: Trend (Uncertainties)
+
+```{r d25-setup, include = FALSE}
+p_load(raster)
+
+tavg_data <- getData(name = "worldclim", var = "tmean", res = 10)
+
+gain(tavg_data) <- 0.1  # browseURL("https://rspatialdata.github.io/temperature.html")
+
+tavg_data$tmean1@data@min 
+  
+  raster::as.data.frame() %>% head()
+
+```
 # Extra Stuff
 
 ```{r end-knit, include = FALSE}
