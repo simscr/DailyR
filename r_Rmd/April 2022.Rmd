@@ -459,17 +459,21 @@ smoking %>%
 # Day 25: Trend (Uncertainties)
 
 ```{r d25-setup, include = FALSE}
-p_load(raster)
+p_load(climate)
 
-tavg_data <- getData(name = "worldclim", var = "tmean", res = 10)
+temperature <- meteo_imgw(interval = "monthly", year = 1966:2020, station =  "ŁEBA")
 
-gain(tavg_data) <- 0.1  # browseURL("https://rspatialdata.github.io/temperature.html")
-
-tavg_data$tmean1@data@min 
-  
-  raster::as.data.frame() %>% head()
 
 ```
+
+```{r d25-plot, include = TRUE}
+temperature %>% 
+  group_by(yy, mm)
+  mutate(date = paste0(yy, mm)) %>% 
+  ggplot(aes(date, tmax_mean)) + 
+  geom_point()
+```
+
 # Extra Stuff
 
 ```{r end-knit, include = FALSE}
