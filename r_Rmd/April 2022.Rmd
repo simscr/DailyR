@@ -468,10 +468,16 @@ temperature <- meteo_imgw(interval = "monthly", year = 1966:2020, station =  "Ł
 
 ```{r d25-plot, include = TRUE}
 temperature %>% 
-  group_by(yy, mm)
-  mutate(date = paste0(yy, mm)) %>% 
-  ggplot(aes(date, tmax_mean)) + 
-  geom_point()
+  mutate(date = paste0(yy, mm),
+         yy = as.factor(yy),
+         mm = as.factor(mm)) %>% 
+  ggplot(aes(mm, tmax_mean, group = yy)) + 
+  geom_smooth(show.legend = FALSE, color = "lightgray", se = FALSE, size = 0.25) + 
+  geom_smooth(data = temperature %>% filter(yy == max(yy)), 
+            color = 'red', se = FALSE) + 
+  labs(x = "Month", y = "Max Temperature (C)",
+       title = "Monthly Temperatures in Łeba, Poland from 1966 to 2020.") + 
+  theme(plot.title = ggtext::element_markdown())
 ```
 
 # Extra Stuff
