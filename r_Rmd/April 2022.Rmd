@@ -459,7 +459,7 @@ smoking %>%
 # Day 25: Trend (Uncertainties)
 
 ```{r d25-setup, include = FALSE}
-p_load(climate)
+p_load(climate, geomtextpath)
 
 temperature <- meteo_imgw(interval = "monthly", year = 1966:2020, station =  "ŁEBA")
 
@@ -473,11 +473,15 @@ temperature %>%
          mm = as.factor(mm)) %>% 
   ggplot(aes(mm, tmax_mean, group = yy)) + 
   geom_smooth(show.legend = FALSE, color = "lightgray", se = FALSE, size = 0.25) + 
-  geom_smooth(data = temperature %>% filter(yy == max(yy)), 
-            color = 'red', se = FALSE) + 
-  labs(x = "Month", y = "Max Temperature (C)",
-       title = "Monthly Temperatures in Łeba, Poland from 1966 to 2020.") + 
-  theme(plot.title = ggtext::element_markdown())
+  geom_textsmooth(data = temperature %>% filter(yy == max(yy)), 
+            color = 'red', se = FALSE, label = " 2020", size = 6, hjust = 0.1) + 
+  labs(x = "Month", y = "Max Temperature (\u00b0C)",
+       title = "Average Monthly Temperatures in **\u0141eba, Poland** from _1966 to 2020_.",
+       caption = "Data Source: **OGIMET**  || Dowloaded using {climate} R package.") + 
+  theme(plot.title = ggtext::element_markdown(),
+        plot.caption = ggtext::element_markdown(),
+        plot.title.position = "plot",
+        panel.grid.minor = element_blank())
 ```
 
 # Extra Stuff
