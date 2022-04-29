@@ -484,11 +484,20 @@ temperature %>%
         panel.grid.minor = element_blank())
 ```
 
-# Extra Stuff
+# Review
+
+I thought this was a good challenge. I had some trouble finding data that I
+thought would be interesting. Overall, I could have done a more thorough job with
+more time.
+
 
 ```{r end-knit, include = FALSE}
 knitr::knit_exit()
 ```
+
+
+# Extra Stuff
+
 template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, debug = T for geom_text, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
 
 
