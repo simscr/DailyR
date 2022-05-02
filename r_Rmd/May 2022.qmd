@@ -1,0 +1,39 @@
+---
+title: "May 2022"
+format:
+  html:
+    theme: yeti
+    toc: true
+    toc-title: "Daily R"
+    number-sections: true
+    mainfont: "Fira Code"
+    linkcolor: "#cc7000"
+    code-fold: true
+    code-overflow: "scroll"
+    code-link: true
+---
+
+Using Quarto again.
+
+# Setup|| 2022-05-02
+
+Today I played with some of the [setup options](https://quarto.org/docs/reference/formats/html.html)
+
+```{r}
+#| echo: false
+library(tidyverse)
+
+mpg %>% ggplot(aes(as.factor(cyl), cty)) + geom_boxplot(outlier.shape = NA) + geom_jitter(alpha = 0.5, width = 0.15)
+```
+
+
+
+
+```{r end-knit, include = FALSE}
+knitr::knit_exit()
+```
+
+
+# Extra Stuff
+
+template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
