@@ -3,27 +3,52 @@ title: "May 2022"
 format:
   html:
     theme: yeti
+    
     toc: true
     toc-title: "Daily R"
     number-sections: true
+    
     mainfont: "Fira Code"
     linkcolor: "#cc7000"
+    
     code-fold: true
     code-overflow: "scroll"
     code-link: true
+    code-copy: true
+    
+    execute:
+      echo: false
+      warning: false
+      message: false
+      freeze: auto
+    
+    fig-dpi: 300
+    fig-format: "png"
+    
+    link-external-icon: true
+    link-external-newwindow: true
+    
 ---
 
 Using Quarto again.
 
-# Setup|| 2022-05-02
+# Setup|| 2022-05-02 and 2022-05-03
 
 Today I played with some of the [setup options](https://quarto.org/docs/reference/formats/html.html)
 
 ```{r}
 #| echo: false
+#| include: false
 library(tidyverse)
+```
 
-mpg %>% ggplot(aes(as.factor(cyl), cty)) + geom_boxplot(outlier.shape = NA) + geom_jitter(alpha = 0.5, width = 0.15)
+
+```{r}
+#| echo: true
+mpg %>% 
+  ggplot(aes(as.factor(cyl), cty)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(alpha = 0.5, width = 0.15)
 ```
 
 
