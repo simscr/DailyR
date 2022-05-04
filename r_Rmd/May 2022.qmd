@@ -32,18 +32,19 @@ format:
 
 Using Quarto again.
 
-# Setup|| 2022-05-02 and 2022-05-03
+# Setup || 2022-05-02 and 2022-05-03
 
 Today I played with some of the [setup options](https://quarto.org/docs/reference/formats/html.html)
 
-```{r}
+```{r quarto-setup}
 #| echo: false
 #| include: false
-library(tidyverse)
+
+pacman::p_load(tidyverse)
 ```
 
 
-```{r}
+```{r ggplot-example}
 #| echo: true
 mpg %>% 
   ggplot(aes(as.factor(cyl), cty)) + 
@@ -51,6 +52,32 @@ mpg %>%
   geom_jitter(alpha = 0.5, width = 0.15)
 ```
 
+# {echarts4r} || 2022-05-04
+
+```{r echarts4r-setup}
+#| include: false
+
+pacman::p_load(echarts4r)
+
+df <- state.x77 |> 
+  as.data.frame() |> 
+  tibble::rownames_to_column("State")
+
+df |> 
+  e_charts(State) |> # initialise and set x
+  e_line(Population, smooth = FALSE) |>  # add a line
+  e_area(Income, smooth = FALSE) |>  # add area
+  e_x_axis(name = "States") |>  # add x axis name
+  e_title(text = "US States", subtext = "Population & Income") |>  # Add title & subtitle
+  e_theme("infographic") |>  # theme
+  e_legend(right = 1) |> # move legend to the bottom
+  e_tooltip(
+    axisPointer = list(
+      type = "cross"
+    )
+  ) 
+
+```
 
 
 
