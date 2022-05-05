@@ -8,7 +8,7 @@ format:
     toc-title: "Daily R"
     number-sections: true
     
-    mainfont: "Fira Code"
+    mainfont: "Century Gothic"
     linkcolor: "#cc7000"
     
     code-fold: true
@@ -41,6 +41,8 @@ Today I played with some of the [setup options](https://quarto.org/docs/referenc
 #| include: false
 
 pacman::p_load(tidyverse)
+
+theme_set(theme_bw())
 ```
 
 
@@ -55,7 +57,7 @@ mpg %>%
 # {echarts4r} || 2022-05-04
 
 ```{r echarts4r-setup}
-#| include: false
+#| include: true
 
 pacman::p_load(echarts4r)
 
@@ -79,6 +81,26 @@ df |>
 
 ```
 
+# {monochromeR} || 2022-05-05
+
+[{monochromeR}](https://github.com/cararthompson/monochromeR) is a package to generate custom palettes based on an initial color. You can make progressively lighter or darker palettes, or blend in another color.
+
+
+```{r}
+#| echo: false
+
+pacman::p_load(monochromeR)
+
+pal1 <- generate_palette("#7FBFF5", blend_colour = "#DB746E", n_colours = 12,
+                 view_palette = TRUE, view_labels = FALSE)
+
+mpg %>% 
+  ggplot(aes(as.factor(cyl), cty, color = as.factor(cyl))) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(alpha = 0.5, width = 0.15) + 
+  scale_color_manual(values = pal1[c(1, 4, 9, 12)])
+```
+
 
 
 ```{r end-knit, include = FALSE}
@@ -88,4 +110,4 @@ knitr::knit_exit()
 
 # Extra Stuff
 
-template, {rprojroot}, {rgbif}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {monochromeR}, {colorblindr}, {echarts4r}, {ggtext}
+template, {rprojroot}, {geoviz}, {ggmap}, {rayvista}, {camcorder}, {rayvertex}, {pwr}, {reprex}, {lcmm}, {rolldown}, {muvr}, {pcalg}, {packagemetrics}, {steveproj}, {ungeviz}, {themis}, {prettydoc}, {annotate}, {printy}, {roughsf}, {colorspace}, {colorblindr}, {ggtext}, {mice}, {ggmice}

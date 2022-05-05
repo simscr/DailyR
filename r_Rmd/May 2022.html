@@ -80,7 +80,7 @@
 <link id="quarto-text-highlighting-styles" href="May%202022_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
 <script src="May%202022_files/libs/bootstrap/bootstrap.min.js"></script><link href="May%202022_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="May%202022_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
-<!--[if lt IE 9]>
+<script src="May%202022_files%5Clibs/htmlwidgets-1.5.4/htmlwidgets.js"></script><script src="May%202022_files%5Clibs/echarts4r-4.8.0/echarts-en.min.js"></script><script src="May%202022_files%5Clibs/echarts4r-4.8.0/ecStat.min.js"></script><script src="May%202022_files%5Clibs/echarts4r-4.8.0/dataTool.min.js"></script><script src="May%202022_files%5Clibs/echarts4r-binding-0.4.3/echarts4r.js"></script><script src="May%202022_files%5Clibs/infographic-1.0.0/infographic.js"></script><!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
@@ -89,13 +89,15 @@
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
   <nav id="TOC" role="doc-toc"><h2 id="toc-title">Daily R</h2>
 <ul>
-<li><a href="#setup-2022-05-02-and-2022-05-03" id="toc-setup-2022-05-02-and-2022-05-03" class="nav-link active" data-scroll-target="#setup-2022-05-02-and-2022-05-03"> <span class="header-section-number">1</span> Setup|| 2022-05-02 and 2022-05-03</a></li>
+<li><a href="#setup-2022-05-02-and-2022-05-03" id="toc-setup-2022-05-02-and-2022-05-03" class="nav-link active" data-scroll-target="#setup-2022-05-02-and-2022-05-03"> <span class="header-section-number">1</span> Setup || 2022-05-02 and 2022-05-03</a></li>
+<li><a href="#echarts4r-2022-05-04" id="toc-echarts4r-2022-05-04" class="nav-link" data-scroll-target="#echarts4r-2022-05-04"> <span class="header-section-number">2</span> {echarts4r} || 2022-05-04</a></li>
+<li><a href="#monochromer-2022-05-05" id="toc-monochromer-2022-05-05" class="nav-link" data-scroll-target="#monochromer-2022-05-05"> <span class="header-section-number">3</span> {monochromeR} || 2022-05-05</a></li>
 </ul></nav>
 </div>
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title"><h1 class="title display-7">May 2022</h1></div></header><p>Using Quarto again.</p>
 <section id="setup-2022-05-02-and-2022-05-03" class="level1" data-number="1"><h1 data-number="1">
-<span class="header-section-number">1</span> Setup|| 2022-05-02 and 2022-05-03</h1>
+<span class="header-section-number">1</span> Setup || 2022-05-02 and 2022-05-03</h1>
 <p>Today I played with some of the <a href="https://quarto.org/docs/reference/formats/html.html">setup options</a></p>
 <div class="cell">
 <details><summary>Code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="va">mpg</span> <span class="op">%&gt;%</span> 
@@ -103,7 +105,26 @@
   <span class="fu">geom_boxplot</span><span class="op">(</span>outlier.shape <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span>, width <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
-<p><img src="May-2022_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid"></p>
+<p><img src="May-2022_files/figure-html/ggplot-example-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section><section id="echarts4r-2022-05-04" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> {echarts4r} || 2022-05-04</h1>
+<div class="cell">
+<div class="cell-output-display">
+<div id="htmlwidget-5102b5c0d0be8cf87557" style="width:100%;height:500px;" class="echarts4r html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5102b5c0d0be8cf87557">{"x":{"theme":"infographic","tl":false,"draw":true,"renderer":"canvas","events":[],"buttons":[],"opts":{"yAxis":[{"show":true}],"xAxis":[{"data":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"type":"category","boundaryGap":true,"name":"States"}],"legend":{"data":["Population","Income"],"show":true,"type":"plain","right":1},"series":[{"data":[{"value":["Alabama"," 3615"]},{"value":["Alaska","  365"]},{"value":["Arizona"," 2212"]},{"value":["Arkansas"," 2110"]},{"value":["California","21198"]},{"value":["Colorado"," 2541"]},{"value":["Connecticut"," 3100"]},{"value":["Delaware","  579"]},{"value":["Florida"," 8277"]},{"value":["Georgia"," 4931"]},{"value":["Hawaii","  868"]},{"value":["Idaho","  813"]},{"value":["Illinois","11197"]},{"value":["Indiana"," 5313"]},{"value":["Iowa"," 2861"]},{"value":["Kansas"," 2280"]},{"value":["Kentucky"," 3387"]},{"value":["Louisiana"," 3806"]},{"value":["Maine"," 1058"]},{"value":["Maryland"," 4122"]},{"value":["Massachusetts"," 5814"]},{"value":["Michigan"," 9111"]},{"value":["Minnesota"," 3921"]},{"value":["Mississippi"," 2341"]},{"value":["Missouri"," 4767"]},{"value":["Montana","  746"]},{"value":["Nebraska"," 1544"]},{"value":["Nevada","  590"]},{"value":["New Hampshire","  812"]},{"value":["New Jersey"," 7333"]},{"value":["New Mexico"," 1144"]},{"value":["New York","18076"]},{"value":["North Carolina"," 5441"]},{"value":["North Dakota","  637"]},{"value":["Ohio","10735"]},{"value":["Oklahoma"," 2715"]},{"value":["Oregon"," 2284"]},{"value":["Pennsylvania","11860"]},{"value":["Rhode Island","  931"]},{"value":["South Carolina"," 2816"]},{"value":["South Dakota","  681"]},{"value":["Tennessee"," 4173"]},{"value":["Texas","12237"]},{"value":["Utah"," 1203"]},{"value":["Vermont","  472"]},{"value":["Virginia"," 4981"]},{"value":["Washington"," 3559"]},{"value":["West Virginia"," 1799"]},{"value":["Wisconsin"," 4589"]},{"value":["Wyoming","  376"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Population","type":"line","coordinateSystem":"cartesian2d","smooth":false},{"data":[{"value":["Alabama","3624"]},{"value":["Alaska","6315"]},{"value":["Arizona","4530"]},{"value":["Arkansas","3378"]},{"value":["California","5114"]},{"value":["Colorado","4884"]},{"value":["Connecticut","5348"]},{"value":["Delaware","4809"]},{"value":["Florida","4815"]},{"value":["Georgia","4091"]},{"value":["Hawaii","4963"]},{"value":["Idaho","4119"]},{"value":["Illinois","5107"]},{"value":["Indiana","4458"]},{"value":["Iowa","4628"]},{"value":["Kansas","4669"]},{"value":["Kentucky","3712"]},{"value":["Louisiana","3545"]},{"value":["Maine","3694"]},{"value":["Maryland","5299"]},{"value":["Massachusetts","4755"]},{"value":["Michigan","4751"]},{"value":["Minnesota","4675"]},{"value":["Mississippi","3098"]},{"value":["Missouri","4254"]},{"value":["Montana","4347"]},{"value":["Nebraska","4508"]},{"value":["Nevada","5149"]},{"value":["New Hampshire","4281"]},{"value":["New Jersey","5237"]},{"value":["New Mexico","3601"]},{"value":["New York","4903"]},{"value":["North Carolina","3875"]},{"value":["North Dakota","5087"]},{"value":["Ohio","4561"]},{"value":["Oklahoma","3983"]},{"value":["Oregon","4660"]},{"value":["Pennsylvania","4449"]},{"value":["Rhode Island","4558"]},{"value":["South Carolina","3635"]},{"value":["South Dakota","4167"]},{"value":["Tennessee","3821"]},{"value":["Texas","4188"]},{"value":["Utah","4022"]},{"value":["Vermont","3907"]},{"value":["Virginia","4701"]},{"value":["Washington","4864"]},{"value":["West Virginia","3617"]},{"value":["Wisconsin","4468"]},{"value":["Wyoming","4566"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Income","type":"line","coordinateSystem":"cartesian2d","areaStyle":[],"smooth":false}],"title":[{"text":"US States","subtext":"Population & Income"}],"tooltip":{"trigger":"item","axisPointer":{"type":"cross"}}},"dispose":true},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section><section id="monochromer-2022-05-05" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> {monochromeR} || 2022-05-05</h1>
+<p><a href="https://github.com/cararthompson/monochromeR">{monochromeR}</a> is a package to generate custom palettes based on an initial color. You can make progressively lighter or darker palettes, or blend in another color.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="May-2022_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="May-2022_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid"></p>
 </div>
 </div>
 
