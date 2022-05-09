@@ -101,6 +101,21 @@ mpg %>%
   scale_color_manual(values = pal1[c(1, 4, 9, 12)])
 ```
 
+# {packagemetrics} || 2022-05-09
+
+```{r}
+#| include: false
+
+pacman::p_load(packagemetrics)
+
+ray_pkgs <- package_list_metrics(c("raymolecule", "rayrender", "rayshader", "rayvertex"))
+```
+
+```{r}
+#| include: true
+
+metrics_table(ray_pkgs)
+```
 
 
 ```{r end-knit, include = FALSE}
