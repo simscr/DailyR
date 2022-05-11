@@ -92,6 +92,8 @@
 <li><a href="#setup-2022-05-02-and-2022-05-03" id="toc-setup-2022-05-02-and-2022-05-03" class="nav-link active" data-scroll-target="#setup-2022-05-02-and-2022-05-03"> <span class="header-section-number">1</span> Setup || 2022-05-02 and 2022-05-03</a></li>
 <li><a href="#echarts4r-2022-05-04" id="toc-echarts4r-2022-05-04" class="nav-link" data-scroll-target="#echarts4r-2022-05-04"> <span class="header-section-number">2</span> {echarts4r} || 2022-05-04</a></li>
 <li><a href="#monochromer-2022-05-05" id="toc-monochromer-2022-05-05" class="nav-link" data-scroll-target="#monochromer-2022-05-05"> <span class="header-section-number">3</span> {monochromeR} || 2022-05-05</a></li>
+<li><a href="#packagemetrics-2022-05-09" id="toc-packagemetrics-2022-05-09" class="nav-link" data-scroll-target="#packagemetrics-2022-05-09"> <span class="header-section-number">4</span> {packagemetrics} || 2022-05-09</a></li>
+<li><a href="#tidytuesdayr-new-york-times-bestsellers-2022-05-10-and-2022-05-11" id="toc-tidytuesdayr-new-york-times-bestsellers-2022-05-10-and-2022-05-11" class="nav-link" data-scroll-target="#tidytuesdayr-new-york-times-bestsellers-2022-05-10-and-2022-05-11"> <span class="header-section-number">5</span> #TidyTuesdayR ++ New York Time’s Bestsellers || 2022-05-10 and 2022-05-11</a></li>
 </ul></nav>
 </div>
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default">
@@ -112,8 +114,8 @@
 <span class="header-section-number">2</span> {echarts4r} || 2022-05-04</h1>
 <div class="cell">
 <div class="cell-output-display">
-<div id="htmlwidget-5102b5c0d0be8cf87557" style="width:100%;height:500px;" class="echarts4r html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5102b5c0d0be8cf87557">{"x":{"theme":"infographic","tl":false,"draw":true,"renderer":"canvas","events":[],"buttons":[],"opts":{"yAxis":[{"show":true}],"xAxis":[{"data":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"type":"category","boundaryGap":true,"name":"States"}],"legend":{"data":["Population","Income"],"show":true,"type":"plain","right":1},"series":[{"data":[{"value":["Alabama"," 3615"]},{"value":["Alaska","  365"]},{"value":["Arizona"," 2212"]},{"value":["Arkansas"," 2110"]},{"value":["California","21198"]},{"value":["Colorado"," 2541"]},{"value":["Connecticut"," 3100"]},{"value":["Delaware","  579"]},{"value":["Florida"," 8277"]},{"value":["Georgia"," 4931"]},{"value":["Hawaii","  868"]},{"value":["Idaho","  813"]},{"value":["Illinois","11197"]},{"value":["Indiana"," 5313"]},{"value":["Iowa"," 2861"]},{"value":["Kansas"," 2280"]},{"value":["Kentucky"," 3387"]},{"value":["Louisiana"," 3806"]},{"value":["Maine"," 1058"]},{"value":["Maryland"," 4122"]},{"value":["Massachusetts"," 5814"]},{"value":["Michigan"," 9111"]},{"value":["Minnesota"," 3921"]},{"value":["Mississippi"," 2341"]},{"value":["Missouri"," 4767"]},{"value":["Montana","  746"]},{"value":["Nebraska"," 1544"]},{"value":["Nevada","  590"]},{"value":["New Hampshire","  812"]},{"value":["New Jersey"," 7333"]},{"value":["New Mexico"," 1144"]},{"value":["New York","18076"]},{"value":["North Carolina"," 5441"]},{"value":["North Dakota","  637"]},{"value":["Ohio","10735"]},{"value":["Oklahoma"," 2715"]},{"value":["Oregon"," 2284"]},{"value":["Pennsylvania","11860"]},{"value":["Rhode Island","  931"]},{"value":["South Carolina"," 2816"]},{"value":["South Dakota","  681"]},{"value":["Tennessee"," 4173"]},{"value":["Texas","12237"]},{"value":["Utah"," 1203"]},{"value":["Vermont","  472"]},{"value":["Virginia"," 4981"]},{"value":["Washington"," 3559"]},{"value":["West Virginia"," 1799"]},{"value":["Wisconsin"," 4589"]},{"value":["Wyoming","  376"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Population","type":"line","coordinateSystem":"cartesian2d","smooth":false},{"data":[{"value":["Alabama","3624"]},{"value":["Alaska","6315"]},{"value":["Arizona","4530"]},{"value":["Arkansas","3378"]},{"value":["California","5114"]},{"value":["Colorado","4884"]},{"value":["Connecticut","5348"]},{"value":["Delaware","4809"]},{"value":["Florida","4815"]},{"value":["Georgia","4091"]},{"value":["Hawaii","4963"]},{"value":["Idaho","4119"]},{"value":["Illinois","5107"]},{"value":["Indiana","4458"]},{"value":["Iowa","4628"]},{"value":["Kansas","4669"]},{"value":["Kentucky","3712"]},{"value":["Louisiana","3545"]},{"value":["Maine","3694"]},{"value":["Maryland","5299"]},{"value":["Massachusetts","4755"]},{"value":["Michigan","4751"]},{"value":["Minnesota","4675"]},{"value":["Mississippi","3098"]},{"value":["Missouri","4254"]},{"value":["Montana","4347"]},{"value":["Nebraska","4508"]},{"value":["Nevada","5149"]},{"value":["New Hampshire","4281"]},{"value":["New Jersey","5237"]},{"value":["New Mexico","3601"]},{"value":["New York","4903"]},{"value":["North Carolina","3875"]},{"value":["North Dakota","5087"]},{"value":["Ohio","4561"]},{"value":["Oklahoma","3983"]},{"value":["Oregon","4660"]},{"value":["Pennsylvania","4449"]},{"value":["Rhode Island","4558"]},{"value":["South Carolina","3635"]},{"value":["South Dakota","4167"]},{"value":["Tennessee","3821"]},{"value":["Texas","4188"]},{"value":["Utah","4022"]},{"value":["Vermont","3907"]},{"value":["Virginia","4701"]},{"value":["Washington","4864"]},{"value":["West Virginia","3617"]},{"value":["Wisconsin","4468"]},{"value":["Wyoming","4566"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Income","type":"line","coordinateSystem":"cartesian2d","areaStyle":[],"smooth":false}],"title":[{"text":"US States","subtext":"Population & Income"}],"tooltip":{"trigger":"item","axisPointer":{"type":"cross"}}},"dispose":true},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-149e52aa8d2c7405c17e" style="width:100%;height:500px;" class="echarts4r html-widget"></div>
+<script type="application/json" data-for="htmlwidget-149e52aa8d2c7405c17e">{"x":{"theme":"infographic","tl":false,"draw":true,"renderer":"canvas","events":[],"buttons":[],"opts":{"yAxis":[{"show":true}],"xAxis":[{"data":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"type":"category","boundaryGap":true,"name":"States"}],"legend":{"data":["Population","Income"],"show":true,"type":"plain","right":1},"series":[{"data":[{"value":["Alabama"," 3615"]},{"value":["Alaska","  365"]},{"value":["Arizona"," 2212"]},{"value":["Arkansas"," 2110"]},{"value":["California","21198"]},{"value":["Colorado"," 2541"]},{"value":["Connecticut"," 3100"]},{"value":["Delaware","  579"]},{"value":["Florida"," 8277"]},{"value":["Georgia"," 4931"]},{"value":["Hawaii","  868"]},{"value":["Idaho","  813"]},{"value":["Illinois","11197"]},{"value":["Indiana"," 5313"]},{"value":["Iowa"," 2861"]},{"value":["Kansas"," 2280"]},{"value":["Kentucky"," 3387"]},{"value":["Louisiana"," 3806"]},{"value":["Maine"," 1058"]},{"value":["Maryland"," 4122"]},{"value":["Massachusetts"," 5814"]},{"value":["Michigan"," 9111"]},{"value":["Minnesota"," 3921"]},{"value":["Mississippi"," 2341"]},{"value":["Missouri"," 4767"]},{"value":["Montana","  746"]},{"value":["Nebraska"," 1544"]},{"value":["Nevada","  590"]},{"value":["New Hampshire","  812"]},{"value":["New Jersey"," 7333"]},{"value":["New Mexico"," 1144"]},{"value":["New York","18076"]},{"value":["North Carolina"," 5441"]},{"value":["North Dakota","  637"]},{"value":["Ohio","10735"]},{"value":["Oklahoma"," 2715"]},{"value":["Oregon"," 2284"]},{"value":["Pennsylvania","11860"]},{"value":["Rhode Island","  931"]},{"value":["South Carolina"," 2816"]},{"value":["South Dakota","  681"]},{"value":["Tennessee"," 4173"]},{"value":["Texas","12237"]},{"value":["Utah"," 1203"]},{"value":["Vermont","  472"]},{"value":["Virginia"," 4981"]},{"value":["Washington"," 3559"]},{"value":["West Virginia"," 1799"]},{"value":["Wisconsin"," 4589"]},{"value":["Wyoming","  376"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Population","type":"line","coordinateSystem":"cartesian2d","smooth":false},{"data":[{"value":["Alabama","3624"]},{"value":["Alaska","6315"]},{"value":["Arizona","4530"]},{"value":["Arkansas","3378"]},{"value":["California","5114"]},{"value":["Colorado","4884"]},{"value":["Connecticut","5348"]},{"value":["Delaware","4809"]},{"value":["Florida","4815"]},{"value":["Georgia","4091"]},{"value":["Hawaii","4963"]},{"value":["Idaho","4119"]},{"value":["Illinois","5107"]},{"value":["Indiana","4458"]},{"value":["Iowa","4628"]},{"value":["Kansas","4669"]},{"value":["Kentucky","3712"]},{"value":["Louisiana","3545"]},{"value":["Maine","3694"]},{"value":["Maryland","5299"]},{"value":["Massachusetts","4755"]},{"value":["Michigan","4751"]},{"value":["Minnesota","4675"]},{"value":["Mississippi","3098"]},{"value":["Missouri","4254"]},{"value":["Montana","4347"]},{"value":["Nebraska","4508"]},{"value":["Nevada","5149"]},{"value":["New Hampshire","4281"]},{"value":["New Jersey","5237"]},{"value":["New Mexico","3601"]},{"value":["New York","4903"]},{"value":["North Carolina","3875"]},{"value":["North Dakota","5087"]},{"value":["Ohio","4561"]},{"value":["Oklahoma","3983"]},{"value":["Oregon","4660"]},{"value":["Pennsylvania","4449"]},{"value":["Rhode Island","4558"]},{"value":["South Carolina","3635"]},{"value":["South Dakota","4167"]},{"value":["Tennessee","3821"]},{"value":["Texas","4188"]},{"value":["Utah","4022"]},{"value":["Vermont","3907"]},{"value":["Virginia","4701"]},{"value":["Washington","4864"]},{"value":["West Virginia","3617"]},{"value":["Wisconsin","4468"]},{"value":["Wyoming","4566"]}],"yAxisIndex":0,"xAxisIndex":0,"name":"Income","type":"line","coordinateSystem":"cartesian2d","areaStyle":[],"smooth":false}],"title":[{"text":"US States","subtext":"Population & Income"}],"tooltip":{"trigger":"item","axisPointer":{"type":"cross"}}},"dispose":true},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section><section id="monochromer-2022-05-05" class="level1" data-number="3"><h1 data-number="3">
@@ -125,6 +127,213 @@
 </div>
 <div class="cell-output-display">
 <p><img src="May-2022_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section><section id="packagemetrics-2022-05-09" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> {packagemetrics} || 2022-05-09</h1>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-condensed">
+<thead><tr>
+<th style="text-align:right;">
+package
+</th>
+<th style="text-align:right;">
+published
+</th>
+<th style="text-align:right;">
+dl_last_month
+</th>
+<th style="text-align:right;">
+stars
+</th>
+<th style="text-align:right;">
+tidyverse_happy
+</th>
+<th style="text-align:right;">
+has_tests
+</th>
+<th style="text-align:right;">
+vignette
+</th>
+<th style="text-align:right;">
+last_commit
+</th>
+<th style="text-align:right;">
+last_issue_closed
+</th>
+<th style="text-align:right;">
+contributors
+</th>
+<th style="text-align:right;">
+depends_count
+</th>
+<th style="text-align:right;">
+reverse_count
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+<span style="font-weight: bold">raymolecule</span>
+</td>
+<td style="text-align:right;">
+2022-03-21
+</td>
+<td style="text-align:right;">
+<span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #56A33E; width: 10.61%">250</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px"> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: purple"> <i class="glyphicon glyphicon-glass"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: white"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff">0</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="font-weight: bold">rayrender </span>
+</td>
+<td style="text-align:right;">
+2021-11-23
+</td>
+<td style="text-align:right;">
+<span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #56A33E; width: 42.51%">1002</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #56a33e">462 </span>
+</td>
+<td style="text-align:right;">
+<span style="color: purple"> <i class="glyphicon glyphicon-glass"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: green"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: white"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f06b13">0.8 </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #54d1ea">6</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b3eaf5">1</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="font-weight: bold">rayshader </span>
+</td>
+<td style="text-align:right;">
+2021-04-28
+</td>
+<td style="text-align:right;">
+<span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #56A33E; width: 100.00%">2357</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px">1.6k</span>
+</td>
+<td style="text-align:right;">
+<span style="color: purple"> <i class="glyphicon glyphicon-glass"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: white"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff">0.6</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff">32.3</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3">7</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3">1</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3">3</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="font-weight: bold">rayvertex </span>
+</td>
+<td style="text-align:right;">
+2021-10-10
+</td>
+<td style="text-align:right;">
+<span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #56A33E; width: 18.63%">439</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff">52 </span>
+</td>
+<td style="text-align:right;">
+<span style="color: purple"> <i class="glyphicon glyphicon-glass"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: red"> <i class="glyphicon glyphicon-remove"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="color: white"> <i class="glyphicon glyphicon-ok"></i> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #f28238">5.8 </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #ffffff">3</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #1cc2e3"> </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; padding: 0 4px; border-radius: 4px; background-color: #b3eaf5">1</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><section id="tidytuesdayr-new-york-times-bestsellers-2022-05-10-and-2022-05-11" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> #TidyTuesdayR ++ New York Time’s Bestsellers || 2022-05-10 and 2022-05-11</h1>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="May-2022_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid"></p>
 </div>
 </div>
 

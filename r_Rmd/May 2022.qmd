@@ -8,7 +8,7 @@ format:
     toc-title: "Daily R"
     number-sections: true
     
-    mainfont: "Century Gothic"
+    mainfont: "Fira Code"
     linkcolor: "#cc7000"
     
     code-fold: true
@@ -40,7 +40,7 @@ Today I played with some of the [setup options](https://quarto.org/docs/referenc
 #| echo: false
 #| include: false
 
-pacman::p_load(tidyverse)
+library(tidyverse)
 
 theme_set(theme_bw())
 ```
@@ -117,7 +117,7 @@ ray_pkgs <- package_list_metrics(c("raymolecule", "rayrender", "rayshader", "ray
 metrics_table(ray_pkgs)
 ```
 
-# #TidyTuesdayR || New York Time's Bestsellers
+# #TidyTuesdayR ++ New York Time's Bestsellers || 2022-05-10 and 2022-05-11
 
 ```{r tt-setup-0510}
 #| include: false
@@ -133,7 +133,23 @@ nyt <- tt_raw %>%
          author = str_remove(author, '[!?\\"]'),
          author = str_replace(author, "^ by ", ""))
 
+best_nyt <- nyt %>% 
+  filter(best_rank == 1)
+
 ```
+
+```{r}
+#| include: true
+
+best_nyt %>% 
+  count(author) %>% 
+  arrange(-n) %>% 
+  filter(n > 5) %>% 
+  ggplot(aes(n, reorder(author, n))) + 
+  geom_point() +
+  labs(y = NULL, x = "Number of NYT #1 Bestsellers")
+```
+
 
 
 ```{r end-knit, include = FALSE}
