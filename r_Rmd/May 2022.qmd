@@ -117,12 +117,13 @@ ray_pkgs <- package_list_metrics(c("raymolecule", "rayrender", "rayshader", "ray
 metrics_table(ray_pkgs)
 ```
 
-# #TidyTuesdayR ++ New York Time's Bestsellers || 2022-05-10 and 2022-05-11
+# #TidyTuesdayR ++ New York Time's Bestsellers || 2022-05-10, 2022-05-11 and 2022-05-12
 
 ```{r tt-setup-0510}
 #| include: false
 
 library(tidytuesdayR)
+library(showtext)
 
 tt <- tt_load("2022-05-10", download_files = "nyt_titles.tsv")
 
@@ -136,6 +137,10 @@ nyt <- tt_raw %>%
 best_nyt <- nyt %>% 
   filter(best_rank == 1)
 
+font_add_google("Josefin Slab", "josefin")
+
+showtext_auto()
+
 ```
 
 ```{r}
@@ -144,10 +149,15 @@ best_nyt <- nyt %>%
 best_nyt %>% 
   count(author) %>% 
   arrange(-n) %>% 
-  filter(n > 5) %>% 
+  filter(n > 10) %>% 
   ggplot(aes(n, reorder(author, n))) + 
-  geom_point() +
-  labs(y = NULL, x = "Number of NYT #1 Bestsellers")
+  geom_segment(aes(x = 0, xend = n, yend = author), lty = 3) +
+  geom_label(aes(label = n), label.r = unit(0, "lines")) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.02))) + 
+  labs(y = NULL, x = "Number of NYT #1 Bestsellers") + 
+  theme_minimal() + 
+  theme(text = element_text(family = "josefin", color = "black", face = "bold"),
+        panel.grid.minor = element_blank())
 ```
 
 
