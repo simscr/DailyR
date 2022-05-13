@@ -27,12 +27,11 @@ format:
     
     link-external-icon: true
     link-external-newwindow: true
-    
 ---
 
 Using Quarto again.
 
-# Setup || 2022-05-02 and 2022-05-03
+# Setup \|\| 2022-05-02 and 2022-05-03
 
 Today I played with some of the [setup options](https://quarto.org/docs/reference/formats/html.html)
 
@@ -45,7 +44,6 @@ library(tidyverse)
 theme_set(theme_bw())
 ```
 
-
 ```{r ggplot-example}
 #| echo: true
 mpg %>% 
@@ -54,7 +52,7 @@ mpg %>%
   geom_jitter(alpha = 0.5, width = 0.15)
 ```
 
-# {echarts4r} || 2022-05-04
+# {echarts4r} \|\| 2022-05-04
 
 ```{r echarts4r-setup}
 #| include: true
@@ -81,10 +79,9 @@ df |>
 
 ```
 
-# {monochromeR} || 2022-05-05
+# {monochromeR} \|\| 2022-05-05
 
 [{monochromeR}](https://github.com/cararthompson/monochromeR) is a package to generate custom palettes based on an initial color. You can make progressively lighter or darker palettes, or blend in another color.
-
 
 ```{r}
 #| echo: false
@@ -101,7 +98,7 @@ mpg %>%
   scale_color_manual(values = pal1[c(1, 4, 9, 12)])
 ```
 
-# {packagemetrics} || 2022-05-09
+# {packagemetrics} \|\| 2022-05-09
 
 ```{r}
 #| include: false
@@ -117,7 +114,7 @@ ray_pkgs <- package_list_metrics(c("raymolecule", "rayrender", "rayshader", "ray
 metrics_table(ray_pkgs)
 ```
 
-# #TidyTuesdayR ++ New York Time's Bestsellers || 2022-05-10, 2022-05-11 and 2022-05-12
+# #TidyTuesdayR ++ New York Time's Bestsellers \|\| 2022-05-10, 2022-05-11 and 2022-05-12
 
 ```{r tt-setup-0510}
 #| include: false
@@ -160,12 +157,28 @@ best_nyt %>%
         panel.grid.minor = element_blank())
 ```
 
+# Facets with Shadows \|\| 2022-05-13
 
+```{r}
+#| include: true
+#| echo: true
+#| label: facet-setup
+
+midwest %>% 
+  ggplot(aes(poptotal, percbelowpoverty, color = state)) + 
+  geom_point(data = ~ select(., -state), color = "grey") + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_log10() + 
+  paletteer::scale_color_paletteer_d("LaCroixColoR::Lemon", direction = -1) + 
+  facet_wrap(~ state)
+
+
+```
 
 ```{r end-knit, include = FALSE}
 knitr::knit_exit()
 ```
-
 
 # Extra Stuff
 
