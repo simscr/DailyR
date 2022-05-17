@@ -176,6 +176,41 @@ midwest %>%
 
 ```
 
+# #TidyTuesdayR ++ Eurovision
+
+```{r}
+#| label: tt-eurovision-seup
+#| include: false
+
+pacman::p_load(tidytuesdayR, rnaturalearth)
+
+tt_raw <- tt_load("2022-05-17")
+readme(tt_raw)
+
+esc <- tt_raw$eurovision
+
+esc %>% 
+  count(artist_country, sort = TRUE)
+
+europe <- ne_countries(continent = "europe")
+
+europe %>% 
+  ggplot(aes(geometry = )) +
+  geom_sf()
+```
+
+```{r}
+#| label: tt-plot
+#| include: true
+#| echo: true
+
+esc %>% 
+  count(artist_country, sort = TRUE) %>% 
+  mutate(artist_country = fct_reorder(artist_country, n)) %>% 
+  ggplot(aes(n, artist_country)) + 
+  geom_point()
+```
+
 ```{r end-knit, include = FALSE}
 knitr::knit_exit()
 ```
