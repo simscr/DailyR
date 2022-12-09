@@ -201,3 +201,4 @@ data/z_hp/challenge-2/models/la_eterna_topic_model-9.lda.expElogbeta.npy
 data/z_hp/challenge-2/models/la_eterna_topic_model-9.lda.id2word
 data/z_hp/challenge-2/models/la_eterna_topic_model-9.lda.state
 data/z_hp/challenge-2/requirements.txt
+r_Rmd/calmcode.R
